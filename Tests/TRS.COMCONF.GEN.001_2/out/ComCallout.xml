@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Script>
+    <Name>ComCallout</Name>
+    <Decription>Fix the parameters</Decription>
+    <Expression>as:modconf('Com')[1]</Expression>
+    <Operations>
+        <Operation Type="ForEach">
+            <Expression>as:modconf('Com')[1]/ComConfig/Test/ComIPdu/Test/ComIPduCallout</Expression>
+            <Operations>
+                <Operation Type="SetEnabled">
+                    <Expression>boolean(1)</Expression>
+                </Operation>
+                <Operation Type="SetValue">
+                    <Expression>"NmLib_COMCallout_Test"</Expression>
+                </Operation>
+            </Operations>
+        </Operation>
+    </Operations>
+</Script>

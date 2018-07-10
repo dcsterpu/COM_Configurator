@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Script>
+    <Name>ComCallout</Name>
+    <Decription>Fix the parameters</Decription>
+    <Expression>as:modconf('Com')[1]</Expression>
+    <Operations/>
+</Script>

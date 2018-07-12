@@ -5,13 +5,13 @@
     <Expression>as:modconf('Com')[1]</Expression>
     <Operations>
         <Operation Type="ForEach">
-            <Expression>as:modconf('Com')[1]/ComConfig/Test/ComIPdu/Test/ComIPduCallout</Expression>
+            <Expression>as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[contains(@name,'Pdu_CounterIn_ETH')]/ComIPduCallout</Expression>
             <Operations>
                 <Operation Type="SetEnabled">
                     <Expression>boolean(1)</Expression>
                 </Operation>
                 <Operation Type="SetValue">
-                    <Expression>"NmLib_COMCallout_Test"</Expression>
+                    <Expression>"NmLib_COMCallout_Pdu_CounterIn_ETH"</Expression>
                 </Operation>
             </Operations>
         </Operation>

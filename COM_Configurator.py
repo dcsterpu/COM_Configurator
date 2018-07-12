@@ -893,39 +893,39 @@ def NeMo_script(file_list, path_list, output_path, logger):
                 operation = etree.SubElement(operations, 'Operation')
                 operation.attrib['Type'] = "ForEach"
                 expression = etree.SubElement(operation, 'Expression')
-                expression.text = "as:modconf('Com')[1]/ComConfig/" + elem['NAME'] + "/ComSignal/" + elem['NAME'] + "/ComTimeoutNotification"
+                expression.text = "as:modconf('Com')[1]/ComConfig/*/ComSignal/*[contains(@name,'" + elem['SIGNAL'].split("/")[-1] + "')]/ComTimeoutNotification"
                 operations2 = etree.SubElement(operation, 'Operations')
                 operation_enable = etree.SubElement(operations2, 'Operation')
                 operation_enable.attrib['Type'] = "SetEnabled"
                 expression_enable = etree.SubElement(operation_enable, 'Expression').text = "boolean(1)"
                 operation2 = etree.SubElement(operations2, 'Operation')
                 operation2.attrib['Type'] = "SetValue"
-                expression2 = etree.SubElement(operation2, 'Expression').text = '"NmLib_COMCbkRxTOut_' + elem['NAME'] + '"'
+                expression2 = etree.SubElement(operation2, 'Expression').text = '"NmLib_COMCbkRxTOut_' + elem['SIGNAL'].split("/")[-1] + '"'
                 # set ComNotification
                 operation = etree.SubElement(operations, 'Operation')
                 operation.attrib['Type'] = "ForEach"
                 expression = etree.SubElement(operation, 'Expression')
-                expression.text = "as:modconf('Com')[1]/ComConfig/" + elem['NAME'] + "/ComSignal/" + elem['NAME'] + "/ComNotification"
+                expression.text = "as:modconf('Com')[1]/ComConfig/*/ComSignal/*[contains(@name,'" + elem['SIGNAL'].split("/")[-1] + "')]/ComNotification"
                 operations2 = etree.SubElement(operation, 'Operations')
                 operation_enable = etree.SubElement(operations2, 'Operation')
                 operation_enable.attrib['Type'] = "SetEnabled"
                 expression_enable = etree.SubElement(operation_enable, 'Expression').text = "boolean(1)"
                 operation2 = etree.SubElement(operations2, 'Operation')
                 operation2.attrib['Type'] = "SetValue"
-                expression2 = etree.SubElement(operation2, 'Expression').text = '"NmLib_COMCbk_' + elem['NAME'] + '"'
+                expression2 = etree.SubElement(operation2, 'Expression').text = '"NmLib_COMCbk_' + elem['SIGNAL'].split("/")[-1] + '"'
             if elem['PDU'] != "":
                 # set ComIPduCallout
                 operation = etree.SubElement(operations, 'Operation')
                 operation.attrib['Type'] = "ForEach"
                 expression = etree.SubElement(operation, 'Expression')
-                expression.text = "as:modconf('Com')[1]/ComConfig/" + elem['NAME'] + "/ComIPdu/" + elem['NAME'] + "/ComIPduCallout"
+                expression.text = "as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[contains(@name,'" + elem['PDU'].split("/")[-1] + "')]/ComIPduCallout"
                 operations2 = etree.SubElement(operation, 'Operations')
                 operation_enable = etree.SubElement(operations2, 'Operation')
                 operation_enable.attrib['Type'] = "SetEnabled"
                 expression_enable = etree.SubElement(operation_enable, 'Expression').text = "boolean(1)"
                 operation2 = etree.SubElement(operations2, 'Operation')
                 operation2.attrib['Type'] = "SetValue"
-                expression2 = etree.SubElement(operation2, 'Expression').text = '"NmLib_COMCallout_' + elem['NAME'] + '"'
+                expression2 = etree.SubElement(operation2, 'Expression').text = '"NmLib_COMCallout_' + elem['PDU'].split("/")[-1] + '"'
         pretty_xml = prettify_xml(rootScript)
         tree = etree.ElementTree(etree.fromstring(pretty_xml))
         tree.write(output_path + "/ComCallout.xml", encoding="UTF-8", xml_declaration=True, method="xml")
@@ -1199,10 +1199,10 @@ def EcuC_config(file_list, path_list, output_path, logger):
 if __name__ == "__main__":                                          # pragma: no cover
     # process = psutil.Process(os.getpid())                         # pragma: no cover
     # start_time = time.clock()                                     # pragma: no cover
-    cov = Coverage()                                                # pragma: no cover
-    cov.start()                                                     # pragma: no cover
+    # cov = Coverage()                                                # pragma: no cover
+    # cov.start()                                                     # pragma: no cover
     main()                                                          # pragma: no cover
-    cov.stop()                                                      # pragma: no cover
-    cov.html_report(directory='Coverage Report')                      # pragma: no cover
+    # cov.stop()                                                      # pragma: no cover
+    # cov.html_report(directory='Coverage Report')                      # pragma: no cover
     # print(str(time.clock() - start_time) + " seconds")            # pragma: no cover
     # print(str(process.memory_info()[0]/float(2**20)) + " MB")     # pragma: no cover

@@ -5,7 +5,7 @@
     <Expression>as:modconf('Com')[1]</Expression>
     <Operations>
         <Operation Type="ForEach">
-            <Expression>as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[contains(@name,'Pdu_CounterIn_ETH')]/ComIPduCallout</Expression>
+            <Expression>as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[text:match(@name,'^PDPdu_CounterIn_ETH_\d+[RT]$')]/ComIPduCallout</Expression>
             <Operations>
                 <Operation Type="SetEnabled">
                     <Expression>boolean(1)</Expression>

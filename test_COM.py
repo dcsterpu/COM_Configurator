@@ -138,37 +138,37 @@ class COMConfigurator(unittest.TestCase):
     #     os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\out')
     #     self.assertFalse(FileCheck.checkFile(head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\out\\', ['ComCallout.xml','EcuC.epc', 'PduR.epc', 'EnGwCCB.epc', 'EnGwCCD.epc', 'EnGwCCLD.epc', 'EnGwCLD.epc', 'EnGwFonc.epc']))
 
-    # def test_TRS_COMCONF_GEN_001_1(self):
-    #     current_path = os.path.realpath(__file__)
-    #     head, tail = ntpath.split(current_path)
-    #     os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_1\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_1\\out -NeMo')
-    #     self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_1\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComTimeoutNotification'))
-    #     self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_1\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComNotification'))
+    def test_TRS_COMCONF_GEN_001_1(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_1\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_1\\out -NeMo')
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_1\\out\\ComCallout.xml', 'HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_128', 'ComTimeoutNotification'))
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_1\\out\\ComCallout.xml', 'HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_128', 'ComNotification'))
 
 
-    # def test_TRS_COMCONF_GEN_001_2(self):
-    #     current_path = os.path.realpath(__file__)
-    #     head, tail = ntpath.split(current_path)
-    #     os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_2\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_2\\out -NeMo')
-    #     self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_2\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH', 'ComIPduCallout'))
+    def test_TRS_COMCONF_GEN_001_2(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_2\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_2\\out -NeMo')
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_2\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH', 'ComIPduCallout'))
 
 
-    # def test_TRS_COMCONF_GEN_001_3(self):
-    #     current_path = os.path.realpath(__file__)
-    #     head, tail = ntpath.split(current_path)
-    #     os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_3\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out -NeMo')
-    #     self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComTimeoutNotification'))
-    #     self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComNotification'))
-    #     self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH', 'ComIPduCallout'))
+    def test_TRS_COMCONF_GEN_001_3(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_3\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out -NeMo')
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out\\ComCallout.xml', 'HS4_ETAT_PRECOND_ET_XVV_BUTEE_2_HS4_1E8', 'ComTimeoutNotification'))
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out\\ComCallout.xml', 'HS4_ETAT_PRECOND_ET_XVV_BUTEE_2_HS4_1E8', 'ComNotification'))
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH', 'ComIPduCallout'))
 
-    #
-    # def test_TRS_COMCONF_GEN_001_4(self):
-    #     current_path = os.path.realpath(__file__)
-    #     head, tail = ntpath.split(current_path)
-    #     os.system('coverage run COM_Configurator.py -in ' + head + '\\Tests\\TRS.COMCONF.GEN.001_4 -out_script ' + head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out -NeMo')
-    #     self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComTimeoutNotification'))
-    #     self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComNotification'))
-    #     self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH', 'ComIPduCallout'))
+
+    def test_TRS_COMCONF_GEN_001_4(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('coverage run COM_Configurator.py -in ' + head + '\\Tests\\TRS.COMCONF.GEN.001_4 -out_script ' + head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out -NeMo')
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComTimeoutNotification'))
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComNotification'))
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH', 'ComIPduCallout'))
 
     # def test_TRS_COMCONF_GEN_003_1(self):
     #     current_path = os.path.realpath(__file__)
@@ -206,11 +206,11 @@ class COMConfigurator(unittest.TestCase):
     #     os.system('coverage run COM_Configurator.py -in ' + head + '\\Tests\\TRS.COMCONF.GEN.003_6\\in -out ' + head + '\\Tests\\TRS.COMCONF.GEN.003_6\\out -EnGw')
     #     self.assertFalse(FileCheck.checkPduR(head + '\\Tests\\TRS.COMCONF.GEN.003_6\\out\PduR.epc', head + '\\Tests\\TRS.COMCONF.GEN.003_6\\in\MAPPING.xml'))
 
-    def test_TRS_COMCONF_GEN_005(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('coverage run COM_Configurator.py -in ' + head + '\\Tests\\TRS.COMCONF.GEN.005\\in -out ' + head + '\\Tests\\TRS.COMCONF.GEN.005\\out -EnGw')
-        self.assertFalse(FileCheck.ecuc(head + '\\Tests\\TRS.COMCONF.GEN.005\\in\EPC_GwDiagCanLinConfig.epc', head + '\\Tests\\TRS.COMCONF.GEN.005\\out\EcuC.epc'))
+    # def test_TRS_COMCONF_GEN_005(self):
+    #     current_path = os.path.realpath(__file__)
+    #     head, tail = ntpath.split(current_path)
+    #     os.system('coverage run COM_Configurator.py -in ' + head + '\\Tests\\TRS.COMCONF.GEN.005\\in -out ' + head + '\\Tests\\TRS.COMCONF.GEN.005\\out -EnGw')
+    #     self.assertFalse(FileCheck.ecuc(head + '\\Tests\\TRS.COMCONF.GEN.005\\in\EPC_GwDiagCanLinConfig.epc', head + '\\Tests\\TRS.COMCONF.GEN.005\\out\EcuC.epc'))
 
 suite = unittest.TestLoader().loadTestsFromTestCase(COMConfigurator)
 unittest.TextTestRunner(verbosity=2).run(suite)

@@ -5,29 +5,29 @@
     <Expression>as:modconf('Com')[1]</Expression>
     <Operations>
         <Operation Type="ForEach">
-            <Expression>as:modconf('Com')[1]/ComConfig/*/ComSignal/*[contains(@name,'CounterIn_ETH')]/ComTimeoutNotification</Expression>
+            <Expression>as:modconf('Com')[1]/ComConfig/*/ComSignal/*[contains(@name,'HS4_ETAT_PRECOND_ET_XVV_BUTEE_2_HS4_1E8')]/ComTimeoutNotification</Expression>
             <Operations>
                 <Operation Type="SetEnabled">
                     <Expression>boolean(1)</Expression>
                 </Operation>
                 <Operation Type="SetValue">
-                    <Expression>"NmLib_COMCbkRxTOut_CounterIn_ETH"</Expression>
+                    <Expression>"NmLib_COMCbkRxTOut_HS4_ETAT_PRECOND_ET_XVV_BUTEE_2_HS4_1E8"</Expression>
                 </Operation>
             </Operations>
         </Operation>
         <Operation Type="ForEach">
-            <Expression>as:modconf('Com')[1]/ComConfig/*/ComSignal/*[contains(@name,'CounterIn_ETH')]/ComNotification</Expression>
+            <Expression>as:modconf('Com')[1]/ComConfig/*/ComSignal/*[contains(@name,'HS4_ETAT_PRECOND_ET_XVV_BUTEE_2_HS4_1E8')]/ComNotification</Expression>
             <Operations>
                 <Operation Type="SetEnabled">
                     <Expression>boolean(1)</Expression>
                 </Operation>
                 <Operation Type="SetValue">
-                    <Expression>"NmLib_COMCbk_CounterIn_ETH"</Expression>
+                    <Expression>"NmLib_COMCbk_HS4_ETAT_PRECOND_ET_XVV_BUTEE_2_HS4_1E8"</Expression>
                 </Operation>
             </Operations>
         </Operation>
         <Operation Type="ForEach">
-            <Expression>as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[contains(@name,'Pdu_CounterIn_ETH')]/ComIPduCallout</Expression>
+            <Expression>as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[text:match(@name,'^PDPdu_CounterIn_ETH_\d+[RT]$')]/ComIPduCallout</Expression>
             <Operations>
                 <Operation Type="SetEnabled">
                     <Expression>boolean(1)</Expression>

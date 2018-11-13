@@ -1,1 +1,2 @@
 C:\Users\Cristi\PycharmProjects\COM_Configurator\Tests\TRS.COMCONF.GEN.001_1\in\ConfigNetwork.xml
+C:\Users\Cristi\PycharmProjects\COM_Configurator\Tests\TRS.COMCONF.GEN.001_3\in\SystemGenerated.arxml

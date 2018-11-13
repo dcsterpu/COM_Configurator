@@ -2272,15 +2272,16 @@ def NeMo_script(file_list, path_list, output_path, logger):
                         else:
                             obj_elem['SIGNAL'] = ""
                         callouts.append(obj_elem)
-                elif file.endswith(".arxml"):
+                elif file.endswith('.arxml'):
+                    fullname = os.path.join(path, file)
                     try:
-                        check_if_xml_is_wellformed(file)
-                        logger.info('The file: ' + file + ' is well-formed')
+                        check_if_xml_is_wellformed(fullname)
+                        logger.info('The file: ' + fullname + ' is well-formed')
                         info_no = info_no + 1
                     except Exception as e:
-                        logger.error('The file: ' + file + ' is not well-formed: ' + str(e))
-                        print('ERROR: The file: ' + file + ' is not well-formed: ' + str(e))
-                    tree = etree.parse(file)
+                        logger.error('The file: ' + fullname + ' is not well-formed: ' + str(e))
+                        print('ERROR: The file: ' + fullname + ' is not well-formed: ' + str(e))
+                    tree = etree.parse(fullname)
                     root = tree.getroot()
                     mapping = root.findall(".//{http://autosar.org/schema/r4.0}SENDER-RECEIVER-TO-SIGNAL-MAPPING")
                     for elem in mapping:
@@ -2344,7 +2345,7 @@ def NeMo_script(file_list, path_list, output_path, logger):
                 operation = etree.SubElement(operations, 'Operation')
                 operation.attrib['Type'] = "ForEach"
                 expression = etree.SubElement(operation, 'Expression')
-                expression.text = "as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[contains(@name,'" + elem['PDU'].split("/")[-1] + "')]/ComIPduCallout"
+                expression.text = "as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[text:match(@name,'^PD" + elem['PDU'].split("/")[-1] + "_\d+[RT]$')]/ComIPduCallout"
                 operations2 = etree.SubElement(operation, 'Operations')
                 operation_enable = etree.SubElement(operations2, 'Operation')
                 operation_enable.attrib['Type'] = "SetEnabled"

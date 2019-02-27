@@ -410,6 +410,7 @@ def PduR_config(file_list, output_path, logger):
                 obj_elem = {}
                 obj_elem['NAME'] = elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
                 direction = elem.find("{http://autosar.org/schema/r4.0}COMMUNICATION-DIRECTION").text
+                obj_elem['WAY'] = None
                 if direction == "OUT":
                     obj_elem['WAY'] = "T"
                 elif direction == "IN":

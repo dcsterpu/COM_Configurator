@@ -170,6 +170,27 @@ class COMConfigurator(unittest.TestCase):
         self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComNotification'))
         self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH', 'ComIPduCallout'))
 
+    def test_TRS_COMCONF_GEN_001_5(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_5\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_5\\out -NeMo')
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_5\\out\\ComCallout.xml','HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_127','ComTimeoutNotification'))
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_5\\out\\ComCallout.xml','HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_127','ComNotification'))
+
+    def test_TRS_COMCONF_GEN_001_6(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out -NeMo')
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out\\ComCallout.xml','HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_127','ComTimeoutNotification'))
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out\\ComCallout.xml','HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_127','ComNotification'))
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH','ComIPduCallout'))
+
+    def test_TRS_COMCONF_GEN_010(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST01\\out -EnGw')
+
+
     # def test_TRS_COMCONF_GEN_003_1(self):
     #     current_path = os.path.realpath(__file__)
     #     head, tail = ntpath.split(current_path)

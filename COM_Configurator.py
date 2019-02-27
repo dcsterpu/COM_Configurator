@@ -316,7 +316,7 @@ def PduR_script(file_list, output_path, logger):
     for route in routes[:]:
         if route['SOURCE'] is None:
             routes.remove(route)
-            logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the source reference cannot be found")
+            '''logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the source reference cannot be found")'''
             continue
         if route['ID'] is None:
             routes.remove(route)
@@ -329,7 +329,7 @@ def PduR_script(file_list, output_path, logger):
             for dest in route['TARGET']:
                 if dest['TARGET'] is None:
                     routes.remove(route)
-                    logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the target reference cannot be found")
+                    '''logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the target reference cannot be found")'''
     rootScript = etree.Element('Script')
     name = etree.SubElement(rootScript, 'Name').text = "EnGw_PduR_Update"
     description = etree.SubElement(rootScript, 'Decription').text = "Updated PduR configuration for EnGw"
@@ -527,7 +527,7 @@ def PduR_config(file_list, output_path, logger):
     for route in routes[:]:
         if route['SOURCE'] is None:
             routes.remove(route)
-            logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the source reference cannot be found")
+            '''logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the source reference cannot be found")'''
             continue
         if route['ID'] is None:
             routes.remove(route)
@@ -540,7 +540,7 @@ def PduR_config(file_list, output_path, logger):
             for dest in route['TARGET']:
                 if dest['TARGET'] is None:
                     routes.remove(route)
-                    logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the target reference cannot be found")
+                    '''logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the target reference cannot be found")'''
                     continue
                 if dest['ID'] is None:
                     routes.remove(route)

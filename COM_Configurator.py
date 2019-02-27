@@ -314,8 +314,13 @@ def PduR_script(file_list, output_path, logger):
                 routes.append(item)
                 break
     for route in routes[:]:
+        if route['ID'] is None:
+            routes.remove(route)
+            logger.warning('The mapping with source ' + route['ID'] + " has been deleted because the souce ID cannot be established")
+            continue
         if route['WAY'] is None:
             routes.remove(route)
+            logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the communication direction cannot be established")
     rootScript = etree.Element('Script')
     name = etree.SubElement(rootScript, 'Name').text = "EnGw_PduR_Update"
     description = etree.SubElement(rootScript, 'Decription').text = "Updated PduR configuration for EnGw"
@@ -511,11 +516,19 @@ def PduR_config(file_list, output_path, logger):
                     routes.append(item)
                     break
     for route in routes[:]:
+        if route['ID'] is None:
+            routes.remove(route)
+            logger.warning('The mapping with ID ' + route['ID'] + " has been deleted because the source ID cannot be established")
+            continue
         if route['WAY'] is None:
             routes.remove(route)
             logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the communication direction cannot be established")
         else:
             for dest in route['TARGET']:
+                if dest['ID'] is None:
+                    routes.remove(route)
+                    logger.warning('The mapping with ID ' + route['ID'] + " has been deleted because the target ID cannot be established")
+                    continue
                 if dest['WAY'] is None:
                     routes.remove(route)
                     logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the communication direction cannot be established")

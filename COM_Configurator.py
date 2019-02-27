@@ -316,7 +316,7 @@ def PduR_script(file_list, output_path, logger):
     for route in routes[:]:
         if route['ID'] is None:
             routes.remove(route)
-            logger.warning('The mapping with source ' + route['ID'] + " has been deleted because the souce ID cannot be established")
+            logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the souce ID cannot be established")
             continue
         if route['WAY'] is None:
             routes.remove(route)
@@ -518,7 +518,7 @@ def PduR_config(file_list, output_path, logger):
     for route in routes[:]:
         if route['ID'] is None:
             routes.remove(route)
-            logger.warning('The mapping with ID ' + route['ID'] + " has been deleted because the source ID cannot be established")
+            logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the source ID cannot be established")
             continue
         if route['WAY'] is None:
             routes.remove(route)
@@ -527,7 +527,7 @@ def PduR_config(file_list, output_path, logger):
             for dest in route['TARGET']:
                 if dest['ID'] is None:
                     routes.remove(route)
-                    logger.warning('The mapping with ID ' + route['ID'] + " has been deleted because the target ID cannot be established")
+                    logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the target ID cannot be established")
                     continue
                 if dest['WAY'] is None:
                     routes.remove(route)

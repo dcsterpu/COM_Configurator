@@ -230,6 +230,7 @@ def PduR_script(file_list, output_path, logger):
                 obj_elem = {}
                 obj_elem['NAME'] = elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
                 direction = elem.find("{http://autosar.org/schema/r4.0}COMMUNICATION-DIRECTION").text
+                obj_elem['WAY'] = None
                 if direction == "OUT":
                     obj_elem['WAY'] = "T"
                 elif direction == "IN":
@@ -1168,69 +1169,6 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
                 value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_" + nad_network.group(0) + "_1P3_LinIf"
-                # RoutingPath forward
-                ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
-                short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDRoutingPath_" + nad_network.group(0) + "_1P3"
-                definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath"
-                reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-                ecuc_reference_src = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                definition_ref = etree.SubElement(ecuc_reference_src, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDSrcRef"
-                value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
-                value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REP_" + nad_network.group(0) + "_1P3"
-                ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDDestRef"
-                value_ref = etree.SubElement(ecuc_reference_dest, 'VALUE-REF')
-                value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQ_" + nad_network.group(0) + "_1P3"
-                # RoutingPath backward
-                ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
-                short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDRoutingPath_" + nad_network.group(0) + "_1P3"
-                definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath"
-                reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-                ecuc_reference_src = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                definition_ref = etree.SubElement(ecuc_reference_src, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDSrcRef"
-                value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
-                value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_" + nad_network.group(0) + "_1P3"
-                ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDDestRef"
-                value_ref = etree.SubElement(ecuc_reference_dest, 'VALUE-REF')
-                value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQP_" + nad_network.group(0) + "_1P3"
-                # ReqRep
-                # ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
-                # short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDReqRepConfiguration_" + nad_network.group(0) + "_1P3"
-                # definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-                # definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-                # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDReqRepConfiguration"
-                # reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-                # ecuc_reference_src = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                # definition_ref = etree.SubElement(ecuc_reference_src, 'DEFINITION-REF')
-                # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDReqRepConfiguration/EnGwCLDReqRef"
-                # value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
-                # value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                # value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REP_" + nad_network.group(0) + "_1P3"
-                # ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                # definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
-                # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDReqRepConfiguration/EnGwCLDRepRef"
-                # value_ref = etree.SubElement(ecuc_reference_dest, 'VALUE-REF')
-                # value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                # value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQ_" + nad_network.group(0) + "_1P3"
     for nad in nads:
         if nad['CONFIG'] == "2.1":
             # REQ part
@@ -1287,69 +1225,6 @@ def EnGw_config(file_list, output_path, logger):
             value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
             value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
             value_ref.text = "/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_" + nad['NETWORK'] + "_LinTp"
-            # RoutingPath forward
-            ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
-            short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDRoutingPath_" + nad['NETWORK'] + "_2P1"
-            definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath"
-            reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-            ecuc_reference_src = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-            definition_ref = etree.SubElement(ecuc_reference_src, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDSrcRef"
-            value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
-            value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-            value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REP_" + nad['NETWORK'] + "_2P1"
-            ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-            definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDDestRef"
-            value_ref = etree.SubElement(ecuc_reference_dest, 'VALUE-REF')
-            value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-            value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQ_" + nad['NETWORK'] + "_2P1"
-            # RoutingPath backward
-            ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
-            short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDRoutingPath_" + nad['NETWORK'] + "_2P1"
-            definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath"
-            reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-            ecuc_reference_src = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-            definition_ref = etree.SubElement(ecuc_reference_src, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDSrcRef"
-            value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
-            value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-            value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_" + nad['NETWORK'] + "_2P1"
-            ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-            definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDDestRef"
-            value_ref = etree.SubElement(ecuc_reference_dest, 'VALUE-REF')
-            value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-            value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_" + nad['NETWORK'] + "_2P1"
-            # ReqRep
-            # ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
-            # short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDReqRepConfiguration_" + nad['NETWORK'] + "_2P1"
-            # definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-            # definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-            # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDReqRepConfiguration"
-            # reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-            # ecuc_reference_src = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-            # definition_ref = etree.SubElement(ecuc_reference_src, 'DEFINITION-REF')
-            # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-            # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDReqRepConfiguration/EnGwCLDReqRef"
-            # value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
-            # value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-            # value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REP_" + nad['NETWORK'] + "_2P1"
-            # ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-            # definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
-            # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-            # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDReqRepConfiguration/EnGwCLDRepRef"
-            # value_ref = etree.SubElement(ecuc_reference_dest, 'VALUE-REF')
-            # value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-            # value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQ_" + nad['NETWORK'] + "_2P1"
     for diag_tool in diag_tools:
         for nad in nads:
             nad_network = re.search("LIN_VSM_\d", nad["NETWORK"])

@@ -138,76 +138,84 @@ class COMConfigurator(unittest.TestCase):
     #     os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\out')
     #     self.assertFalse(FileCheck.checkFile(head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\out\\', ['ComCallout.xml','EcuC.epc', 'PduR.epc', 'EnGwCCB.epc', 'EnGwCCD.epc', 'EnGwCCLD.epc', 'EnGwCLD.epc', 'EnGwFonc.epc']))
 
-    def test_TRS_COMCONF_GEN_001_1(self):
+    def test_TRS_COMCONF_GEN_004_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out -NeMo')
-        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_1\\out\\ComCallout.xml', 'HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_128', 'ComTimeoutNotification'))
-        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_1\\out\\ComCallout.xml', 'HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_128', 'ComNotification'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST01\\out -NeMo')
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST01\\out\\ComCallout.xml','Pdu_CounterIn_ETH','ComIPduCallout'))
 
-
-    def test_TRS_COMCONF_GEN_001_2(self):
+    def test_TRS_COMCONF_GEN_004_TEST02(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out -NeMo')
-        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_2\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH', 'ComIPduCallout'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST02\\out -NeMo')
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST02\\out\\ComCallout.xml','Pdu_CounterIn_ETH', 'ComIPduCallout'))
 
-
-    def test_TRS_COMCONF_GEN_001_3(self):
+    def test_TRS_COMCONF_GEN_005_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out -NeMo')
-        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out\\ComCallout.xml', 'HS4_ETAT_PRECOND_ET_XVV_BUTEE_2_HS4_1E8', 'ComTimeoutNotification'))
-        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out\\ComCallout.xml', 'HS4_ETAT_PRECOND_ET_XVV_BUTEE_2_HS4_1E8', 'ComNotification'))
-        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_3\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH', 'ComIPduCallout'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST01\\out -NeMo')
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST01\\out\\ComCallout.xml', 'HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_128', 'ComTimeoutNotification'))
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST01\\out\\ComCallout.xml', 'HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_128', 'ComNotification'))
 
-
-    def test_TRS_COMCONF_GEN_001_4(self):
+    def test_TRS_COMCONF_GEN_005_TEST02(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out -NeMo')
-        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComTimeoutNotification'))
-        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'CounterIn_ETH', 'ComNotification'))
-        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_4\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH', 'ComIPduCallout'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST02\\out -NeMo')
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST02\\out\\ComCallout.xml', 'HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_128', 'ComTimeoutNotification'))
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST02\\out\\ComCallout.xml', 'HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_128', 'ComNotification'))
 
-    def test_TRS_COMCONF_GEN_001_5(self):
+    def test_TRS_COMCONF_GEN_005_TEST03(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_5\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_5\\out -NeMo')
-        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_5\\out\\ComCallout.xml','HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_127','ComTimeoutNotification'))
-        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_5\\out\\ComCallout.xml','HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_127','ComNotification'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST03\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST03\\out -NeMo')
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST03\\out\\ComCallout.xml', 'HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_128', 'ComTimeoutNotification'))
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.005\\TEST03\\out\\ComCallout.xml', 'HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_128', 'ComNotification'))
 
-    def test_TRS_COMCONF_GEN_001_6(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out -NeMo')
-        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out\\ComCallout.xml','HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_127','ComTimeoutNotification'))
-        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out\\ComCallout.xml','HS4_CDE_CMB_SIGNALISATION_DMD_COULEUR_CMB_HS4_127','ComNotification'))
-        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.001_6\\out\\ComCallout.xml', 'Pdu_CounterIn_ETH','ComIPduCallout'))
-
-    #no id
     def test_TRS_COMCONF_GEN_010_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
         os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST01\\out -EnGw')
         self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST01\\out\\EnGw_PduR_Update.xml','isip_HS4_VSM_INF_CFG_T','PduRDestPdu'))
-    #no communication direction
+
     def test_TRS_COMCONF_GEN_010_TEST02(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
         os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST02\\out -EnGw')
         self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST02\\out\\EnGw_PduR_Update.xml','isip_HS4_VSM_INF_CFG_865','PduRDestPdu'))
-    #id and communication direction are persent
+
     def test_TRS_COMCONF_GEN_010_TEST03(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
         os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST03\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST03\\out -EnGw')
         self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.010\\TEST03\\out\\EnGw_PduR_Update.xml','isip_HS4_VSM_INF_CFG_865T','PduRDestPdu'))
 
+    def test_TRS_COMCONF_GEN_011_TEST01(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.011\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.011\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.011\\TEST01\\out\\EnGw_PduR_Update.xml','isip_HS4_VSM_INF_CFG_865T', 'PduRDestPdu'))
+
+    def test_TRS_COMCONF_GEN_011_TEST02(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.011\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.011\\TEST02\\out -EnGw')
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.011\\TEST02\\out\\EnGw_PduR_Update.xml','isip_HS4_VSM_INF_CFG_865T', 'PduRDestPdu'))
+
     def test_TRS_COMCONF_GEN_012_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
         os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST01\\out\\EnGw_PduR_Update.xml','isip_HS4_VSM_INF_CFG_865T','PduRDestPdu'))
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST01\\out\\EnGw_PduR_Update.xml','ARVSW_TBXDETReport_Frame','PduRDestPdu'))
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST01\\out\\EnGw_PduR_Update.xml','isip_HS4_VSM_CDE_PTR_MESSAGE_417T', 'PduRDestPdu'))
+        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST01\\out\\EnGw_PduR_Update.xml','isip_HS1_REQ_EOBD_ON_CAN_7E7_2023T','PduRDestPdu'))
+
+    def test_TRS_COMCONF_GEN_012_TEST02(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST01\\out -EnGw')
+        self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST01\\out\\EnGw_PduR_Update.xml','HS1_REQ_EOBD_ON_CAN_7E9','PduRDestPdu'))
+
 
     # def test_TRS_COMCONF_GEN_003_1(self):
     #     current_path = os.path.realpath(__file__)

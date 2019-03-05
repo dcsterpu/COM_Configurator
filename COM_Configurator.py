@@ -2838,11 +2838,6 @@ def CanIf_config(file_list, output_path, logger):
             def_textual_1.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
             def_textual_1.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduCanIdType"
             val_textual_1 = etree.SubElement(textual_1, "VALUE").text = "STANDARD_CAN"
-            # textual_2 = etree.SubElement(parameters, "ECUC-TEXTUAL-PARAM-VALUE")
-            # def_textual_2 = etree.SubElement(textual_2, "DEFINITION-REF")
-            # def_textual_2.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
-            # def_textual_2.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduUserTxIndicationUL"
-            # val_textual_2 = etree.SubElement(textual_2, "VALUE").text = "CAN_TP"
             references = etree.SubElement(ecuc_container_value, "REFERENCE-VALUES")
             ecuc_ref_value = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
             definition = etree.SubElement(ecuc_ref_value, "DEFINITION-REF")
@@ -2887,11 +2882,6 @@ def CanIf_config(file_list, output_path, logger):
                 def_textual_1.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
                 def_textual_1.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfRxPduCfg/CanIfRxPduCanIdType"
                 val_textual_1 = etree.SubElement(textual_1, "VALUE").text = "STANDARD_CAN"
-                # textual_2 = etree.SubElement(parameters, "ECUC-TEXTUAL-PARAM-VALUE")
-                # def_textual_2 = etree.SubElement(textual_2, "DEFINITION-REF")
-                # def_textual_2.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
-                # def_textual_2.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfRxPduCfg/CanIfTxPduCbkConfigRef"
-                # val_textual_2 = etree.SubElement(textual_2, "VALUE").text = "CanIfRxPduCbkConfig_PduR"
                 textual_3 = etree.SubElement(parameters, "ECUC-TEXTUAL-PARAM-VALUE")
                 def_textual_3 = etree.SubElement(textual_3, "DEFINITION-REF")
                 def_textual_3.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
@@ -2948,11 +2938,6 @@ def CanIf_config(file_list, output_path, logger):
                 def_textual_3.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
                 def_textual_3.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduUserTxConfirmationUL"
                 val_textual_3 = etree.SubElement(textual_3, "VALUE").text = "PDUR"
-                # textual_3 = etree.SubElement(parameters, "ECUC-TEXTUAL-PARAM-VALUE")
-                # def_textual_3 = etree.SubElement(textual_3, "DEFINITION-REF")
-                # def_textual_3.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
-                # def_textual_3.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduCbkConfigRef"
-                # val_textual_3 = etree.SubElement(textual_3, "VALUE").text = "CanIfTxPduCbkConfig_PduR"
                 references = etree.SubElement(ecuc_container_value, "REFERENCE-VALUES")
                 ecuc_ref_value = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
                 definition = etree.SubElement(ecuc_ref_value, "DEFINITION-REF")
@@ -2976,15 +2961,22 @@ def CanIf_config(file_list, output_path, logger):
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
                 definition.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg"
                 parameters = etree.SubElement(ecuc_container_value, "PARAMETER-VALUES")
-                for lin in lins:
+                for lin in lins21:
                     lin_network = re.search("LIN_VSM_\d", lin["NAME"])
                     nad_network = re.search("LIN_VSM_\d", nad["LIN"])
-                    if lin_network.group(0) == nad_network.group(0) and nad['NAME'] in lin['NAME']:
+                    if lin_network.group(0) == nad_network.group(0):# and nad['NAME'] in lin['NAME']:
                         numerical_0 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                         definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
                         definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                         definition_0.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduCanId"
                         value_0 = etree.SubElement(numerical_0, "VALUE").text = lin['REP-ID']
+
+                # numerical_0 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
+                # definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
+                # definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+                # definition_0.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfRxPduCfg/CanIfRxPduCanId"
+                # value_0 = etree.SubElement(numerical_0, "VALUE").text = lin['REQ-ID']
+
                 numerical_1 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
                 definition_1.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
@@ -3027,10 +3019,10 @@ def CanIf_config(file_list, output_path, logger):
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
                 definition.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg"
                 parameters = etree.SubElement(ecuc_container_value, "PARAMETER-VALUES")
-                for lin in lins:
+                for lin in lins21:
                     lin_network = re.search("LIN_VSM_\d", lin["NAME"])
                     nad_network = re.search("LIN_VSM_\d", nad["LIN"])
-                    if lin_network.group(0) == nad_network.group(0) and nad['NAME'] in lin['NAME']:
+                    if lin_network.group(0) == nad_network.group(0):# and nad['NAME'] in lin['NAME']:
                         numerical_0 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                         definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
                         definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"

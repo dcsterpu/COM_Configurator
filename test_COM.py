@@ -273,82 +273,183 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST02\\out -EnGw')
     #    self.assertFalse(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.012\\TEST02\\out\\EnGw_PduR_Update.xml','HS1_REQ_EOBD_ON_CAN_7E9','PduRDestPdu'))
 
-    def test_TRS_COMCONF_GEN_015_TEST01(self):
+    #def test_TRS_COMCONF_GEN_015_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST01\\out -EnGw')
+    #    self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG'))
+
+    #def test_TRS_COMCONF_GEN_015_TEST02(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\out -EnGw')
+    #    self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG'))
+
+    #def test_TRS_COMCONF_GEN_015_TEST03(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST03\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST03\\out -EnGw')
+    #    self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST03\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_015_TEST04(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST04\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST04\\out -EnGw')
+    #    self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST04\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_015_TEST05(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST05\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST05\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST05\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST05\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG'))
+
+    #def test_TRS_COMCONF_GEN_016_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG'))
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS2_VIN_VDS_BSI_492'))
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS2_VIN_VDS_BSI_492_isip_HS2_VERS_BSI_112_FROM_CDD'))
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_CDE_PTR_MESSAGE'))
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_CDE_PTR_MESSAGE_isip_HS4_VMF_DSGN_FROM_CDD'))
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS1_REQ_EOBD_ON_CAN_7E7'))
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS1_REQ_EOBD_ON_CAN_7E7_isip_HS1_REQ_EOBD_ON_CAN_7E6_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_016_TEST02(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST02\\out -EnGw')
+    #    self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST02\\out\\PduR.epc','PduRRoutingPath_isip_HS1_REQ_EOBD_ON_CAN_7E9'))
+    #    self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST02\\out\\PduR.epc','PduRRoutingPath_isip_HS1_REQ_EOBD_ON_CAN_7E9_isip_HS1_REQ_EOBD_ON_CAN_7E8_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_017_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.017\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.017\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.017\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG'))
+
+    #def test_TRS_COMCONF_GEN_018_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.018\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.018\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.018\\TEST01\\out\\PduR.epc','PduRSrcPdu_isip_HS4_VSM_INF_CFG','/EcuC/EcuC/EcucPduCollection/isip_HS4_VSM_INF_CFG_865T','PduRDestPdu_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_TO_CDD','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/isip_HS4_VSM_INF_PRG_RTAB_TO_CDD'))
+
+    #def test_TRS_COMCONF_GEN_019_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.019\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.019\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.019\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_020_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.020\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.020\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.020\\TEST01\\out\\PduR.epc','PduRSrcPdu_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD','/EcuC/EcuC/EcucPduCollection/isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD','PduRDestPdu_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/isip_HS4_VSM_INF_PRG_RTAB_352T'))
+
+    #def test_TRS_COMCONF_GEN_021_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.021\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.021\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.021\\TEST01\\out\\PduR.epc','PduRRoutingPath_EnGw_LinIf_REQ_LIN_VSM_1_1P3'))
+
+    #def test_TRS_COMCONF_GEN_022_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.022\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.022\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.022\\TEST01\\out\\PduR.epc','PduRSrcPdu_EnGw_LinIf_REQ_LIN_VSM_1_1P3','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_LIN_VSM_1_1P3_LinIf','PduRDestPdu_EnGw_LinIf_REQ_LIN_VSM_1_1P3','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/LinIf_REQ_LIN_VSM_1_1P3_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_023_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.023\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.023\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.023\\TEST01\\out\\PduR.epc','PduRRoutingPath_EnGw_LinIf_REP_LIN_VSM_1_1P3'))
+
+    #def test_TRS_COMCONF_GEN_024_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.024\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.024\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.024\\TEST01\\out\\PduR.epc','PduRSrcPdu_EnGw_LinIf_REP_LIN_VSM_1_1P3','/EcuC/EcuC/EcucPduCollection/LinIf_REP_LIN_VSM_1_1P3_EnGwCLD','PduRDestPdu_EnGw_LinIf_REP_LIN_VSM_1_1P3','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_LIN_VSM_1_1P3_LinIf'))
+
+    #def test_TRS_COMCONF_GEN_025_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.025\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.025\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.025\\TEST01\\out\\PduR.epc','PduRRoutingPath_EnGw_LinTp_REQ_FRONT_WIPING_LIN_VSM_1'))
+
+    #def test_TRS_COMCONF_GEN_026_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.026\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.026\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.026\\TEST01\\out\\PduR.epc','PduRSrcPdu_EnGw_LinTp_REQ_FRONT_WIPING_LIN_VSM_1','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_FRONT_WIPING_LIN_VSM_1_LinTp','PduRDestPdu_EnGw_LinTp_REQ_FRONT_WIPING_LIN_VSM_1','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/LinTp_REQ_FRONT_WIPING_LIN_VSM_1_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_027_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.027\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.027\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.027\\TEST01\\out\\PduR.epc','PduRRoutingPath_EnGw_LinTp_REP_FRONT_WIPING_LIN_VSM_1'))
+
+    #def test_TRS_COMCONF_GEN_028_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.028\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.028\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.028\\TEST01\\out\\PduR.epc','PduRSrcPdu_EnGw_LinTp_REP_FRONT_WIPING_LIN_VSM_1','/EcuC/EcuC/EcucPduCollection/LinTp_REP_FRONT_WIPING_LIN_VSM_1_EnGwCLD','PduRDestPdu_EnGw_LinTp_REP_FRONT_WIPING_LIN_VSM_1','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_FRONT_WIPING_LIN_VSM_1_LinTp'))
+
+    #def test_TRS_COMCONF_GEN_029_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.029\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.029\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.029\\TEST01\\out\\PduR.epc','PduRRoutingPath_EnGw_CanIf_REQ_DIAG_MUS_LIN_VSM_1'))
+
+    #def test_TRS_COMCONF_GEN_030_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.030\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.030\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.030\\TEST01\\out\\PduR.epc','PduRSrcPdu_EnGw_CanIf_REQ_DIAG_MUS_LIN_VSM_1','/EcuC/EcuC/EcucPduCollection/CanIf_REQ_DIAG_MUS_LIN_VSM_1_EnGwCLD','PduRDestPdu_EnGw_CanIf_REQ_DIAG_MUS_LIN_VSM_1','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_DIAG_MUS_LIN_VSM_1_CanIf'))
+
+    #def test_TRS_COMCONF_GEN_031_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.031\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.031\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.031\\TEST01\\out\\PduR.epc','PduRRoutingPath_EnGw_CanIf_REP_DIAG_MUS_LIN_VSM_1'))
+
+    #def test_TRS_COMCONF_GEN_032_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.032\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.032\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.032\\TEST01\\out\\PduR.epc','PduRSrcPdu_EnGw_CanIf_REP_DIAG_MUS_LIN_VSM_1','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_DIAG_MUS_LIN_VSM_1_CanIf','PduRDestPdu_EnGw_CanIf_REP_DIAG_MUS_LIN_VSM_1','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/CanIf_REP_DIAG_MUS_LIN_VSM_1_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_033_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.033\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.033\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.033\\TEST01\\out\\PduR.epc','PduRRoutingPath_EnGw_CanTp_REQ_DIAG_FRONT_WIPING_LIN_VSM_1'))
+
+    #def test_TRS_COMCONF_GEN_034_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.034\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.034\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.034\\TEST01\\out\\PduR.epc','PduRSrcPdu_EnGw_CanTp_REQ_DIAG_FRONT_WIPING_LIN_VSM_1','/EcuC/EcuC/EcucPduCollection/CanTp_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_EnGwCLD','PduRDestPdu_EnGw_CanTp_REQ_DIAG_FRONT_WIPING_LIN_VSM_1','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_CanTp'))
+
+    #def test_TRS_COMCONF_GEN_035_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.035\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.035\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.035\\TEST01\\out\\PduR.epc','PduRRoutingPath_EnGw_CanTp_REP_DIAG_FRONT_WIPING_LIN_VSM_1'))
+
+    #def test_TRS_COMCONF_GEN_036_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.036\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.036\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.036\\TEST01\\out\\PduR.epc','PduRSrcPdu_EnGw_CanTp_REP_DIAG_FRONT_WIPING_LIN_VSM_1','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_DIAG_FRONT_WIPING_LIN_VSM_1_CanTp','PduRDestPdu_EnGw_CanTp_REP_DIAG_FRONT_WIPING_LIN_VSM_1','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/CanTp_REP_DIAG_FRONT_WIPING_LIN_VSM_1_EnGwCLD'))
+
+    def test_TRS_COMCONF_GEN_037_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST01\\out -EnGw')
-        self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.037\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.037\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckId(head + '\\Tests\\TRS.COMCONF.GEN.037\\TEST01\\out\\PduR.epc'))
 
-    def test_TRS_COMCONF_GEN_015_TEST02(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\out -EnGw')
-        self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG'))
-
-    def test_TRS_COMCONF_GEN_015_TEST03(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST03\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST03\\out -EnGw')
-        self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST03\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
-
-    def test_TRS_COMCONF_GEN_015_TEST04(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST04\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST04\\out -EnGw')
-        self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST04\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
-
-    def test_TRS_COMCONF_GEN_015_TEST05(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST05\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST05\\out -EnGw')
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST05\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST05\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG'))
-
-    def test_TRS_COMCONF_GEN_016_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG'))
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS2_VIN_VDS_BSI_492'))
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS2_VIN_VDS_BSI_492_isip_HS2_VERS_BSI_112_FROM_CDD'))
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_CDE_PTR_MESSAGE'))
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_CDE_PTR_MESSAGE_isip_HS4_VMF_DSGN_FROM_CDD'))
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS1_REQ_EOBD_ON_CAN_7E7'))
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS1_REQ_EOBD_ON_CAN_7E7_isip_HS1_REQ_EOBD_ON_CAN_7E6_FROM_CDD'))
-
-    def test_TRS_COMCONF_GEN_016_TEST02(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST02\\out -EnGw')
-        self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST02\\out\\PduR.epc','PduRRoutingPath_isip_HS1_REQ_EOBD_ON_CAN_7E9'))
-        self.assertFalse(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.016\\TEST02\\out\\PduR.epc','PduRRoutingPath_isip_HS1_REQ_EOBD_ON_CAN_7E9_isip_HS1_REQ_EOBD_ON_CAN_7E8_FROM_CDD'))
-
-    def test_TRS_COMCONF_GEN_017_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.017\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.017\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.017\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_HS4_VSM_INF_CFG'))
-        self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.017\\TEST01\\out\\PduR.epc','PduRRoutingPath_isip_FD3_REQ_DIAG_ON_CAN_6B6'))
-
-
-
-
-
-
-
-
-
-
-
-
-    def test_TRS_COMCONF_GEN_015_TEST01113(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\out -EnGw')
-        #self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\out\\PduR.epc','PduRSrcPdu_isip_FD3_REQ_DIAG_ON_CAN_6B6','/EcuC/EcuC/EcucPduCollection/isip_FD3_REQ_DIAG_ON_CAN_6B6_1718T','PduRDestPdu_isip_FD3_REQ_DIAG_ON_CAN_6B6_isip_FD3_REQ_DIAG_ON_CAN_6AE_TO_CDD','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/isip_FD3_REQ_DIAG_ON_CAN_6AE_TO_CDD'))
-        #self.assertTrue(FileCheck.CheckNameRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\out\\PduR.epc','PduRRoutingPath_isip_FD3_REQ_DIAG_ON_CAN_6B6'))
-        self.assertTrue(FileCheck.CheckId(head + '\\Tests\\TRS.COMCONF.GEN.015\\TEST02\\out\\PduR.epc'))
 
 
 

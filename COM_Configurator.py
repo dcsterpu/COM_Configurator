@@ -266,6 +266,7 @@ def PduR_script(file_list, output_path, logger):
             if elem['PORT'] and elem['PORT'] == port['NAME']:
                 elem['WAY'] = port['WAY']
                 break
+    # TRS.COMCONF.GEN.009(0)
     for mapping in mappings[:]:
         obj_map = {}
         dest_list = []
@@ -299,6 +300,7 @@ def PduR_script(file_list, output_path, logger):
             obj_map['TARGET'] = dest_list
             items.append(obj_map)
 
+    # TRS.COMCONF.GEN.012(0)
     for item in items:
         for dest in item['TARGET']:
             if dest['TYPE'] == "GW-REMOTE-DIAG":
@@ -313,6 +315,7 @@ def PduR_script(file_list, output_path, logger):
             elif dest['TYPE'] == "GW-CAN-DIAG":
                 routes.append(item)
                 break
+    # TRS.COMCONF.GEN.010(0)
     for route in routes[:]:
         if route['SOURCE'] is None:
             routes.remove(route)
@@ -477,6 +480,7 @@ def PduR_config(file_list, output_path, logger):
             if elem['PORT'] and elem['PORT'] == port['NAME']:
                 elem['WAY'] = port['WAY']
                 break
+    # TRS.COMCONF.GEN.014(0)
     for mapping in mappings[:]:
         obj_map = {}
         dest_list = []
@@ -510,6 +514,7 @@ def PduR_config(file_list, output_path, logger):
             obj_map['TARGET'] = dest_list
             items.append(obj_map)
 
+    # TRS.COMCONF.GEN.016(0)
     for item in items:
             for dest in item['TARGET']:
                 if dest['TYPE'] == "GW-REMOTE-DIAG":
@@ -524,6 +529,8 @@ def PduR_config(file_list, output_path, logger):
                 elif dest['TYPE'] == "GW-CAN-DIAG":
                     routes.append(item)
                     break
+
+    # TRS.COMCONF.GEN.015(0)
     for route in routes[:]:
         if route['SOURCE'] is None:
             routes.remove(route)
@@ -589,11 +596,13 @@ def PduR_config(file_list, output_path, logger):
     index_id = 0
     for route in routes:
         ecuc_container_value_route = etree.SubElement(subcontainer_route, 'ECUC-CONTAINER-VALUE')
+        # TRS.COMCONF.GEN.017(0)
         short_name = etree.SubElement(ecuc_container_value_route, 'SHORT-NAME').text = 'PduRRoutingPath_' + route['SOURCE']
         definition = etree.SubElement(ecuc_container_value_route, 'DEFINITION-REF')
         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
         definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath"
         subcontainer_path = etree.SubElement(ecuc_container_value_route, 'SUB-CONTAINERS')
+        # TRS.COMCONF.GEN.018(0)
         # src
         ecuc_container_value_src = etree.SubElement(subcontainer_path, 'ECUC-CONTAINER-VALUE')
         short_name = etree.SubElement(ecuc_container_value_src, 'SHORT-NAME').text = "PduRSrcPdu_" + route['SOURCE']
@@ -635,11 +644,13 @@ def PduR_config(file_list, output_path, logger):
         #backward route
         for dest in route['TARGET']:
             ecuc_container_value_route = etree.SubElement(subcontainer_route, 'ECUC-CONTAINER-VALUE')
+            # TRS.COMCONF.GEN.019(0)
             short_name = etree.SubElement(ecuc_container_value_route, 'SHORT-NAME').text = 'PduRRoutingPath_' + route['SOURCE'] + "_" + dest['TARGET'] + "_FROM_CDD"
             definition = etree.SubElement(ecuc_container_value_route, 'DEFINITION-REF')
             definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
             definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath"
             subcontainer_path = etree.SubElement(ecuc_container_value_route, 'SUB-CONTAINERS')
+            # TRS.COMCONF.GEN.020(0)
             #src
             ecuc_container_value_src = etree.SubElement(subcontainer_path, 'ECUC-CONTAINER-VALUE')
             short_name = etree.SubElement(ecuc_container_value_src, 'SHORT-NAME').text = "PduRSrcPdu_" + route['SOURCE'] + "_" + dest['TARGET'] + "_FROM_CDD"
@@ -677,6 +688,7 @@ def PduR_config(file_list, output_path, logger):
             definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
             definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath/PduRDestPdu/PduRDestPduRef"
             value = etree.SubElement(ecuc_reference_value, 'VALUE-REF').text = "/EcuC/EcuC/EcucPduCollection/" + dest['TARGET'] + "_" + str(dest['ID']) + str(dest['WAY'])
+
     network_list = []
     comment = etree.Comment("LinIf")
     subcontainer_route.append(comment)
@@ -686,11 +698,13 @@ def PduR_config(file_list, output_path, logger):
             if nad_network.group(0) not in network_list:
                 network_list.append(nad_network.group(0))
                 ecuc_container_value_route = etree.SubElement(subcontainer_route, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.021(0)
                 short_name = etree.SubElement(ecuc_container_value_route, 'SHORT-NAME').text = 'PduRRoutingPath_EnGw_LinIf_REQ_' + nad_network.group(0) + "_1P3"
                 definition = etree.SubElement(ecuc_container_value_route, 'DEFINITION-REF')
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
                 definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath"
                 subcontainer_path = etree.SubElement(ecuc_container_value_route, 'SUB-CONTAINERS')
+                # TRS.COMCONF.GEN.022(0)
                 # src
                 ecuc_container_value_src = etree.SubElement(subcontainer_path, 'ECUC-CONTAINER-VALUE')
                 short_name = etree.SubElement(ecuc_container_value_src, 'SHORT-NAME').text = "PduRSrcPdu_EnGw_LinIf_REQ_" + nad_network.group(0) + "_1P3"
@@ -730,11 +744,13 @@ def PduR_config(file_list, output_path, logger):
                 value = etree.SubElement(ecuc_reference_value, 'VALUE-REF').text = "/EcuC/EcuC/EcucPduCollection/LinIf_REQ_" + nad_network.group(0) + "_1P3_EnGwCLD"
                 # backwards route
                 ecuc_container_value_route = etree.SubElement(subcontainer_route, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.023(0)
                 short_name = etree.SubElement(ecuc_container_value_route, 'SHORT-NAME').text = 'PduRRoutingPath_EnGw_LinIf_REP_' + nad_network.group(0) + "_1P3"
                 definition = etree.SubElement(ecuc_container_value_route, 'DEFINITION-REF')
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
                 definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath"
                 subcontainer_path = etree.SubElement(ecuc_container_value_route, 'SUB-CONTAINERS')
+                # TRS.COMCONF.GEN.024(0)
                 # src
                 ecuc_container_value_src = etree.SubElement(subcontainer_path, 'ECUC-CONTAINER-VALUE')
                 short_name = etree.SubElement(ecuc_container_value_src, 'SHORT-NAME').text = "PduRSrcPdu_EnGw_LinIf_REP_" + nad_network.group(0) + "_1P3"
@@ -779,11 +795,13 @@ def PduR_config(file_list, output_path, logger):
                 comment = etree.Comment("CanTp")
                 subcontainer_route.append(comment)
                 ecuc_container_value_route = etree.SubElement(subcontainer_route, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.033(0)
                 short_name = etree.SubElement(ecuc_container_value_route, 'SHORT-NAME').text = 'PduRRoutingPath_EnGw_CanTp_REQ_' + diag_tool + "_" + nad['NETWORK']
                 definition = etree.SubElement(ecuc_container_value_route, 'DEFINITION-REF')
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
                 definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath"
                 subcontainer_path = etree.SubElement(ecuc_container_value_route, 'SUB-CONTAINERS')
+                # TRS.COMCONF.GEN.034(0)
                 # src
                 ecuc_container_value_src = etree.SubElement(subcontainer_path, 'ECUC-CONTAINER-VALUE')
                 short_name = etree.SubElement(ecuc_container_value_src, 'SHORT-NAME').text = "PduRSrcPdu_EnGw_CanTp_REQ_" + diag_tool + "_" + nad['NETWORK']
@@ -823,11 +841,13 @@ def PduR_config(file_list, output_path, logger):
                 value = etree.SubElement(ecuc_reference_value, 'VALUE-REF').text = "/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_CanTp"
                 # backwards route
                 ecuc_container_value_route = etree.SubElement(subcontainer_route, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.035(0)
                 short_name = etree.SubElement(ecuc_container_value_route, 'SHORT-NAME').text = 'PduRRoutingPath_EnGw_CanTp_REP_' + diag_tool + "_" + nad['NETWORK']
                 definition = etree.SubElement(ecuc_container_value_route, 'DEFINITION-REF')
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
                 definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath"
                 subcontainer_path = etree.SubElement(ecuc_container_value_route, 'SUB-CONTAINERS')
+                # TRS.COMCONF.GEN.036(0)
                 # src
                 ecuc_container_value_src = etree.SubElement(subcontainer_path, 'ECUC-CONTAINER-VALUE')
                 short_name = etree.SubElement(ecuc_container_value_src, 'SHORT-NAME').text = "PduRSrcPdu_EnGw_CanTp_REP_" + diag_tool + "_" + nad['NETWORK']
@@ -869,11 +889,13 @@ def PduR_config(file_list, output_path, logger):
                 comment = etree.Comment("CanIf")
                 subcontainer_route.append(comment)
                 ecuc_container_value_route = etree.SubElement(subcontainer_route, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.029(0)
                 short_name = etree.SubElement(ecuc_container_value_route, 'SHORT-NAME').text = 'PduRRoutingPath_EnGw_CanIf_REQ_' + diag_tool + "_" + nad['NETWORK']
                 definition = etree.SubElement(ecuc_container_value_route, 'DEFINITION-REF')
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
                 definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath"
                 subcontainer_path = etree.SubElement(ecuc_container_value_route, 'SUB-CONTAINERS')
+                # TRS.COMCONF.GEN.030(0)
                 # src
                 ecuc_container_value_src = etree.SubElement(subcontainer_path, 'ECUC-CONTAINER-VALUE')
                 short_name = etree.SubElement(ecuc_container_value_src, 'SHORT-NAME').text = "PduRSrcPdu_EnGw_CanIf_REQ_" + diag_tool + "_" + nad['NETWORK']
@@ -913,11 +935,13 @@ def PduR_config(file_list, output_path, logger):
                 value = etree.SubElement(ecuc_reference_value, 'VALUE-REF').text = "/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_CanIf"
                 # backwards route
                 ecuc_container_value_route = etree.SubElement(subcontainer_route, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.031(0)
                 short_name = etree.SubElement(ecuc_container_value_route, 'SHORT-NAME').text = 'PduRRoutingPath_EnGw_CanIf_REP_' + diag_tool + "_" + nad['NETWORK']
                 definition = etree.SubElement(ecuc_container_value_route, 'DEFINITION-REF')
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
                 definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath"
                 subcontainer_path = etree.SubElement(ecuc_container_value_route, 'SUB-CONTAINERS')
+                # TRS.COMCONF.GEN.032(0)
                 # src
                 ecuc_container_value_src = etree.SubElement(subcontainer_path, 'ECUC-CONTAINER-VALUE')
                 short_name = etree.SubElement(ecuc_container_value_src, 'SHORT-NAME').text = "PduRSrcPdu_EnGw_CanIf_REP_" + diag_tool + "_" + nad['NETWORK']
@@ -960,11 +984,13 @@ def PduR_config(file_list, output_path, logger):
     for nad in nads:
         if nad['CONFIG'] == "2.1":
             ecuc_container_value_route = etree.SubElement(subcontainer_route, 'ECUC-CONTAINER-VALUE')
+            # TRS.COMCONF.GEN.025(0)
             short_name = etree.SubElement(ecuc_container_value_route, 'SHORT-NAME').text = 'PduRRoutingPath_EnGw_LinTp_REQ_' + nad['NETWORK']
             definition = etree.SubElement(ecuc_container_value_route, 'DEFINITION-REF')
             definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
             definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath"
             subcontainer_path = etree.SubElement(ecuc_container_value_route, 'SUB-CONTAINERS')
+            # TRS.COMCONF.GEN.026(0)
             # src
             ecuc_container_value_src = etree.SubElement(subcontainer_path, 'ECUC-CONTAINER-VALUE')
             short_name = etree.SubElement(ecuc_container_value_src, 'SHORT-NAME').text = "PduRSrcPdu_EnGw_LinTp_REQ_" + nad['NETWORK']
@@ -1004,11 +1030,13 @@ def PduR_config(file_list, output_path, logger):
             value = etree.SubElement(ecuc_reference_value, 'VALUE-REF').text = "/EcuC/EcuC/EcucPduCollection/LinTp_REQ_" + nad['NETWORK'] + "_EnGwCLD"
             # backwards route
             ecuc_container_value_route = etree.SubElement(subcontainer_route, 'ECUC-CONTAINER-VALUE')
+            # TRS.COMCONF.GEN.027(0)
             short_name = etree.SubElement(ecuc_container_value_route, 'SHORT-NAME').text = 'PduRRoutingPath_EnGw_LinTp_REP_' + nad['NETWORK']
             definition = etree.SubElement(ecuc_container_value_route, 'DEFINITION-REF')
             definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
             definition.text = "/AUTOSAR/EcuDefs/PduR/PduRRoutingTables/PduRRoutingTable/PduRRoutingPath"
             subcontainer_path = etree.SubElement(ecuc_container_value_route, 'SUB-CONTAINERS')
+            # TRS.COMCONF.GEN.028(0)
             # src
             ecuc_container_value_src = etree.SubElement(subcontainer_path, 'ECUC-CONTAINER-VALUE')
             short_name = etree.SubElement(ecuc_container_value_src, 'SHORT-NAME').text = "PduRSrcPdu_EnGw_LinTp_REP_" + nad['NETWORK']
@@ -2225,6 +2253,7 @@ def NeMo_script(file_list, output_path, logger):
         operations = etree.SubElement(rootScript, 'Operations')
         for elem in callouts:
             if elem['SIGNAL'] != "":
+                # TRS.COMCONF.GEN.005(0)
                 # set ComTimeoutNotification
                 operation = etree.SubElement(operations, 'Operation')
                 operation.attrib['Type'] = "ForEach"
@@ -2250,6 +2279,7 @@ def NeMo_script(file_list, output_path, logger):
                 operation2.attrib['Type'] = "SetValue"
                 expression2 = etree.SubElement(operation2, 'Expression').text = '"NmLib_COMCbk_' + elem['SIGNAL'].split("/")[-1] + '"'
             if elem['PDU'] != "":
+                # TRS.COMCONF.GEN.004(0)
                 # set ComIPduCallout
                 operation = etree.SubElement(operations, 'Operation')
                 operation.attrib['Type'] = "ForEach"

@@ -76,6 +76,17 @@ class FileCheck():
         else:
             return False
 
+    def CheckEcuC(path, param):
+        tree = etree.parse(path)
+        root = tree.getroot()
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            short_name = elem.getchildren()[0].text
+            if short_name == param:
+                value = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
+                if int(value) == 8:
+                    return True
+        return False
 
     def isOutput(path):
         """
@@ -444,11 +455,169 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.036\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.036\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckRoutingPath(head + '\\Tests\\TRS.COMCONF.GEN.036\\TEST01\\out\\PduR.epc','PduRSrcPdu_EnGw_CanTp_REP_DIAG_FRONT_WIPING_LIN_VSM_1','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_DIAG_FRONT_WIPING_LIN_VSM_1_CanTp','PduRDestPdu_EnGw_CanTp_REP_DIAG_FRONT_WIPING_LIN_VSM_1','PDUR_DIRECT','/EcuC/EcuC/EcucPduCollection/CanTp_REP_DIAG_FRONT_WIPING_LIN_VSM_1_EnGwCLD'))
 
-    def test_TRS_COMCONF_GEN_037_TEST01(self):
+    #def test_TRS_COMCONF_GEN_037_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.037\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.037\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckId(head + '\\Tests\\TRS.COMCONF.GEN.037\\TEST01\\out\\PduR.epc'))
+
+
+
+    #test 40000000000000000
+
+
+
+    #def test_TRS_COMCONF_GEN_041_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.041\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.041\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.041\\TEST01\\out\\EcuC.epc','EnGwCLD_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_CanTp'))
+
+    #def test_TRS_COMCONF_GEN_042_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #   os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.042\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.042\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.042\\TEST01\\out\\EcuC.epc','CanTp_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_043_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.043\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.043\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.043\\TEST01\\out\\EcuC.epc','EnGwCLD_REP_DIAG_FRONT_WIPING_LIN_VSM_1_CanTp'))
+
+    #def test_TRS_COMCONF_GEN_044_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.044\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.044\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.044\\TEST01\\out\\EcuC.epc','CanTp_REP_DIAG_FRONT_WIPING_LIN_VSM_1_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_045_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.045\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.045\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.045\\TEST01\\out\\EcuC.epc','EnGwCLD_REQ_FRONT_WIPING_LIN_VSM_1_LinTp'))
+
+    #def test_TRS_COMCONF_GEN_046_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.046\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.046\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.046\\TEST01\\out\\EcuC.epc','LinTp_REQ_FRONT_WIPING_LIN_VSM_1_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_047_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.047\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.047\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.047\\TEST01\\out\\EcuC.epc','EnGwCLD_REP_FRONT_WIPING_LIN_VSM_1_LinTp'))
+
+    #def test_TRS_COMCONF_GEN_048_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.048\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.048\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.048\\TEST01\\out\\EcuC.epc','LinTp_REP_FRONT_WIPING_LIN_VSM_1_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_049_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.049\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.049\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.049\\TEST01\\out\\EcuC.epc','EnGwCLD_REQ_DIAG_MUS_LIN_VSM_1_CanIf'))
+
+    #def test_TRS_COMCONF_GEN_050_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.050\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.050\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.050\\TEST01\\out\\EcuC.epc','CanIf_REQ_DIAG_MUS_LIN_VSM_1_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_051_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.051\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.051\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.051\\TEST01\\out\\EcuC.epc','EnGwCLD_REP_DIAG_MUS_LIN_VSM_1_CanIf'))
+
+    #def test_TRS_COMCONF_GEN_052_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.052\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.052\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.052\\TEST01\\out\\EcuC.epc','CanIf_REP_DIAG_MUS_LIN_VSM_1_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_053_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.053\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.053\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.053\\TEST01\\out\\EcuC.epc','EnGwCLD_REQ_LIN_VSM_1_1P3_LinIf'))
+
+    #def test_TRS_COMCONF_GEN_054_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.054\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.054\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.054\\TEST01\\out\\EcuC.epc','LinIf_REQ_LIN_VSM_1_1P3_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_055_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.055\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.055\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.055\\TEST01\\out\\EcuC.epc','EnGwCLD_REP_LIN_VSM_1_1P3_LinIf'))
+
+    #def test_TRS_COMCONF_GEN_056_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.056\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.056\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.056\\TEST01\\out\\EcuC.epc','LinIf_REP_LIN_VSM_1_1P3_EnGwCLD'))
+
+    #def test_TRS_COMCONF_GEN_057_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.057\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.057\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.057\\TEST01\\out\\EcuC.epc','CanIf_REQ_DIAG_LIN_VSM_1_CanTp'))
+
+    #def test_TRS_COMCONF_GEN_058_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.058\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.058\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.058\\TEST01\\out\\EcuC.epc','CanTp_REP_DIAG_LIN_VSM_1_CanIf'))
+
+    #def test_TRS_COMCONF_GEN_059_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.059\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.059\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.059\\TEST01\\out\\EcuC.epc','CanTp_REP_DIAG_LIN_VSM_1_FRONT_WIPING_CanIf'))
+
+    def test_TRS_COMCONF_GEN_060_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.037\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.037\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckId(head + '\\Tests\\TRS.COMCONF.GEN.037\\TEST01\\out\\PduR.epc'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.060\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.060\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckEcuC(head + '\\Tests\\TRS.COMCONF.GEN.060\\TEST01\\out\\EcuC.epc','CanTp_FC_REP_DIAG_LIN_VSM_1_FRONT_WIPING_CanIf'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

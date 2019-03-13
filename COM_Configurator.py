@@ -119,6 +119,7 @@ def main():
                 CanIf_config(entry_list, output_path, logger)
                 LinTp_config(entry_list, output_path, logger)
                 LinIf_config(entry_list, output_path, logger)
+                BswM_config(entry_list, output_path, logger)
         else:
             logger = set_logger(output_path)
             if NeMo:
@@ -132,6 +133,7 @@ def main():
                 CanIf_config(entry_list, output_path, logger)
                 LinTp_config(entry_list, output_path, logger)
                 LinIf_config(entry_list, output_path, logger)
+                BswM_config(entry_list, output_path, logger)
     elif not output_path:
         if output_epc:
             if not os.path.isdir(output_epc):
@@ -150,6 +152,7 @@ def main():
                     CanIf_config(entry_list, output_epc, logger)
                     LinTp_config(entry_list, output_epc, logger)
                     LinIf_config(entry_list, output_epc, logger)
+                    BswM_config(entry_list, output_epc, logger)
             else:
                 logger = set_logger(output_epc)
                 if EnGw:
@@ -160,6 +163,7 @@ def main():
                     CanIf_config(entry_list, output_epc, logger)
                     LinTp_config(entry_list, output_epc, logger)
                     LinIf_config(entry_list, output_epc, logger)
+                    BswM_config(entry_list, output_epc, logger)
         if output_script:
             if not os.path.isdir(output_script):
                 print("\nError defining the output script path!\n")
@@ -3942,6 +3946,892 @@ def LinIf_config(file_list, output_path, logger):
     output.write(output_path + '/LinIf.epc', encoding='UTF-8', xml_declaration=True, method="xml")
     return
 
+
+def BswM_config(file_list, output_path, logger):
+    NSMAP = {None: 'http://autosar.org/schema/r4.0', "xsi": 'http://www.w3.org/2001/XMLSchema-instance'}
+    attr_qname = etree.QName("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation")
+    tables = []
+    networks = []
+    for file in file_list:
+        if file.endswith('.arxml'):
+            parser = etree.XMLParser(remove_comments=True)
+            tree = objectify.parse(file, parser=parser)
+            root = tree.getroot()
+            elements = root.findall(".//{http://autosar.org/schema/r4.0}LIN-SCHEDULE-TABLE")
+            for elem in elements:
+                obj_table = {}
+                obj_table['NAME'] = elem.find(".//{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                obj_table['CATEGORY'] = elem.find(".//{http://autosar.org/schema/r4.0}CATEGORY").text
+                obj_table['LIN'] = elem.getparent().getparent().getparent().getparent().getparent().getparent().getchildren()[0].text
+                tables.append(obj_table)
+
+    # check that for each LIN-CLUSTER there is at least one schedule-table of category REQUEST_DIAG and one of category RESPONSE_DIAG
+    network_list = []
+    for table in tables:
+        if table['LIN'] not in network_list:
+            network_list.append(table['LIN'])
+
+    for network in network_list:
+        obj_network = {}
+        obj_network['NAME'] = network
+        obj_network['RESPONSE'] = False
+        obj_network['REQUEST'] = False
+        networks.append(obj_network)
+
+    for table in tables:
+        for network in networks:
+            if table['LIN'] == network['NAME']:
+                if table['CATEGORY'] == "RESPONSE_DIAG":
+                    network['RESPONSE'] = True
+                if table['CATEGORY'] == "REQUEST_DIAG":
+                    network['REQUEST'] = True
+
+    for network in networks[:]:
+        if not network['RESPONSE']:
+            logger.error("LIN-CLUSTER " + network['NAME'] + " does not have a SCHEDULE-TABLE of type RESPONSE_DIAG")
+            networks.remove(network)
+            for table in tables[:]:
+                if table['LIN'] == network['NAME']:
+                    tables.remove(table)
+    for network in networks[:]:
+        if not network['REQUEST']:
+            logger.error("LIN-CLUSTER " + network['NAME'] + " does not have a SCHEDULE-TABLE of type REQUEST_DIAG")
+            networks.remove(network)
+            for table in tables[:]:
+                if table['LIN'] == network['NAME']:
+                    tables.remove(table)
+
+    # create ouput file: BswM.epc
+    rootBswM = etree.Element('AUTOSAR', {attr_qname: 'http://autosar.org/schema/r4.0 AUTOSAR_4-2-2_STRICT_COMPACT.xsd'}, nsmap=NSMAP)
+    packages = etree.SubElement(rootBswM, 'AR-PACKAGES')
+    package = etree.SubElement(packages, 'AR-PACKAGE')
+    short_name = etree.SubElement(package, 'SHORT-NAME').text = "BswM"
+    elements = etree.SubElement(package, 'ELEMENTS')
+    ecuc_module = etree.SubElement(elements, 'ECUC-MODULE-CONFIGURATION-VALUES')
+    short_name = etree.SubElement(ecuc_module, 'SHORT-NAME').text = "BswM"
+    definition = etree.SubElement(ecuc_module, 'DEFINITION-REF')
+    definition.attrib['DEST'] = "ECUC-MODULE-DEF"
+    definition.text = "/AUTOSAR/EcuDefs/BswM"
+    description = etree.SubElement(ecuc_module, 'IMPLEMENTATION-CONFIG-VARIANT').text = "VARIANT-PRE-COMPILE"
+    containers = etree.SubElement(ecuc_module, 'CONTAINERS')
+    ecuc_general = etree.SubElement(containers, "ECUC-CONTAINER-VALUE")
+    short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = "BswMConfig_0"
+    definition_general = etree.SubElement(ecuc_general, "DEFINITION-REF")
+    definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    definition_general.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig"
+    subcontainer_master = etree.SubElement(ecuc_general, "SUB-CONTAINERS")
+    ecuc_arbitration = etree.SubElement(subcontainer_master, "ECUC-CONTAINER-VALUE")
+    short_name = etree.SubElement(ecuc_arbitration, "SHORT-NAME").text = "BswMArbitration"
+    definition = etree.SubElement(ecuc_arbitration, "DEFINITION-REF")
+    definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration"
+    subcontainer_arbitration = etree.SubElement(ecuc_arbitration, "SUB-CONTAINERS")
+    ecuc_control = etree.SubElement(subcontainer_master, "ECUC-CONTAINER-VALUE")
+    short_name = etree.SubElement(ecuc_control, "SHORT-NAME").text = "BswMModeControl"
+    definition = etree.SubElement(ecuc_control, "DEFINITION-REF")
+    definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl"
+    subcontainer_control = etree.SubElement(ecuc_control, "SUB-CONTAINERS")
+    for table in tables:
+        if table['CATEGORY'] in ["RESPONSE_DIAG", "REQUEST_DIAG", "FUNCTIONAL"]:
+            container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMLogicalExpression_BswMRule_CurrentSchedule_" + table["LIN"] + "_" + table["NAME"]
+            definition = etree.SubElement(container, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMLogicalExpression"
+            reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+            reference = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+            definition = etree.SubElement(reference, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-CHOICE-REFERENCE-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMLogicalExpression/BswMArgumentRef"
+            value = etree.SubElement(reference, "VALUE-REF")
+            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_LinScheduleTable_" + table["LIN"] + "_" + table["NAME"]
+
+            container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeCondition_LinScheduleTable_" + table["LIN"] + "_" + table["NAME"]
+            definition = etree.SubElement(container, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition"
+            parameter = etree.SubElement(container, "PARAMETER-VALUES")
+            textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionType"
+            value = etree.SubElement(textual_param, "VALUE").text = "BSWM_EQUALS"
+            reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+            reference = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+            definition = etree.SubElement(reference, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionMode"
+            value = etree.SubElement(reference, "VALUE-REF")
+            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMScheduleIndication_" + table["LIN"] + "_" + table["NAME"]
+            subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+            container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMConditionValue"
+            definition1 = etree.SubElement(container1, "DEFINITION-REF")
+            definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+            definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue"
+            subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+            container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMConditionValue"
+            definition2 = etree.SubElement(container2, "DEFINITION-REF")
+            definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode"
+            parameters2 = etree.SubElement(container2, "PARAMETER-VALUES")
+            textual_param2 = etree.SubElement(parameters2, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param2, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode/BswMBswRequestedMode"
+            value = etree.SubElement(textual_param2, "VALUE").text = "LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"]
+
+            container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMScheduleIndication_" + table["LIN"] + "_" + table["NAME"]
+            definition = etree.SubElement(container, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort"
+            parameter = etree.SubElement(container, "PARAMETER-VALUES")
+            textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMRequestProcessing"
+            value = etree.SubElement(textual_param, "VALUE").text = "BSWM_IMMEDIATE"
+            subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+            container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMModeRequestSource"
+            definition1 = etree.SubElement(container1, "DEFINITION-REF")
+            definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+            definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource"
+            subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+            container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMModeRequestSource"
+            definition2 = etree.SubElement(container2, "DEFINITION-REF")
+            definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource/BswMLinScheduleIndication"
+            references2 = etree.SubElement(container2, "REFERENCE-VALUES")
+            reference = etree.SubElement(references2, 'ECUC-REFERENCE-VALUE')
+            definition = etree.SubElement(reference, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-SYMBOLIC-NAME-REFERENCE-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource/BswMLinScheduleIndication/BswMLinScheduleRef"
+            value = etree.SubElement(reference, "VALUE-REF")
+            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            value.text = "/LinSM/LinSM/LinSMConfigSet/" + table["LIN"] + "/" + table["NAME"]
+
+            container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMRule_CurrentSchedule_" + table["LIN"] + "_" + table["NAME"]
+            definition = etree.SubElement(container, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule"
+            parameter = etree.SubElement(container, "PARAMETER-VALUES")
+            numerical_param = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+            definition = etree.SubElement(numerical_param, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-BOOLEAN-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMNestedExecutionOnly"
+            value = etree.SubElement(numerical_param, "VALUE").text = "0"
+            textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleInitState"
+            value = etree.SubElement(textual_param, "VALUE").text = "BSWM_FALSE"
+            reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+            reference1 = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+            definition = etree.SubElement(reference1, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleExpressionRef"
+            value = etree.SubElement(reference1, "VALUE-REF")
+            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMLogicalExpression_BswMRule_CurrentSchedule_" + table["LIN"] + "_" + table["NAME"]
+            reference2 = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+            definition = etree.SubElement(reference2, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleTrueActionList"
+            value = etree.SubElement(reference2, "VALUE-REF")
+            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_CurrentSchedule_" + table["LIN"] + "_" + table["NAME"] + "_TrueActionList"
+
+            container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMActionList_BswMRule_CurrentSchedule_" + table["LIN"] + "_" + table["NAME"] + "_TrueActionList"
+            definition = etree.SubElement(container, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList"
+            parameter = etree.SubElement(container, "PARAMETER-VALUES")
+            textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListExecution"
+            value = etree.SubElement(textual_param, "VALUE").text = "BSWM_CONDITION"
+            subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+            container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMActionList_" + table["LIN"] + "_" + table["NAME"]
+            definition1 = etree.SubElement(container1, "DEFINITION-REF")
+            definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+            definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem"
+            parameter = etree.SubElement(container1, "PARAMETER-VALUES")
+            numerical_param1 = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+            definition = etree.SubElement(numerical_param1, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-BOOLEAN-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMAbortOnFail"
+            value = etree.SubElement(numerical_param1, "VALUE").text = "0"
+            textual_param = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMActionListItemIndex"
+            value = etree.SubElement(textual_param, "VALUE").text = "0"
+            references = etree.SubElement(container1, "REFERENCE-VALUES")
+            reference = etree.SubElement(references, 'ECUC-REFERENCE-VALUE')
+            definition = etree.SubElement(reference, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-CHOICE-REFERENCE-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMActionListItemRef"
+            value = etree.SubElement(reference, "VALUE-REF")
+            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_Confirmation_" + table["LIN"] + "_" + table["NAME"]
+
+        if table['CATEGORY'] == "RESPONSE_DIAG":
+            container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_Confirmation_" + table["LIN"] + "_" + table["NAME"]
+            definition = etree.SubElement(container, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction"
+            subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+            container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMAvailableActions"
+            definition1 = etree.SubElement(container1, "DEFINITION-REF")
+            definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+            definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions"
+            subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+            container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMAvailableActions"
+            definition2 = etree.SubElement(container2, "DEFINITION-REF")
+            definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout"
+            parameters2 = etree.SubElement(container2, "PARAMETER-VALUES")
+            textual_param2 = etree.SubElement(parameters2, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param2, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
+            value = etree.SubElement(textual_param2, "VALUE").text = "SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_" + table["LIN"] + ",LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"] + ",LINTP_DIAG_RESPONSE)"
+
+            container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_" + table["LIN"] + "_DiagResp"
+            definition = etree.SubElement(container, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction"
+            subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+            container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMAvailableActions"
+            definition1 = etree.SubElement(container1, "DEFINITION-REF")
+            definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+            definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions"
+            subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+            container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMAvailableActions"
+            definition2 = etree.SubElement(container2, "DEFINITION-REF")
+            definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout"
+            parameters2 = etree.SubElement(container2, "PARAMETER-VALUES")
+            textual_param2 = etree.SubElement(parameters2, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param2, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
+            value = etree.SubElement(textual_param2, "VALUE").text = "SSR_DiagScheduleResponse(ComMConf_ComMChannel_" + table["LIN"] + ",LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"] + ")"
+
+        if table['CATEGORY'] == "FUNCTIONAL":
+            container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_Confirmation_" + table["LIN"] + "_" + table["NAME"]
+            definition = etree.SubElement(container, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction"
+            subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+            container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMAvailableActions"
+            definition1 = etree.SubElement(container1, "DEFINITION-REF")
+            definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+            definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions"
+            subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+            container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMAvailableActions"
+            definition2 = etree.SubElement(container2, "DEFINITION-REF")
+            definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout"
+            parameters2 = etree.SubElement(container2, "PARAMETER-VALUES")
+            textual_param2 = etree.SubElement(parameters2, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param2, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
+            value = etree.SubElement(textual_param2, "VALUE").text = "SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_" + table["LIN"] + ",LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"] + ",LINTP_APPLICATIVE_SCHEDULE)"
+
+        if table['CATEGORY'] == "REQUEST_DIAG":
+            container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_Confirmation_" + table["LIN"] + "_" + table["NAME"]
+            definition = etree.SubElement(container, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction"
+            subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+            container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMAvailableActions"
+            definition1 = etree.SubElement(container1, "DEFINITION-REF")
+            definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+            definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions"
+            subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+            container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMAvailableActions"
+            definition2 = etree.SubElement(container2, "DEFINITION-REF")
+            definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout"
+            parameters2 = etree.SubElement(container2, "PARAMETER-VALUES")
+            textual_param2 = etree.SubElement(parameters2, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param2, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
+            value = etree.SubElement(textual_param2, "VALUE").text = "SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_" + table["LIN"] + ",LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"] + ",LINTP_DIAG_REQUEST)"
+
+            container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_" + table["LIN"] + "_DiagReq"
+            definition = etree.SubElement(container, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction"
+            subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+            container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMAvailableActions"
+            definition1 = etree.SubElement(container1, "DEFINITION-REF")
+            definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+            definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions"
+            subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+            container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+            short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMAvailableActions"
+            definition2 = etree.SubElement(container2, "DEFINITION-REF")
+            definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout"
+            parameters2 = etree.SubElement(container2, "PARAMETER-VALUES")
+            textual_param2 = etree.SubElement(parameters2, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition = etree.SubElement(textual_param2, "DEFINITION-REF")
+            definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+            definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
+            value = etree.SubElement(textual_param2, "VALUE").text = "SSR_DiagScheduleRequest(ComMConf_ComMChannel_" + table["LIN"] + ",LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"] + ")"
+
+    for network in networks:
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMLogicalExpression_BswMRule_LinTp_" + network["NAME"] + "_Applicative"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMLogicalExpression"
+        reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+        reference = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-CHOICE-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMLogicalExpression/BswMArgumentRef"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_APPLICATIVE_SCHEDULE"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMLogicalExpression_BswMRule_LinTp_" + network["NAME"] + "_DiagReq"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMLogicalExpression"
+        reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+        reference = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-CHOICE-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMLogicalExpression/BswMArgumentRef"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_DIAG_REQUEST"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMLogicalExpression_BswMRule_LinTp_" + network["NAME"] + "_DiagResp"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMLogicalExpression"
+        reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+        reference = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-CHOICE-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMLogicalExpression/BswMArgumentRef"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_DIAG_RESPONSE"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_APPLICATIVE_SCHEDULE"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionType"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_EQUALS"
+        reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+        reference = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-CHOICE-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionMode"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeRequestPort_" + network["NAME"] + "_Applicative"
+        subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMConditionValue"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue"
+        subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+        container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMConditionValue"
+        definition2 = etree.SubElement(container2, "DEFINITION-REF")
+        definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode"
+        parameters2 = etree.SubElement(container2, "PARAMETER-VALUES")
+        textual_param2 = etree.SubElement(parameters2, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param2, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode/BswMBswRequestedMode"
+        value = etree.SubElement(textual_param2, "VALUE").text = "LINTP_APPLICATIVE_SCHEDULE"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_DIAG_REQUEST"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionType"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_EQUALS"
+        reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+        reference = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionMode"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeRequestPort_" + network["NAME"] + "_DiagReq"
+        subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMConditionValue"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue"
+        subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+        container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMConditionValue"
+        definition2 = etree.SubElement(container2, "DEFINITION-REF")
+        definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode"
+        parameters2 = etree.SubElement(container2, "PARAMETER-VALUES")
+        textual_param2 = etree.SubElement(parameters2, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param2, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode/BswMBswRequestedMode"
+        value = etree.SubElement(textual_param2, "VALUE").text = "LINTP_DIAG_REQUEST"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_DIAG_RESPONSE"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionType"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_EQUALS"
+        reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+        reference = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionMode"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeRequestPort_" + network["NAME"] + "_DiagReq"
+        subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMConditionValue"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue"
+        subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+        container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMConditionValue"
+        definition2 = etree.SubElement(container2, "DEFINITION-REF")
+        definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode"
+        parameters2 = etree.SubElement(container2, "PARAMETER-VALUES")
+        textual_param2 = etree.SubElement(parameters2, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param2, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode/BswMBswRequestedMode"
+        value = etree.SubElement(textual_param2, "VALUE").text = "LINTP_DIAG_RESPONSE"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeRequestPort_" + network["NAME"] + "_Applicative"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMRequestProcessing"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_IMMEDIATE"
+        subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMModeInitValue"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeInitValue/BswMBswModeInitValue"
+        parameter = etree.SubElement(container1, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeInitValue/BswMBswModeInitValue/BswMBswModeInitValueMode"
+        value = etree.SubElement(textual_param, "VALUE").text = "LINTP_APPLICATIVE_SCHEDULE"
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMModeRequestSource"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource"
+        subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+        container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMModeRequestSource"
+        definition2 = etree.SubElement(container2, "DEFINITION-REF")
+        definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource/BswMLinTpModeRequest"
+        references2 = etree.SubElement(container2, "REFERENCE-VALUES")
+        reference = etree.SubElement(references2, 'ECUC-REFERENCE-VALUE')
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-SYMBOLIC-NAME-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource/BswMLinTpModeRequest/BswMLinTpChannelRef"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/LinIf/LinIf/LinIfGlobalConfig/" + network["NAME"] + "_Channel"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeRequestPort_" + network["NAME"] + "_DiagReq"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMRequestProcessing"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_IMMEDIATE"
+        subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMModeInitValue"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeInitValue/BswMBswModeInitValue"
+        parameter = etree.SubElement(container1, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeInitValue/BswMBswModeInitValue/BswMBswModeInitValueMode"
+        value = etree.SubElement(textual_param, "VALUE").text = "LINTP_APPLICATIVE_SCHEDULE"
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMModeRequestSource"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource"
+        subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+        container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMModeRequestSource"
+        definition2 = etree.SubElement(container2, "DEFINITION-REF")
+        definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource/BswMLinTpModeRequest"
+        references2 = etree.SubElement(container2, "REFERENCE-VALUES")
+        reference = etree.SubElement(references2, 'ECUC-REFERENCE-VALUE')
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-SYMBOLIC-NAME-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource/BswMLinTpModeRequest/BswMLinTpChannelRef"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/LinIf/LinIf/LinIfGlobalConfig/" + network["NAME"] + "_Channel"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeRequestPort_" + network["NAME"] + "_DiagResp"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMRequestProcessing"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_IMMEDIATE"
+        subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMModeInitValue"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeInitValue/BswMBswModeInitValue"
+        parameter = etree.SubElement(container1, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeInitValue/BswMBswModeInitValue/BswMBswModeInitValueMode"
+        value = etree.SubElement(textual_param, "VALUE").text = "LINTP_DIAG_REQUEST"
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMModeRequestSource"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource"
+        subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+        container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMModeRequestSource"
+        definition2 = etree.SubElement(container2, "DEFINITION-REF")
+        definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource/BswMLinTpModeRequest"
+        references2 = etree.SubElement(container2, "REFERENCE-VALUES")
+        reference = etree.SubElement(references2, 'ECUC-REFERENCE-VALUE')
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-SYMBOLIC-NAME-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeRequestPort/BswMModeRequestSource/BswMLinTpModeRequest/BswMLinTpChannelRef"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/LinIf/LinIf/LinIfGlobalConfig/" + network["NAME"] + "_Channel"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMRule_LinTp_" + network["NAME"] + "_Applicative"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        numerical_param = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+        definition = etree.SubElement(numerical_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-BOOLEAN-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMNestedExecutionOnly"
+        value = etree.SubElement(numerical_param, "VALUE").text = "0"
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleInitState"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_FALSE"
+        reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+        reference1 = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference1, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleExpressionRef"
+        value = etree.SubElement(reference1, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMLogicalExpression_BswMRule_LinTp_" + network["NAME"] + "_Applicative"
+        reference2 = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference2, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleTrueActionList"
+        value = etree.SubElement(reference2, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_Applicative_TrueActionList"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMRule_LinTp_" + network["NAME"] + "_DiagReq"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        numerical_param = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+        definition = etree.SubElement(numerical_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-BOOLEAN-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMNestedExecutionOnly"
+        value = etree.SubElement(numerical_param, "VALUE").text = "0"
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleInitState"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_FALSE"
+        reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+        reference1 = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference1, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleExpressionRef"
+        value = etree.SubElement(reference1, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMLogicalExpression_BswMRule_LinTp_" + network["NAME"] + "_DiagReq"
+        reference2 = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference2, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleTrueActionList"
+        value = etree.SubElement(reference2, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_DiagReq_TrueActionList"
+
+        container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMRule_LinTp_" + network["NAME"] + "_DiagResp"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        numerical_param = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+        definition = etree.SubElement(numerical_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-BOOLEAN-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMNestedExecutionOnly"
+        value = etree.SubElement(numerical_param, "VALUE").text = "0"
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleInitState"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_FALSE"
+        reference_values = etree.SubElement(container, "REFERENCE-VALUES")
+        reference1 = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference1, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleExpressionRef"
+        value = etree.SubElement(reference1, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMLogicalExpression_BswMRule_LinTp_" + network["NAME"] + "_DiagResp"
+        reference2 = etree.SubElement(reference_values, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(reference2, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMRule/BswMRuleTrueActionList"
+        value = etree.SubElement(reference2, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_DiagResp_TrueActionList"
+
+        container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_Applicative_TrueActionList"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListExecution"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_CONDITION"
+        subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMActionList_" + network["NAME"] + "_Applicative"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem"
+        parameter = etree.SubElement(container1, "PARAMETER-VALUES")
+        numerical_param1 = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+        definition = etree.SubElement(numerical_param1, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-BOOLEAN-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMAbortOnFail"
+        value = etree.SubElement(numerical_param1, "VALUE").text = "0"
+        textual_param = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMActionListItemIndex"
+        value = etree.SubElement(textual_param, "VALUE").text = "0"
+        references = etree.SubElement(container1, "REFERENCE-VALUES")
+        reference = etree.SubElement(references, 'ECUC-REFERENCE-VALUE')
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-CHOICE-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMActionListItemRef"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_" + network["NAME"] + "_Applicative"
+
+        container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_DiagReq_TrueActionList"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListExecution"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_CONDITION"
+        subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMActionList_" + network["NAME"] + "_DiagReq"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem"
+        parameter = etree.SubElement(container1, "PARAMETER-VALUES")
+        numerical_param1 = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+        definition = etree.SubElement(numerical_param1, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-BOOLEAN-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMAbortOnFail"
+        value = etree.SubElement(numerical_param1, "VALUE").text = "0"
+        textual_param = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMActionListItemIndex"
+        value = etree.SubElement(textual_param, "VALUE").text = "0"
+        references = etree.SubElement(container1, "REFERENCE-VALUES")
+        reference = etree.SubElement(references, 'ECUC-REFERENCE-VALUE')
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-CHOICE-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMActionListItemRef"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_" + network["NAME"] + "_DiagReq"
+
+        container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_DiagResp_TrueActionList"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList"
+        parameter = etree.SubElement(container, "PARAMETER-VALUES")
+        textual_param = etree.SubElement(parameter, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListExecution"
+        value = etree.SubElement(textual_param, "VALUE").text = "BSWM_CONDITION"
+        subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMActionList_" + network["NAME"] + "_DiagResp"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem"
+        parameter = etree.SubElement(container1, "PARAMETER-VALUES")
+        numerical_param1 = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+        definition = etree.SubElement(numerical_param1, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-BOOLEAN-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMAbortOnFail"
+        value = etree.SubElement(numerical_param1, "VALUE").text = "0"
+        textual_param = etree.SubElement(parameter, "ECUC-NUMERICAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMActionListItemIndex"
+        value = etree.SubElement(textual_param, "VALUE").text = "0"
+        references = etree.SubElement(container1, "REFERENCE-VALUES")
+        reference = etree.SubElement(references, 'ECUC-REFERENCE-VALUE')
+        definition = etree.SubElement(reference, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-CHOICE-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMActionList/BswMActionListItem/BswMActionListItemRef"
+        value = etree.SubElement(reference, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_" + network["NAME"] + "_DiagResp"
+
+        container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_" + network["NAME"] + "_Applicative"
+        definition = etree.SubElement(container, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction"
+        subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
+        container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMAvailableActions"
+        definition1 = etree.SubElement(container1, "DEFINITION-REF")
+        definition1.attrib['DEST'] = "ECUC-CHOICE-CONTAINER-DEF"
+        definition1.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions"
+        subcontainers1 = etree.SubElement(container1, "SUB-CONTAINERS")
+        container2 = etree.SubElement(subcontainers1, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(container2, "SHORT-NAME").text = "BswMAvailableActions"
+        definition2 = etree.SubElement(container2, "DEFINITION-REF")
+        definition2.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition2.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout"
+        parameters2 = etree.SubElement(container2, "PARAMETER-VALUES")
+        textual_param2 = etree.SubElement(parameters2, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition = etree.SubElement(textual_param2, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
+        value = etree.SubElement(textual_param2, "VALUE").text = "SSR_AppLicativeScheduleRequest(ComMConf_ComMChannel_" + network["NAME"] + ")"
+
+    # generate data
+    pretty_xml = prettify_xml(rootBswM)
+    output = etree.ElementTree(etree.fromstring(pretty_xml))
+    output.write(output_path + '/BswM.epc', encoding='UTF-8', xml_declaration=True, method="xml")
+    return
 
 if __name__ == "__main__":                                          # pragma: no cover
     # process = psutil.Process(os.getpid())                         # pragma: no cover

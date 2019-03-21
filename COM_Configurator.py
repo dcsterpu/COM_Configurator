@@ -2852,7 +2852,7 @@ def CanIf_config(file_list, output_path, logger):
             def_textual_1 = etree.SubElement(textual_1, "DEFINITION-REF")
             def_textual_1.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
             def_textual_1.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfRxPduCfg/CanIfRxPduCanIdType"
-            val_textual_1 = etree.SubElement(textual_1, "VALUE").text = "STANDARD_CAN"
+            val_textual_1 = etree.SubElement(textual_1, "VALUE").text = "STANDARD_NO_FD_CAN"
             textual_2 = etree.SubElement(parameters, "ECUC-TEXTUAL-PARAM-VALUE")
             def_textual_2 = etree.SubElement(textual_2, "DEFINITION-REF")
             def_textual_2.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
@@ -2938,7 +2938,7 @@ def CanIf_config(file_list, output_path, logger):
                 def_textual_1 = etree.SubElement(textual_1, "DEFINITION-REF")
                 def_textual_1.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
                 def_textual_1.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfRxPduCfg/CanIfRxPduCanIdType"
-                val_textual_1 = etree.SubElement(textual_1, "VALUE").text = "STANDARD_CAN"
+                val_textual_1 = etree.SubElement(textual_1, "VALUE").text = "STANDARD_NO_FD_CAN"
                 textual_3 = etree.SubElement(parameters, "ECUC-TEXTUAL-PARAM-VALUE")
                 def_textual_3 = etree.SubElement(textual_3, "DEFINITION-REF")
                 def_textual_3.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"

@@ -3021,19 +3021,12 @@ def CanIf_config(file_list, output_path, logger):
                 for lin in lins21:
                     lin_network = re.search("LIN_VSM_\d", lin["NAME"])
                     nad_network = re.search("LIN_VSM_\d", nad["LIN"])
-                    if lin_network.group(0) == nad_network.group(0):# and nad['NAME'] in lin['NAME']:
+                    if lin_network.group(0) == nad_network.group(0):
                         numerical_0 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                         definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
                         definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                         definition_0.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduCanId"
                         value_0 = etree.SubElement(numerical_0, "VALUE").text = lin['REP-ID']
-
-                # numerical_0 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
-                # definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
-                # definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                # definition_0.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfRxPduCfg/CanIfRxPduCanId"
-                # value_0 = etree.SubElement(numerical_0, "VALUE").text = lin['REQ-ID']
-
                 numerical_1 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
                 definition_1.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
@@ -3079,7 +3072,7 @@ def CanIf_config(file_list, output_path, logger):
                 for lin in lins21:
                     lin_network = re.search("LIN_VSM_\d", lin["NAME"])
                     nad_network = re.search("LIN_VSM_\d", nad["LIN"])
-                    if lin_network.group(0) == nad_network.group(0):# and nad['NAME'] in lin['NAME']:
+                    if lin_network.group(0) == nad_network.group(0):
                         numerical_0 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                         definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
                         definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
@@ -4447,7 +4440,7 @@ def BswM_config(file_list, output_path, logger):
         definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionMode"
         value = etree.SubElement(reference, "VALUE-REF")
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeRequestPort_" + network["NAME"] + "_DiagReq"
+        value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeRequestPort_" + network["NAME"] + "_DiagResp"
         subcontainers = etree.SubElement(container, "SUB-CONTAINERS")
         container1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container1, "SHORT-NAME").text = "BswMConditionValue"

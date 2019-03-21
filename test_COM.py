@@ -4,9 +4,11 @@ import os.path
 import ntpath
 from lxml import etree
 #import HtmlTestRunner
+from operator import itemgetter
 
 
 class FileCheck():
+
     def CheckParameter(path, callout, param):
         """
         function that checks in a Scriptor script if a specific CALLOUT has a given parameter set
@@ -360,19 +362,95 @@ class FileCheck():
                     return True
         return False
 
-    def CheckCanTp8(path):
+    def CheckCanTp81(path):
+        list = []
         tree = etree.parse(path)
         root = tree.getroot()
         elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            dict = {}
+            dict['NAME'] = elem.getchildren()[0].text
+            dict['VALUE'] = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
+            list.append(dict)
+
+        #verifica daca sunt dubluri
+        for i in range(0,len(list),1):
+            for j in range(0,len(list),1):
+                if list[i] == list[j] and i != j:
+                    return False
+
+        #daca nr de elem din lista e impar => un element nu are corespondent
+        if len(list)%2 != 0:
+            return False
+        else:
+            contor = 0
+            for i in range(0,len(list),1):
+                name = list[i]['NAME'].split("_")
+                prefix = name[0] + "_" + name[1]
+                if prefix == "CanTpRxNSdu_REQ":
+                    name2 = "CanTpTxNSdu_REP"
+                    for k in range(2,len(name),1):
+                        name2 = name2 + "_" + name[k]
+                    cnt = 0
+                    for j in range(0,len(list),1):
+                        if list[j]['NAME'] == name2:
+                            cnt = cnt +1
+                    if cnt == 1:
+                        contor = contor + 1
+                    else:
+                        return False
+                else:
+                    if prefix == "CanTpTxNSdu_REP":
+                        name2 = "CanTpRxNSdu_REQ"
+                        for k in range(2, len(name), 1):
+                            name2 = name2 + "_" + name[k]
+                        cnt = 0
+                        for j in range(0, len(list), 1):
+                            if list[j]['NAME'] == name2:
+                                cnt = cnt + 1
+                        if cnt == 1:
+                            contor = contor + 1
+                        else:
+                            return False
+
+        if contor == len(list):
+            return True
+        else:
+            return False
+
+    def CheckCanTp82(path):
+        list = []
+        tree = etree.parse(path)
+        root = tree.getroot()
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            dict = {}
+            dict['NAME'] = elem.getchildren()[0].text
+            dict['VALUE'] = int(elem.getchildren()[2].getchildren()[0].getchildren()[1].text)
+            list.append(dict)
         cnt = 0
-        for x in range(0, len(elements),2):
-            short_name_rx = elements[x].getchildren()[0].text.split("_")[0]
-            short_name_tx = elements[x+1].getchildren()[0].text.split("_")[0]
-            value0 = elements[x].getchildren()[2].getchildren()[0].getchildren()[1].text
-            value1 = elements[x+1].getchildren()[2].getchildren()[0].getchildren()[1].text
-            if short_name_rx == "CanTpRxNSdu" and short_name_tx == "CanTpTxNSdu" and value0 == value1 and int(value0) == cnt:
-                cnt = cnt + 1
-        if cnt == len(elements)/2:
+        list = sorted(list, key = itemgetter('VALUE'))
+        for i in range(0,len(list),2):
+            name = list[i]['NAME'].split("_")
+            prefix = name[0] + "_" + name[1]
+            if prefix == "CanTpRxNSdu_REQ":
+                name2 = "CanTpTxNSdu_REP"
+                for k in range(2, len(name), 1):
+                    name2 = name2 + "_" + name[k]
+                if list[i+1]['NAME'] == name2:
+                    if list[i]['VALUE'] == list[i+1]['VALUE']:
+                        if list[i]['VALUE'] == i/2:
+                            cnt = cnt + 1
+            else:
+                if prefix == "CanTpTxNSdu_REP":
+                    name2 = "CanTpRxNSdu_REQ"
+                    for k in range(2, len(name), 1):
+                        name2 = name2 + "_" + name[k]
+                    if list[i + 1]['NAME'] == name2:
+                        if list[i]['VALUE'] == list[i + 1]['VALUE']:
+                            if list[i]['VALUE'] == i / 2:
+                                cnt = cnt + 1
+        if cnt == len(list)/2:
             return True
         else:
             return False
@@ -448,8 +526,6 @@ class FileCheck():
         else:
             return False
 
-
-
     # def ecuc(path1, path2):
     #     """
     #         path1 = used for defining the file to be checked for values(from input)
@@ -464,10 +540,6 @@ class FileCheck():
     #     #     if container.getchildren[0].text == "BTA":
     #         for elem in container:
     #             for elem2 in elem:
-
-
-
-
 
 class COMConfigurator(unittest.TestCase):
     # def test_TRS_COMCONF_INOUT_001_1(self):
@@ -1180,12 +1252,18 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0112\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0112\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckCanTp7(head + '\\Tests\\TRS.COMCONF.GEN.0112\\TEST01\\out\\CanTp.epc','CanTpRxFcNPdu_REP_DIAG_LIN_VSM_1_FRONT_WIPING','/EcuC/EcuC/EcucPduCollection/CanIf_REQ_DIAG_LIN_VSM_1_CanTp'))
 
-    def test_TRS_COMCONF_GEN_0113_TEST01(self):
+    #def test_TRS_COMCONF_GEN_0113_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0113\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0113\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckCanTp81(head + '\\Tests\\TRS.COMCONF.GEN.0113\\TEST01\\out\\CanTp.epc'))
+    #    self.assertTrue(FileCheck.CheckCanTp82(head + '\\Tests\\TRS.COMCONF.GEN.0113\\TEST01\\out\\CanTp.epc'))
+
+    def test_TRS_COMCONF_GEN_0115_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0113\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0113\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckCanTp8(head + '\\Tests\\TRS.COMCONF.GEN.0113\\TEST01\\out\\CanTp.epc'))
-
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0115\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0115\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckCanIf1(head + '\\Tests\\TRS.COMCONF.GEN.0113\\TEST01\\out\\CanIf.epc'))
 
 
 

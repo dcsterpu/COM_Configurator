@@ -553,15 +553,15 @@ class FileCheck():
     def CheckBswM3(path, param1, param2, param3, param4):
         tree = etree.parse(path)
         root = tree.getroot()
-        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS")
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
         for elem in elements:
-            elem1 = elem.getchildren()[1].getchildren()[0].text
+            elem1 = elem.getchildren()[0].text
             if elem1 == param1:
-                elem2 = elem.getchildren()[1].getchildren()[2].getchildren()[0].getchildren()[1].text
+                elem2 = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
                 if elem2 == param2:
-                    elem3 = elem.getchildren()[1].getchildren()[3].getchildren()[0].getchildren()[1].text
+                    elem3 = elem.getchildren()[3].getchildren()[0].getchildren()[1].text
                     if elem3 == param3:
-                        elem4 = elem.getchildren()[1].getchildren()[4].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[1].text
+                        elem4 = elem.getchildren()[4].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[1].text
                         if elem4 == param4:
                             return True
         return False
@@ -569,13 +569,13 @@ class FileCheck():
     def CheckBswM4(path, param1, param2, param3):
         tree = etree.parse(path)
         root = tree.getroot()
-        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS")
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
         for elem in elements:
-            elem1 = elem.getchildren()[2].getchildren()[0].text
+            elem1 = elem.getchildren()[0].text
             if elem1 == param1:
-                elem2 = elem.getchildren()[2].getchildren()[2].getchildren()[0].getchildren()[1].text
+                elem2 = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
                 if elem2 == param2:
-                    elem3 = elem.getchildren()[2].getchildren()[3].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[1].text
+                    elem3 = elem.getchildren()[3].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[1].text
                     if elem3 == param3:
                         return True
         return False
@@ -583,17 +583,17 @@ class FileCheck():
     def CheckBswM5(path, param1, param2, param3, param4, param5):
         tree = etree.parse(path)
         root = tree.getroot()
-        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS")
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
         for elem in elements:
-            elem1 = elem.getchildren()[3].getchildren()[0].text
+            elem1 = elem.getchildren()[0].text
             if elem1 == param1:
-                elem2 = elem.getchildren()[3].getchildren()[2].getchildren()[0].getchildren()[1].text
+                elem2 = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
                 if elem2 == param2:
-                    elem3 = elem.getchildren()[3].getchildren()[2].getchildren()[1].getchildren()[1].text
+                    elem3 = elem.getchildren()[2].getchildren()[1].getchildren()[1].text
                     if elem3 == param3:
-                        elem4 = elem.getchildren()[3].getchildren()[3].getchildren()[0].getchildren()[1].text
+                        elem4 = elem.getchildren()[3].getchildren()[0].getchildren()[1].text
                         if elem4 == param4:
-                            elem5 = elem.getchildren()[3].getchildren()[3].getchildren()[1].getchildren()[1].text
+                            elem5 = elem.getchildren()[3].getchildren()[1].getchildren()[1].text
                             if elem5 == param5:
                                 return True
         return False
@@ -601,19 +601,19 @@ class FileCheck():
     def CheckBswM6(path, param1, param2, param3, param4, param5, param6):
         tree = etree.parse(path)
         root = tree.getroot()
-        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS")
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
         for elem in elements:
-            elem1 = elem.getchildren()[0].getchildren()[0].text
+            elem1 = elem.getchildren()[0].text
             if elem1 == param1:
-                elem2 = elem.getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[1].text
+                elem2 = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
                 if elem2 == param2:
-                    elem3 = elem.getchildren()[0].getchildren()[3].getchildren()[0].getchildren()[0].text
+                    elem3 = elem.getchildren()[3].getchildren()[0].getchildren()[0].text
                     if elem3 == param3:
-                        elem4 = elem.getchildren()[0].getchildren()[3].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[1].text
+                        elem4 = elem.getchildren()[3].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[1].text
                         if elem4 == param4:
-                            elem5 = elem.getchildren()[0].getchildren()[3].getchildren()[0].getchildren()[2].getchildren()[1].getchildren()[1].text
+                            elem5 = elem.getchildren()[3].getchildren()[0].getchildren()[2].getchildren()[1].getchildren()[1].text
                             if elem5 == param5:
-                                elem6 = elem.getchildren()[0].getchildren()[3].getchildren()[0].getchildren()[3].getchildren()[0].getchildren()[1].text
+                                elem6 = elem.getchildren()[3].getchildren()[0].getchildren()[3].getchildren()[0].getchildren()[1].text
                                 if elem6 == param6:
                                     return True
         return False
@@ -630,7 +630,21 @@ class FileCheck():
                     return True
         return False
 
-
+    def CheckBswM8(path, param1, param2, param3, param4):
+        tree = etree.parse(path)
+        root = tree.getroot()
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            elem1 = elem.getchildren()[0].text
+            if elem1 == param1:
+                elem2 = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
+                if elem2 == param2:
+                    elem3 = elem.getchildren()[3].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[1].text
+                    if elem3 == param3:
+                        elem4 = elem.getchildren()[3].getchildren()[1].getchildren()[2].getchildren()[0].getchildren()[2].getchildren()[0].getchildren()[1].text
+                        if elem4 == param4:
+                            return True
+        return False
 
     def isOutput(path):
         """
@@ -1556,11 +1570,11 @@ class COMConfigurator(unittest.TestCase):
 
 
 
-    def test_TRS_COMCONF_GEN_0138_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0138\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0138\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckBswM2(head + '\\Tests\\TRS.COMCONF.GEN.0138\\TEST01\\out\\BswM.epc','BswMLogicalExpression_BswMRule_CurrentSchedule_LIN_VSM_1_SCH_LIN1VSM_FONC1','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_LinScheduleTable_LIN_VSM_1_SCH_LIN1VSM_FONC1'))
+    #def test_TRS_COMCONF_GEN_0138_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0138\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0138\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM2(head + '\\Tests\\TRS.COMCONF.GEN.0138\\TEST01\\out\\BswM.epc','BswMLogicalExpression_BswMRule_CurrentSchedule_LIN_VSM_1_SCH_LIN1VSM_FONC1','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_LinScheduleTable_LIN_VSM_1_SCH_LIN1VSM_FONC1'))
 
     #def test_TRS_COMCONF_GEN_0139_TEST01(self):
     #    current_path = os.path.realpath(__file__)
@@ -1586,71 +1600,131 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0142\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0142\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckBswM6(head + '\\Tests\\TRS.COMCONF.GEN.0142\\TEST01\\out\\BswM.epc','BswMActionList_BswMRule_CurrentSchedule_LIN_VSM_1_SCH_LIN1VSM_FONC1_TrueActionList','BSWM_CONDITION','BswMActionList_LIN_VSM_1_SCH_LIN1VSM_FONC1','0','0','/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_Confirmation_LIN_VSM_1_SCH_LIN1VSM_FONC1'))
 
-    def test_TRS_COMCONF_GEN_0143_TEST01(self):
+    #def test_TRS_COMCONF_GEN_0143_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0143\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0143\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0143\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_Confirmation_LIN_VSM_1_SCH_LIN1VSM_REPDIAG','SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REPDIAG,LINTP_DIAG_RESPONSE)'))
+
+    #def test_TRS_COMCONF_GEN_0144_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0144\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0144\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0144\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_LIN_VSM_1_DiagResp','SSR_DiagScheduleResponse(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REPDIAG)'))
+
+    #def test_TRS_COMCONF_GEN_0145_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0145\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0145\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0145\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_Confirmation_LIN_VSM_1_SCH_LIN1VSM_FONC1','SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_FONC1,LINTP_APPLICATIVE_SCHEDULE)'))
+
+    #def test_TRS_COMCONF_GEN_0146_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0146\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0146\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0146\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_Confirmation_LIN_VSM_1_SCH_LIN1VSM_REQDIAG','SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REQDIAG,LINTP_DIAG_REQUEST)'))
+
+    #def test_TRS_COMCONF_GEN_0147_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0147\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0147\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0147\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_LIN_VSM_1_DiagReq','SSR_DiagScheduleRequest(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REQDIAG)'))
+
+    #def test_TRS_COMCONF_GEN_0148_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0148\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0148\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM2(head + '\\Tests\\TRS.COMCONF.GEN.0148\\TEST01\\out\\BswM.epc','BswMLogicalExpression_BswMRule_LinTp_LIN_VSM_1_Applicative','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_LIN_VSM_1_LINTP_APPLICATIVE_SCHEDULE'))
+
+    #def test_TRS_COMCONF_GEN_0149_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0149\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0149\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM2(head + '\\Tests\\TRS.COMCONF.GEN.0149\\TEST01\\out\\BswM.epc','BswMLogicalExpression_BswMRule_LinTp_LIN_VSM_1_DiagReq','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_LIN_VSM_1_LINTP_DIAG_REQUEST'))
+
+    #def test_TRS_COMCONF_GEN_0150_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0150\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0150\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM2(head + '\\Tests\\TRS.COMCONF.GEN.0150\\TEST01\\out\\BswM.epc','BswMLogicalExpression_BswMRule_LinTp_LIN_VSM_1_DiagResp','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_LIN_VSM_1_LINTP_DIAG_RESPONSE'))
+
+    #def test_TRS_COMCONF_GEN_0151_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0151\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0151\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM3(head + '\\Tests\\TRS.COMCONF.GEN.0151\\TEST01\\out\\BswM.epc','BswMModeCondition_BswMModeRequestPort_LIN_VSM_1_LINTP_APPLICATIVE_SCHEDULE','BSWM_EQUALS','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeRequestPort_LIN_VSM_1_Applicative','LINTP_APPLICATIVE_SCHEDULE'))
+
+    #def test_TRS_COMCONF_GEN_0152_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0152\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0152\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM3(head + '\\Tests\\TRS.COMCONF.GEN.0152\\TEST01\\out\\BswM.epc','BswMModeCondition_BswMModeRequestPort_LIN_VSM_1_LINTP_DIAG_REQUEST','BSWM_EQUALS','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeRequestPort_LIN_VSM_1_DiagReq','LINTP_DIAG_REQUEST'))
+
+    #def test_TRS_COMCONF_GEN_0153_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0153\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0153\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM3(head + '\\Tests\\TRS.COMCONF.GEN.0153\\TEST01\\out\\BswM.epc','BswMModeCondition_BswMModeRequestPort_LIN_VSM_1_LINTP_DIAG_RESPONSE','BSWM_EQUALS','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeRequestPort_LIN_VSM_1_DiagResp','LINTP_DIAG_RESPONSE'))
+
+    #def test_TRS_COMCONF_GEN_0154_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0154\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0154\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM8(head + '\\Tests\\TRS.COMCONF.GEN.0154\\TEST01\\out\\BswM.epc','BswMModeRequestPort_LIN_VSM_1_Applicative','BSWM_IMMEDIATE','LINTP_APPLICATIVE_SCHEDULE','/LinIf/LinIf/LinIfGlobalConfig/LIN_VSM_1_Channel'))
+
+    #def test_TRS_COMCONF_GEN_0155_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0155\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0155\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM8(head + '\\Tests\\TRS.COMCONF.GEN.0155\\TEST01\\out\\BswM.epc','BswMModeRequestPort_LIN_VSM_1_DiagReq','BSWM_IMMEDIATE','LINTP_APPLICATIVE_SCHEDULE','/LinIf/LinIf/LinIfGlobalConfig/LIN_VSM_1_Channel'))
+
+    #def test_TRS_COMCONF_GEN_0156_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0156\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0156\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM8(head + '\\Tests\\TRS.COMCONF.GEN.0156\\TEST01\\out\\BswM.epc','BswMModeRequestPort_LIN_VSM_1_DiagResp','BSWM_IMMEDIATE','LINTP_DIAG_REQUEST','/LinIf/LinIf/LinIfGlobalConfig/LIN_VSM_1_Channel'))
+
+    #def test_TRS_COMCONF_GEN_0157_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0157\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0157\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM5(head + '\\Tests\\TRS.COMCONF.GEN.0157\\TEST01\\out\\BswM.epc','BswMRule_LinTp_LIN_VSM_1_Applicative','0','BSWM_FALSE','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMLogicalExpression_BswMRule_LinTp_LIN_VSM_1_Applicative','/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_LinTp_LIN_VSM_1_Applicative_TrueActionList'))
+
+    #def test_TRS_COMCONF_GEN_0158_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0158\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0158\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM5(head + '\\Tests\\TRS.COMCONF.GEN.0158\\TEST01\\out\\BswM.epc','BswMRule_LinTp_LIN_VSM_1_DiagReq','0','BSWM_FALSE','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMLogicalExpression_BswMRule_LinTp_LIN_VSM_1_DiagReq','/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_LinTp_LIN_VSM_1_DiagReq_TrueActionList'))
+
+    #def test_TRS_COMCONF_GEN_0159_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0159\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0159\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckBswM5(head + '\\Tests\\TRS.COMCONF.GEN.0159\\TEST01\\out\\BswM.epc','BswMRule_LinTp_LIN_VSM_1_DiagResp','0','BSWM_FALSE','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMLogicalExpression_BswMRule_LinTp_LIN_VSM_1_DiagResp','/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_LinTp_LIN_VSM_1_DiagResp_TrueActionList'))
+
+    def test_TRS_COMCONF_GEN_0160_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0143\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0143\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0143\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_Confirmation_LIN_VSM_1_SCH_LIN1VSM_REPDIAG','SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REPDIAG,LINTP_DIAG_RESPONSE)'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0160\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0160\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckBswM6(head + '\\Tests\\TRS.COMCONF.GEN.0160\\TEST01\\out\\BswM.epc','BswMActionList_BswMRule_LinTp_LIN_VSM_1_Applicative_TrueActionList','BSWM_CONDITION','BswMActionList_LIN_VSM_1_Applicative','0','0','/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_LIN_VSM_1_Applicative'))
 
-    def test_TRS_COMCONF_GEN_0144_TEST01(self):
+    def test_TRS_COMCONF_GEN_0161_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0144\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0144\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0144\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_LIN_VSM_1_DiagResp','SSR_DiagScheduleResponse(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REPDIAG)'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0161\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0161\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckBswM6(head + '\\Tests\\TRS.COMCONF.GEN.0161\\TEST01\\out\\BswM.epc','BswMActionList_BswMRule_LinTp_LIN_VSM_1_DiagReq_TrueActionList','BSWM_CONDITION','BswMActionList_LIN_VSM_1_DiagReq','0','0','/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_LIN_VSM_1_DiagReq'))
 
-    def test_TRS_COMCONF_GEN_0145_TEST01(self):
+    def test_TRS_COMCONF_GEN_0162_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0145\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0145\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0145\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_Confirmation_LIN_VSM_1_SCH_LIN1VSM_FONC1','SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_FONC1,LINTP_APPLICATIVE_SCHEDULE)'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0162\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0162\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckBswM6(head + '\\Tests\\TRS.COMCONF.GEN.0162\\TEST01\\out\\BswM.epc','BswMActionList_BswMRule_LinTp_LIN_VSM_1_DiagResp_TrueActionList','BSWM_CONDITION','BswMActionList_LIN_VSM_1_DiagResp','0','0','/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_LIN_VSM_1_DiagResp'))
 
-    def test_TRS_COMCONF_GEN_0146_TEST01(self):
+    def test_TRS_COMCONF_GEN_0163_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0146\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0146\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0146\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_Confirmation_LIN_VSM_1_SCH_LIN1VSM_REQDIAG','SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REQDIAG,LINTP_DIAG_REQUEST)'))
-
-    def test_TRS_COMCONF_GEN_0147_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0147\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0147\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0147\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_LIN_VSM_1_DiagReq','SSR_DiagScheduleRequest(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REQDIAG)'))
-
-    def test_TRS_COMCONF_GEN_0148_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0148\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0148\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckBswM2(head + '\\Tests\\TRS.COMCONF.GEN.0148\\TEST01\\out\\BswM.epc','BswMLogicalExpression_BswMRule_LinTp_LIN_VSM_1_Applicative','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_LIN_VSM_1_LINTP_APPLICATIVE_SCHEDULE'))
-
-    def test_TRS_COMCONF_GEN_0149_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0149\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0149\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckBswM2(head + '\\Tests\\TRS.COMCONF.GEN.0149\\TEST01\\out\\BswM.epc','BswMLogicalExpression_BswMRule_LinTp_LIN_VSM_1_DiagReq','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_LIN_VSM_1_LINTP_DIAG_REQUEST'))
-
-    def test_TRS_COMCONF_GEN_0150_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0150\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0150\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckBswM2(head + '\\Tests\\TRS.COMCONF.GEN.0150\\TEST01\\out\\BswM.epc','BswMLogicalExpression_BswMRule_LinTp_LIN_VSM_1_DiagResp','/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_LIN_VSM_1_LINTP_DIAG_RESPONSE'))
-
-    def test_TRS_COMCONF_GEN_0151_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0151\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0151\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckBswM2(head + '\\Tests\\TRS.COMCONF.GEN.0151\\TEST01\\out\\BswM.epc','','','',''))
-
-
-
-
-
-
-
-
-
-
-
-
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0163\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0163\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0163\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_LIN_VSM_1_Applicative','SSR_AppLicativeScheduleRequest(ComMConf_ComMChannel_LIN_VSM_1)'))
 
 
 

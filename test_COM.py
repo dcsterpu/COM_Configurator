@@ -1564,10 +1564,23 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0136\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0136\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckBswM1(head + '\\Tests\\TRS.COMCONF.GEN.0136\\TEST01\\out\\BswM.epc','BswMConfig_0'))
 
+    def test_TRS_COMCONF_GEN_0137_TEST01(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0137\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0137\\TEST01\\out -EnGw')
+        self.assertFalse(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0137\\TEST01\\out\\BswM.epc','BswMAction_BswMUserCallout_LIN_VSM_1_DiagResp','SSR_DiagScheduleResponse(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REPDIAG)'))
 
+    def test_TRS_COMCONF_GEN_0137_TEST02(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0137\\TEST02\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0137\\TEST02\\out -EnGw')
+        self.assertFalse(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0137\\TEST02\\out\\BswM.epc','BswMAction_BswMUserCallout_LIN_VSM_1_DiagResp','SSR_DiagScheduleResponse(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REPDIAG)'))
 
-
-
+    def test_TRS_COMCONF_GEN_0137_TEST03(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0137\\TEST03\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0137\\TEST03\\out -EnGw')
+        self.assertTrue(FileCheck.CheckBswM7(head + '\\Tests\\TRS.COMCONF.GEN.0137\\TEST03\\out\\BswM.epc','BswMAction_BswMUserCallout_LIN_VSM_1_DiagResp','SSR_DiagScheduleResponse(ComMConf_ComMChannel_LIN_VSM_1,LinSMConf_LinSMSchedule_LIN_VSM_1_SCH_LIN1VSM_REPDIAG)'))
 
 
     #def test_TRS_COMCONF_GEN_0138_TEST01(self):

@@ -9,6 +9,92 @@ from operator import itemgetter
 
 class FileCheck():
 
+    def isOutput(path):
+        """
+        path = used for defining the file folder to be checked
+        """
+        if os.path.isfile(path):
+            return True
+        else:
+            return False
+
+    def checkFile(path, files):
+        """
+        path = used for defining the folder to be checked for files with extension
+        files = used for defining the files to be checked
+        """
+        bool_message = []
+        for fname in os.listdir(path):
+            bool_message.append(False)
+        i = 0
+        for file in files:
+            if file in os.listdir(path):
+                bool_message[i] = True
+                i = i + 1
+            else:
+                return False
+        for elem in bool_message:
+            if elem == False:
+                return False
+        return True
+
+    def checkPduR(path, inPath):
+        """
+        path = used for defining the file to be checked
+        inPath = used for defining the file from where to obtain source/target frame names
+        """
+        found_routingtable = found_routingpath = found_srcPdu = found_DestPdu = False
+        mapping_list = []
+        tree = etree.parse(inPath)
+        root = tree.getroot()
+        source = root.findall(".//GATEWAY-MAPPING")
+        for elem in source:
+            temp = []
+            for c in elem:
+                if c.tag == "SOURCE-FRAME-REF":
+                    temp.append(c.text.split("ft_", 1)[1])
+                    #source_name.append(c.text.split("ft_", 1)[1])
+                if c.tag == "TARGET-FRAME-REF":
+                    temp.append(c.text.split("ft_", 1)[1])
+                    #target_name.append(c.text.split("ft_", 1)[1])
+            mapping_list.append(temp)
+        tree1 = etree.parse(path)
+        root1 = tree1.getroot()
+        sub_containers = root1.findall(".//{http://autosar.org/schema/r4.0}SUB-CONTAINERS")
+        for container in sub_containers:
+            for mapping in mapping_list:
+                for elem in container:
+                    for elem2 in elem.iter(tag="{http://autosar.org/schema/r4.0}SHORT-NAME"):
+                        if elem2.text == "PduRRoutingTable_" + mapping[0]:
+                            found_routingtable = True
+                        if elem2.text == "PduRRoutingPath_" + mapping[0]:
+                            found_routingpath = True
+                        if elem2.text == "PduRSrcPdu_" + mapping[0]:
+                            found_srcPdu = True
+                        if elem2.text == "PduRDestPdu_" + mapping[0] + "_" + mapping[1] + "_TO_CDD":
+                            found_DestPdu = True
+                    if not found_routingtable and not found_DestPdu and not found_routingpath and not found_srcPdu:
+                        return False
+        if found_routingtable and found_routingpath and found_srcPdu and found_DestPdu:
+            return True
+        else:
+            return False
+
+    # def ecuc(path1, path2):
+    #     """
+    #         path1 = used for defining the file to be checked for values(from input)
+    #         path2 = used for defining the file to be checked (from output)
+    #     """
+    #     a = 7
+    #     tree = etree.parse(path1)
+    #     root = tree.getroot()
+    #     source = root.findall(".//{http://autosar.org/2.1.2}CONTAINERS")
+    #     for container in source:
+    #     #     if container.getchildren[0].text == "DiagTool":
+    #     #     if container.getchildren[0].text == "BTA":
+    #         for elem in container:
+    #             for elem2 in elem:
+
     def CheckParameter(path, callout, param):
         """
         function that checks in a Scriptor script if a specific CALLOUT has a given parameter set
@@ -646,7 +732,7 @@ class FileCheck():
                             return True
         return False
 
-    def CheckEnGwCLD1(path, param):
+    def CheckEnGw1(path, param):
         tree = etree.parse(path)
         root = tree.getroot()
         elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
@@ -656,7 +742,7 @@ class FileCheck():
                 return True
         return False
 
-    def CheckEnGwCLD2(path, param):
+    def CheckEnGw2(path, param):
         tree = etree.parse(path)
         root = tree.getroot()
         elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
@@ -666,7 +752,7 @@ class FileCheck():
                 return True
         return False
 
-    def CheckEnGwCLD3(path, param2, param3):
+    def CheckEnGw3(path, param2, param3):
         tree = etree.parse(path)
         root = tree.getroot()
         elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
@@ -680,7 +766,7 @@ class FileCheck():
                         return True
         return False
 
-    def CheckEnGwCLD4(path, param):
+    def CheckEnGw4(path, param):
         tree = etree.parse(path)
         root = tree.getroot()
         elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
@@ -690,7 +776,7 @@ class FileCheck():
                 return True
         return False
 
-    def CheckEnGwCLD5(path, param1, param2):
+    def CheckEnGw5(path, param1, param2):
         tree = etree.parse(path)
         root = tree.getroot()
         elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
@@ -702,7 +788,7 @@ class FileCheck():
                     return True
         return False
 
-    def CheckEnGwCLD6(path, param1, param2, param3, param4):
+    def CheckEnGw6(path, param1, param2, param3, param4):
         tree = etree.parse(path)
         root = tree.getroot()
         elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
@@ -718,96 +804,284 @@ class FileCheck():
                             return True
         return False
 
-
-
-
-
-
-    def isOutput(path):
-        """
-        path = used for defining the file folder to be checked
-        """
-        if os.path.isfile(path):
-            return True
-        else:
-            return False
-
-    def checkFile(path, files):
-        """
-        path = used for defining the folder to be checked for files with extension
-        files = used for defining the files to be checked
-        """
-        bool_message = []
-        for fname in os.listdir(path):
-            bool_message.append(False)
-        i = 0
-        for file in files:
-            if file in os.listdir(path):
-                bool_message[i] = True
-                i = i + 1
-            else:
-                return False
-        for elem in bool_message:
-            if elem == False:
-                return False
-        return True
-
-    def checkPduR(path, inPath):
-        """
-        path = used for defining the file to be checked
-        inPath = used for defining the file from where to obtain source/target frame names
-        """
-        found_routingtable = found_routingpath = found_srcPdu = found_DestPdu = False
-        mapping_list = []
-        tree = etree.parse(inPath)
+    def CheckEnGw71(path):
+        list = []
+        tree = etree.parse(path)
         root = tree.getroot()
-        source = root.findall(".//GATEWAY-MAPPING")
-        for elem in source:
-            temp = []
-            for c in elem:
-                if c.tag == "SOURCE-FRAME-REF":
-                    temp.append(c.text.split("ft_", 1)[1])
-                    #source_name.append(c.text.split("ft_", 1)[1])
-                if c.tag == "TARGET-FRAME-REF":
-                    temp.append(c.text.split("ft_", 1)[1])
-                    #target_name.append(c.text.split("ft_", 1)[1])
-            mapping_list.append(temp)
-        tree1 = etree.parse(path)
-        root1 = tree1.getroot()
-        sub_containers = root1.findall(".//{http://autosar.org/schema/r4.0}SUB-CONTAINERS")
-        for container in sub_containers:
-            for mapping in mapping_list:
-                for elem in container:
-                    for elem2 in elem.iter(tag="{http://autosar.org/schema/r4.0}SHORT-NAME"):
-                        if elem2.text == "PduRRoutingTable_" + mapping[0]:
-                            found_routingtable = True
-                        if elem2.text == "PduRRoutingPath_" + mapping[0]:
-                            found_routingpath = True
-                        if elem2.text == "PduRSrcPdu_" + mapping[0]:
-                            found_srcPdu = True
-                        if elem2.text == "PduRDestPdu_" + mapping[0] + "_" + mapping[1] + "_TO_CDD":
-                            found_DestPdu = True
-                    if not found_routingtable and not found_DestPdu and not found_routingpath and not found_srcPdu:
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            dict = {}
+            dict['NAME'] = elem.getchildren()[0].text
+            dict['VALUE'] = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
+            list.append(dict)
+
+        #verifica daca sunt dubluri
+        for i in range(0,len(list),1):
+            for j in range(0,len(list),1):
+                if list[i] == list[j] and i != j:
+                    return False
+
+        #daca nr de elem din lista e impar => un element nu are corespondent
+        if len(list)%2 != 0:
+            return False
+        else:
+            contor = 0
+            for i in range(0,len(list),1):
+                name = list[i]['NAME'].split("_")
+                prefix = name[0] + "_" + name[1]
+                if prefix == "PduRUpperLayerRxPdu_REP":
+                    name2 = "PduRUpperLayerTxPdu_REQ"
+                    for k in range(2,len(name),1):
+                        name2 = name2 + "_" + name[k]
+                    cnt = 0
+                    for j in range(0,len(list),1):
+                        if list[j]['NAME'] == name2:
+                            cnt = cnt +1
+                    if cnt == 1:
+                        contor = contor + 1
+                    else:
                         return False
-        if found_routingtable and found_routingpath and found_srcPdu and found_DestPdu:
+                else:
+                    if prefix == "PduRUpperLayerTxPdu_REQ":
+                        name2 = "PduRUpperLayerRxPdu_REP"
+                        for k in range(2, len(name), 1):
+                            name2 = name2 + "_" + name[k]
+                        cnt = 0
+                        for j in range(0, len(list), 1):
+                            if list[j]['NAME'] == name2:
+                                cnt = cnt + 1
+                        if cnt == 1:
+                            contor = contor + 1
+                        else:
+                            return False
+                    else:
+                        if prefix == "PduRUpperLayerRxPdu_REQ":
+                            name2 = "PduRUpperLayerTxPdu_REP"
+                            for k in range(2, len(name), 1):
+                                name2 = name2 + "_" + name[k]
+                            cnt = 0
+                            for j in range(0, len(list), 1):
+                                if list[j]['NAME'] == name2:
+                                    cnt = cnt + 1
+                            if cnt == 1:
+                                contor = contor + 1
+                            else:
+                                return False
+                        else:
+                            if prefix == "PduRUpperLayerTxPdu_REP":
+                                name2 = "PduRUpperLayerRxPdu_REQ"
+                                for k in range(2, len(name), 1):
+                                    name2 = name2 + "_" + name[k]
+                                cnt = 0
+                                for j in range(0, len(list), 1):
+                                    if list[j]['NAME'] == name2:
+                                        cnt = cnt + 1
+                                if cnt == 1:
+                                    contor = contor + 1
+                                else:
+                                    return False
+
+
+        if contor == len(list):
             return True
         else:
             return False
 
-    # def ecuc(path1, path2):
-    #     """
-    #         path1 = used for defining the file to be checked for values(from input)
-    #         path2 = used for defining the file to be checked (from output)
-    #     """
-    #     a = 7
-    #     tree = etree.parse(path1)
-    #     root = tree.getroot()
-    #     source = root.findall(".//{http://autosar.org/2.1.2}CONTAINERS")
-    #     for container in source:
-    #     #     if container.getchildren[0].text == "DiagTool":
-    #     #     if container.getchildren[0].text == "BTA":
-    #         for elem in container:
-    #             for elem2 in elem:
+    def CheckEnGw72(path):
+        list = []
+        tree = etree.parse(path)
+        root = tree.getroot()
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            dict = {}
+            dict['NAME'] = elem.getchildren()[0].text
+            dict['VALUE'] = int(elem.getchildren()[2].getchildren()[0].getchildren()[1].text)
+            list.append(dict)
+        cnt = 0
+        list = sorted(list, key = itemgetter('VALUE'))
+        for i in range(0,len(list),2):
+            name = list[i]['NAME'].split("_")
+            prefix = name[0] + "_" + name[1]
+            if prefix == "PduRUpperLayerRxPdu_REP":
+                name2 = "PduRUpperLayerTxPdu_REQ"
+                for k in range(2, len(name), 1):
+                    name2 = name2 + "_" + name[k]
+                if list[i+1]['NAME'] == name2:
+                    if list[i]['VALUE'] == list[i+1]['VALUE']:
+                        if list[i]['VALUE'] == i/2:
+                            cnt = cnt + 1
+            else:
+                if prefix == "PduRUpperLayerTxPdu_REQ":
+                    name2 = "PduRUpperLayerRxPdu_REP"
+                    for k in range(2, len(name), 1):
+                        name2 = name2 + "_" + name[k]
+                    if list[i + 1]['NAME'] == name2:
+                        if list[i]['VALUE'] == list[i + 1]['VALUE']:
+                            if list[i]['VALUE'] == i / 2:
+                                cnt = cnt + 1
+                else:
+                    if prefix == "PduRUpperLayerRxPdu_REQ":
+                        name2 = "PduRUpperLayerTxPdu_REP"
+                        for k in range(2, len(name), 1):
+                            name2 = name2 + "_" + name[k]
+                        if list[i + 1]['NAME'] == name2:
+                            if list[i]['VALUE'] == list[i + 1]['VALUE']:
+                                if list[i]['VALUE'] == i / 2:
+                                    cnt = cnt + 1
+                    else:
+                        if prefix == "PduRUpperLayerTxPdu_REP":
+                            name2 = "PduRUpperLayerRxPdu_REQ"
+                            for k in range(2, len(name), 1):
+                                name2 = name2 + "_" + name[k]
+                            if list[i + 1]['NAME'] == name2:
+                                if list[i]['VALUE'] == list[i + 1]['VALUE']:
+                                    if list[i]['VALUE'] == i / 2:
+                                        cnt = cnt + 1
+        if cnt == len(list)/2:
+            return True
+        else:
+            return False
+
+    def CheckEnGw8(path, param2):
+        tree = etree.parse(path)
+        root = tree.getroot()
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            elem1 = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
+            if elem1.isdigit():
+                elem2 = elem.getchildren()[3].getchildren()[0].getchildren()[1].text
+                if elem2 == param2:
+                    return True
+        return False
+
+    def CheckEnGw91(path):
+        list = []
+        tree = etree.parse(path)
+        root = tree.getroot()
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            if elem.getchildren()[0].text.split("_")[0] == "PduRLowerLayerRxPdu" or elem.getchildren()[0].text.split("_")[0] == "PduRLowerLayerTxPdu":
+                dict = {}
+                dict['NAME'] = elem.getchildren()[0].text
+                dict['VALUE'] = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
+                list.append(dict)
+
+        #verifica daca sunt dubluri
+        for i in range(0,len(list),1):
+            for j in range(0,len(list),1):
+                if list[i] == list[j] and i != j:
+                    return False
+
+        #daca nr de elem din lista e impar => un element nu are corespondent
+        if len(list)%2 != 0:
+            return False
+        else:
+            contor = 0
+            for i in range(0,len(list),1):
+                name = list[i]['NAME'].split("_")
+                prefix = name[0]
+                if prefix == "PduRLowerLayerRxPdu":
+                    name2 = "PduRLowerLayerTxPdu"
+                    for k in range(1,len(name),1):
+                        if k == len(name)-2:
+                            name2 = name2 + "_" + "TO"
+                        else:
+                            name2 = name2 + "_" + name[k]
+                    cnt = 0
+                    for j in range(0,len(list),1):
+                        if list[j]['NAME'] == name2:
+                            cnt = cnt +1
+                    if cnt == 1:
+                        contor = contor + 1
+                    else:
+                        return False
+                else:
+                    if prefix == "PduRLowerLayerTxPdu":
+                        name2 = "PduRLowerLayerRxPdu"
+                        for k in range(1, len(name), 1):
+                            if k == len(name) - 2:
+                                name2 = name2 + "_" + "FROM"
+                            else:
+                                name2 = name2 + "_" + name[k]
+                        cnt = 0
+                        for j in range(0, len(list), 1):
+                            if list[j]['NAME'] == name2:
+                                cnt = cnt + 1
+                        if cnt == 1:
+                            contor = contor + 1
+                        else:
+                            return False
+        if contor == len(list):
+            return True
+        else:
+            return False
+
+    def CheckEnGw92(path):
+        list = []
+        tree = etree.parse(path)
+        root = tree.getroot()
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            if elem.getchildren()[0].text.split("_")[0] == "PduRLowerLayerRxPdu" or elem.getchildren()[0].text.split("_")[0] == "PduRLowerLayerTxPdu":
+                dict = {}
+                dict['NAME'] = elem.getchildren()[0].text
+                dict['VALUE'] = int(elem.getchildren()[2].getchildren()[0].getchildren()[1].text)
+                list.append(dict)
+
+        cnt = 0
+        list = sorted(list, key = itemgetter('VALUE'))
+        for i in range(0,len(list),2):
+            name = list[i]['NAME'].split("_")
+            prefix = name[0]
+            if prefix == "PduRLowerLayerRxPdu":
+                name2 = "PduRLowerLayerTxPdu"
+                for k in range(1, len(name), 1):
+                    if k == len(name) - 2:
+                        name2 = name2 + "_" + "TO"
+                    else:
+                        name2 = name2 + "_" + name[k]
+                if list[i+1]['NAME'] == name2:
+                    if list[i]['VALUE'] == list[i+1]['VALUE']:
+                        if list[i]['VALUE'] == i/2:
+                            cnt = cnt + 1
+            else:
+                if prefix == "PduRLowerLayerTxPdu":
+                    name2 = "PduRLowerLayerRxPdu"
+                    for k in range(1, len(name), 1):
+                        if k == len(name) - 2:
+                            name2 = name2 + "_" + "FROM"
+                        else:
+                            name2 = name2 + "_" + name[k]
+                    if list[i + 1]['NAME'] == name2:
+                        if list[i]['VALUE'] == list[i + 1]['VALUE']:
+                            if list[i]['VALUE'] == i / 2:
+                                cnt = cnt + 1
+        if cnt == len(list)/2:
+            return True
+        else:
+            return False
+
+    def CheckEnGw10(path, param1, param2, param3):
+        tree = etree.parse(path)
+        root = tree.getroot()
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE/{http://autosar.org/schema/r4.0}SUB-CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            elem1 = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
+            if elem1 == param1:
+                elem2 = elem.getchildren()[3].getchildren()[0].getchildren()[1].text
+                if elem2 == param2:
+                    elem3 = elem.getchildren()[3].getchildren()[1].getchildren()[1].text
+                    if elem3 == param3:
+                        return True
+        return False
+
+
+
+
+
+
+
+
 
 class COMConfigurator(unittest.TestCase):
     # def test_TRS_COMCONF_INOUT_001_1(self):
@@ -1819,187 +2093,419 @@ class COMConfigurator(unittest.TestCase):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0166\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0166\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD1(head + '\\Tests\\TRS.COMCONF.GEN.0166\\TEST01\\out\\EnGwCLD.epc','CddPduRUpperLayerContribution'))
+    #    self.assertTrue(FileCheck.CheckEnGw1(head + '\\Tests\\TRS.COMCONF.GEN.0166\\TEST01\\out\\EnGwCLD.epc','CddPduRUpperLayerContribution'))
 
     #def test_TRS_COMCONF_GEN_0167_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0167\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0167\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD2(head + '\\Tests\\TRS.COMCONF.GEN.0167\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerRxPdu_REP_LIN_VSM_1_1P3'))
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0167\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerRxPdu_REP_LIN_VSM_1_1P3'))
 
     #def test_TRS_COMCONF_GEN_0168_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0168\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0168\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD3(head + '\\Tests\\TRS.COMCONF.GEN.0168\\TEST01\\out\\EnGwCLD.epc','IF','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_LIN_VSM_1_1P3_LinIf'))
+    #    self.assertTrue(FileCheck.CheckEnGw3(head + '\\Tests\\TRS.COMCONF.GEN.0168\\TEST01\\out\\EnGwCLD.epc','IF','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_LIN_VSM_1_1P3_LinIf'))
 
     #def test_TRS_COMCONF_GEN_0169_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0169\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0169\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD2(head + '\\Tests\\TRS.COMCONF.GEN.0169\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerTxPdu_REQ_LIN_VSM_1_1P3'))
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0169\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerTxPdu_REQ_LIN_VSM_1_1P3'))
 
     #def test_TRS_COMCONF_GEN_0170_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0170\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0170\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD3(head + '\\Tests\\TRS.COMCONF.GEN.0170\\TEST01\\out\\EnGwCLD.epc','IF','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_LIN_VSM_1_1P3_LinIf'))
+    #    self.assertTrue(FileCheck.CheckEnGw3(head + '\\Tests\\TRS.COMCONF.GEN.0170\\TEST01\\out\\EnGwCLD.epc','IF','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_LIN_VSM_1_1P3_LinIf'))
 
     #def test_TRS_COMCONF_GEN_0171_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0171\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0171\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD2(head + '\\Tests\\TRS.COMCONF.GEN.0171\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerTxPdu_REQ_FRONT_WIPING_LIN_VSM_1_2P1'))
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0171\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerTxPdu_REQ_FRONT_WIPING_LIN_VSM_1_2P1'))
 
     #def test_TRS_COMCONF_GEN_0172_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0172\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0172\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD3(head + '\\Tests\\TRS.COMCONF.GEN.0172\\TEST01\\out\\EnGwCLD.epc','TP','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_FRONT_WIPING_LIN_VSM_1_LinTp'))
+    #    self.assertTrue(FileCheck.CheckEnGw3(head + '\\Tests\\TRS.COMCONF.GEN.0172\\TEST01\\out\\EnGwCLD.epc','TP','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_FRONT_WIPING_LIN_VSM_1_LinTp'))
 
     #def test_TRS_COMCONF_GEN_0173_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0173\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0173\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD2(head + '\\Tests\\TRS.COMCONF.GEN.0173\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerRxPdu_REP_FRONT_WIPING_LIN_VSM_1_2P1'))
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0173\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerRxPdu_REP_FRONT_WIPING_LIN_VSM_1_2P1'))
 
     #def test_TRS_COMCONF_GEN_0174_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0174\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0174\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD3(head + '\\Tests\\TRS.COMCONF.GEN.0174\\TEST01\\out\\EnGwCLD.epc','TP','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_FRONT_WIPING_LIN_VSM_1_LinTp'))
+    #    self.assertTrue(FileCheck.CheckEnGw3(head + '\\Tests\\TRS.COMCONF.GEN.0174\\TEST01\\out\\EnGwCLD.epc','TP','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_FRONT_WIPING_LIN_VSM_1_LinTp'))
 
     #def test_TRS_COMCONF_GEN_0175_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0175\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0175\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD2(head + '\\Tests\\TRS.COMCONF.GEN.0175\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerRxPdu_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0175\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerRxPdu_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
 
     #def test_TRS_COMCONF_GEN_0176_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0176\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0176\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD3(head + '\\Tests\\TRS.COMCONF.GEN.0176\\TEST01\\out\\EnGwCLD.epc','TP','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_CanTp'))
+    #    self.assertTrue(FileCheck.CheckEnGw3(head + '\\Tests\\TRS.COMCONF.GEN.0176\\TEST01\\out\\EnGwCLD.epc','TP','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_CanTp'))
 
     #def test_TRS_COMCONF_GEN_0177_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0177\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0177\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD2(head + '\\Tests\\TRS.COMCONF.GEN.0177\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerTxPdu_REP_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0177\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerTxPdu_REP_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
 
     #def test_TRS_COMCONF_GEN_0178_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0178\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0178\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD3(head + '\\Tests\\TRS.COMCONF.GEN.0178\\TEST01\\out\\EnGwCLD.epc','TP','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_DIAG_FRONT_WIPING_LIN_VSM_1_CanTp'))
+    #    self.assertTrue(FileCheck.CheckEnGw3(head + '\\Tests\\TRS.COMCONF.GEN.0178\\TEST01\\out\\EnGwCLD.epc','TP','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_DIAG_FRONT_WIPING_LIN_VSM_1_CanTp'))
 
     #def test_TRS_COMCONF_GEN_0179_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0179\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0179\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD4(head + '\\Tests\\TRS.COMCONF.GEN.0179\\TEST01\\out\\EnGwCLD.epc','EnGwCLDRoutingPath_REP_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
+    #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0179\\TEST01\\out\\EnGwCLD.epc','EnGwCLDRoutingPath_REP_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
 
     #def test_TRS_COMCONF_GEN_0180_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0180\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0180\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD5(head + '\\Tests\\TRS.COMCONF.GEN.0180\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REP_FRONT_WIPING_LIN_VSM_1_2P1','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
+    #    self.assertTrue(FileCheck.CheckEnGw5(head + '\\Tests\\TRS.COMCONF.GEN.0180\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REP_FRONT_WIPING_LIN_VSM_1_2P1','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
 
     #def test_TRS_COMCONF_GEN_0181_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0181\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0181\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD4(head + '\\Tests\\TRS.COMCONF.GEN.0181\\TEST01\\out\\EnGwCLD.epc','EnGwCLDRoutingPath_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
+    #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0181\\TEST01\\out\\EnGwCLD.epc','EnGwCLDRoutingPath_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
 
     #def test_TRS_COMCONF_GEN_0182_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0182\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0182\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD5(head + '\\Tests\\TRS.COMCONF.GEN.0182\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_2P1','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQ_FRONT_WIPING_LIN_VSM_1_2P1'))
+    #    self.assertTrue(FileCheck.CheckEnGw5(head + '\\Tests\\TRS.COMCONF.GEN.0182\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_2P1','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQ_FRONT_WIPING_LIN_VSM_1_2P1'))
 
     #def test_TRS_COMCONF_GEN_0183_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD4(head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out\\EnGwCLD.epc','EnGwCLDReqRepConfiguration_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
+    #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out\\EnGwCLD.epc','EnGwCLDReqRepConfiguration_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
 
     #def test_TRS_COMCONF_GEN_0183_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD4(head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out\\EnGwCLD.epc','EnGwCLDReqRepConfiguration_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
+    #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out\\EnGwCLD.epc','EnGwCLDReqRepConfiguration_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
 
     #def test_TRS_COMCONF_GEN_0184_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0184\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD6(head + '\\Tests\\TRS.COMCONF.GEN.0184\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_2P1','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_FRONT_WIPING_LIN_VSM_1_2P1','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_GW_CAN_DIAG_INDEX','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_LIN_VSM_1_INDEX'))
+    #    self.assertTrue(FileCheck.CheckEnGw6(head + '\\Tests\\TRS.COMCONF.GEN.0184\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_FRONT_WIPING_LIN_VSM_1_2P1','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_FRONT_WIPING_LIN_VSM_1_2P1','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_GW_CAN_DIAG_INDEX','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_LIN_VSM_1_INDEX'))
 
     #def test_TRS_COMCONF_GEN_0185_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0185\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0185\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD2(head + '\\Tests\\TRS.COMCONF.GEN.0185\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerRxPdu_REQ_DIAG_SIR_LIN_VSM_1_1P3'))
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0185\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerRxPdu_REQ_DIAG_SIR_LIN_VSM_1_1P3'))
 
     #def test_TRS_COMCONF_GEN_0186_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0186\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0186\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD3(head + '\\Tests\\TRS.COMCONF.GEN.0186\\TEST01\\out\\EnGwCLD.epc','IF','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_DIAG_SIR_LIN_VSM_1_CanIf'))
+    #    self.assertTrue(FileCheck.CheckEnGw3(head + '\\Tests\\TRS.COMCONF.GEN.0186\\TEST01\\out\\EnGwCLD.epc','IF','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_DIAG_SIR_LIN_VSM_1_CanIf'))
 
     #def test_TRS_COMCONF_GEN_0187_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0187\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0187\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD2(head + '\\Tests\\TRS.COMCONF.GEN.0187\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerTxPdu_REP_DIAG_SIR_LIN_VSM_1_1P3'))
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0187\\TEST01\\out\\EnGwCLD.epc','PduRUpperLayerTxPdu_REP_DIAG_SIR_LIN_VSM_1_1P3'))
 
     #def test_TRS_COMCONF_GEN_0188_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0188\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0188\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD3(head + '\\Tests\\TRS.COMCONF.GEN.0188\\TEST01\\out\\EnGwCLD.epc','IF','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_DIAG_SIR_LIN_VSM_1_CanIf'))
+    #    self.assertTrue(FileCheck.CheckEnGw3(head + '\\Tests\\TRS.COMCONF.GEN.0188\\TEST01\\out\\EnGwCLD.epc','IF','/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_DIAG_SIR_LIN_VSM_1_CanIf'))
 
     #def test_TRS_COMCONF_GEN_0189_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0189\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0189\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD4(head + '\\Tests\\TRS.COMCONF.GEN.0189\\TEST01\\out\\EnGwCLD.epc','EnGwCLDRoutingPath_REP_DIAG_SIR_LIN_VSM_1_1P3'))
+    #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0189\\TEST01\\out\\EnGwCLD.epc','EnGwCLDRoutingPath_REP_DIAG_SIR_LIN_VSM_1_1P3'))
 
     #def test_TRS_COMCONF_GEN_0190_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0190\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0190\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD5(head + '\\Tests\\TRS.COMCONF.GEN.0190\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REP_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_SIR_LIN_VSM_1_1P3'))
+    #    self.assertTrue(FileCheck.CheckEnGw5(head + '\\Tests\\TRS.COMCONF.GEN.0190\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REP_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_SIR_LIN_VSM_1_1P3'))
 
     #def test_TRS_COMCONF_GEN_0191_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0191\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0191\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD4(head + '\\Tests\\TRS.COMCONF.GEN.0191\\TEST01\\out\\EnGwCLD.epc','EnGwCLDRoutingPath_REQ_DIAG_SIR_LIN_VSM_1_1P3'))
+    #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0191\\TEST01\\out\\EnGwCLD.epc','EnGwCLDRoutingPath_REQ_DIAG_SIR_LIN_VSM_1_1P3'))
 
     #def test_TRS_COMCONF_GEN_0192_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0192\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0192\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD5(head + '\\Tests\\TRS.COMCONF.GEN.0192\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQ_LIN_VSM_1_1P3'))
+    #    self.assertTrue(FileCheck.CheckEnGw5(head + '\\Tests\\TRS.COMCONF.GEN.0192\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQ_LIN_VSM_1_1P3'))
 
     #def test_TRS_COMCONF_GEN_0193_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0193\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0193\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD4(head + '\\Tests\\TRS.COMCONF.GEN.0193\\TEST01\\out\\EnGwCLD.epc','EnGwCLDReqRepConfiguration_DIAG_SIR_LIN_VSM_1_1P3'))
+    #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0193\\TEST01\\out\\EnGwCLD.epc','EnGwCLDReqRepConfiguration_DIAG_SIR_LIN_VSM_1_1P3'))
 
     #def test_TRS_COMCONF_GEN_0194_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGwCLD6(head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_GW_CAN_DIAG_INDEX','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_LIN_VSM_1_INDEX'))
+    #    self.assertTrue(FileCheck.CheckEnGw6(head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_GW_CAN_DIAG_INDEX','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_LIN_VSM_1_INDEX'))
 
-    def test_TRS_COMCONF_GEN_0194_TEST01(self):
+    #def test_TRS_COMCONF_GEN_0194_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw6(head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_GW_CAN_DIAG_INDEX','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_LIN_VSM_1_INDEX'))
+
+    #def test_TRS_COMCONF_GEN_0195_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0195\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0195\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw71(head + '\\Tests\\TRS.COMCONF.GEN.0195\\TEST01\\out\\EnGwCLD.epc'))
+    #    self.assertTrue(FileCheck.CheckEnGw72(head + '\\Tests\\TRS.COMCONF.GEN.0195\\TEST01\\out\\EnGwCLD.epc'))
+
+    #def test_TRS_COMCONF_GEN_0196_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0196\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0196\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw1(head + '\\Tests\\TRS.COMCONF.GEN.0196\\TEST01\\out\\EnGwCLD.epc','cEnGw_GW_CAN_DIAG_INDEX'))
+
+    #def test_TRS_COMCONF_GEN_0197_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0197\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0197\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw1(head + '\\Tests\\TRS.COMCONF.GEN.0197\\TEST01\\out\\EnGwCLD.epc','cEnGw_LIN_VSM_1_INDEX'))
+
+    #def test_TRS_COMCONF_GEN_0199_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0199\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0199\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw1(head + '\\Tests\\TRS.COMCONF.GEN.0199\\TEST01\\out\\EnGwCCLD.epc','CddPduRLowerLayerContribution'))
+
+    #def test_TRS_COMCONF_GEN_0200_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0200\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0200\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0200\\TEST01\\out\\EnGwCCLD.epc','PduRLowerLayerRxPdu_isip_HS4_VMF_DSGN_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0201_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0201\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0201\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw8(head + '\\Tests\\TRS.COMCONF.GEN.0201\\TEST01\\out\\EnGwCCLD.epc','/EcuC/EcuC/EcucPduCollection/isip_HS4_VMF_DSGN_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0202_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0202\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0202\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0202\\TEST01\\out\\EnGwCCLD.epc','PduRLowerLayerTxPdu_isip_HS4_VMF_DSGN_TO_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0203_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0203\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0203\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw8(head + '\\Tests\\TRS.COMCONF.GEN.0203\\TEST01\\out\\EnGwCCLD.epc','/EcuC/EcuC/EcucPduCollection/isip_HS4_VMF_DSGN_TO_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0204_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0204\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0204\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw91(head + '\\Tests\\TRS.COMCONF.GEN.0204\\TEST01\\out\\EnGwCCLD.epc'))
+    #    self.assertTrue(FileCheck.CheckEnGw92(head + '\\Tests\\TRS.COMCONF.GEN.0204\\TEST01\\out\\EnGwCCLD.epc'))
+
+    #def test_TRS_COMCONF_GEN_0205_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0205\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0205\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0205\\TEST01\\out\\EnGwCCLD.epc','RoutingPathCCLD_isip_HS4_VSM_CDE_PTR_MESSAGE_TO_isip_HS4_VMF_DSGN'))
+
+    #def test_TRS_COMCONF_GEN_0206_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0206\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0206\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw10(head + '\\Tests\\TRS.COMCONF.GEN.0206\\TEST01\\out\\EnGwCCLD.epc','isip_HS4_VSM_CDE_PTR_MESSAGE_to_isip_HS4_VMF_DSGN','/EnGwCCLD/EnGwCCLD/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_isip_HS4_VMF_DSGN_TO_CDD','/EnGwCCLD/EnGwCCLD/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_isip_HS4_VMF_DSGN_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0208_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0208\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0208\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw1(head + '\\Tests\\TRS.COMCONF.GEN.0208\\TEST01\\out\\EnGwCCB.epc','CddPduRLowerLayerContribution'))
+
+    #def test_TRS_COMCONF_GEN_0209_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0209\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0209\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0209\\TEST01\\out\\EnGwCCB.epc','PduRLowerLayerRxPdu_isip_HS1_REQ_EOBD_ON_CAN_7E6_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0210_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0210\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0210\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw8(head + '\\Tests\\TRS.COMCONF.GEN.0210\\TEST01\\out\\EnGwCCB.epc','/EcuC/EcuC/EcucPduCollection/isip_HS1_REQ_EOBD_ON_CAN_7E6_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0211_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0211\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0211\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0211\\TEST01\\out\\EnGwCCB.epc','PduRLowerLayerTxPdu_isip_HS1_REQ_EOBD_ON_CAN_7E6_TO_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0212_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0212\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0212\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw8(head + '\\Tests\\TRS.COMCONF.GEN.0212\\TEST01\\out\\EnGwCCB.epc','/EcuC/EcuC/EcucPduCollection/isip_HS1_REQ_EOBD_ON_CAN_7E6_TO_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0213_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0213\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0213\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw91(head + '\\Tests\\TRS.COMCONF.GEN.0213\\TEST01\\out\\EnGwCCLD.epc'))
+    #    self.assertTrue(FileCheck.CheckEnGw92(head + '\\Tests\\TRS.COMCONF.GEN.0213\\TEST01\\out\\EnGwCCLD.epc'))
+
+    #def test_TRS_COMCONF_GEN_0214_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0214\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0214\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0214\\TEST01\\out\\EnGwCCB.epc','RoutingPathCCB_isip_HS1_REQ_EOBD_ON_CAN_7E7_TO_isip_HS1_REQ_EOBD_ON_CAN_7E6'))
+
+    #def test_TRS_COMCONF_GEN_0215_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0215\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0215\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw10(head + '\\Tests\\TRS.COMCONF.GEN.0215\\TEST01\\out\\EnGwCCB.epc','isip_HS1_REQ_EOBD_ON_CAN_7E7_to_isip_HS1_REQ_EOBD_ON_CAN_7E6','/EnGwCCB/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_isip_HS1_REQ_EOBD_ON_CAN_7E6_TO_CDD','/EnGwCCB/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_isip_HS1_REQ_EOBD_ON_CAN_7E6_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0217_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0217\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0217\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw1(head + '\\Tests\\TRS.COMCONF.GEN.0217\\TEST01\\out\\EnGwCCD.epc','CddPduRLowerLayerContribution'))
+
+    #def test_TRS_COMCONF_GEN_0218_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0218\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0218\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0218\\TEST01\\out\\EnGwCCD.epc','PduRLowerLayerRxPdu_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0219_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0219\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0219\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw8(head + '\\Tests\\TRS.COMCONF.GEN.0219\\TEST01\\out\\EnGwCCD.epc','/EcuC/EcuC/EcucPduCollection/isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0220_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0220\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0220\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0220\\TEST01\\out\\EnGwCCD.epc','PduRLowerLayerTxPdu_isip_HS4_VSM_INF_PRG_RTAB_TO_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0221_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0221\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0221\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw8(head + '\\Tests\\TRS.COMCONF.GEN.0221\\TEST01\\out\\EnGwCCD.epc','/EcuC/EcuC/EcucPduCollection/isip_HS4_VSM_INF_PRG_RTAB_TO_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0222_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0222\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0222\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw91(head + '\\Tests\\TRS.COMCONF.GEN.0222\\TEST01\\out\\EnGwCCD.epc'))
+    #    self.assertTrue(FileCheck.CheckEnGw91(head + '\\Tests\\TRS.COMCONF.GEN.0222\\TEST01\\out\\EnGwCCD.epc'))
+
+    #def test_TRS_COMCONF_GEN_0223_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0223\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0223\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0223\\TEST01\\out\\EnGwCCD.epc','RoutingPathCCD_isip_HS4_VSM_INF_CFG_TO_isip_HS4_VSM_INF_PRG_RTAB'))
+
+    #def test_TRS_COMCONF_GEN_0224_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0224\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0224\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw10(head + '\\Tests\\TRS.COMCONF.GEN.0224\\TEST01\\out\\EnGwCCD.epc','isip_HS4_VSM_INF_CFG_to_isip_HS4_VSM_INF_PRG_RTAB','/EnGwCCD/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_isip_HS4_VSM_INF_PRG_RTAB_TO_CDD','/EnGwCCLD/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_isip_HS4_VSM_INF_PRG_RTAB_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0225_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0225\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0225\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0225\\TEST01\\out\\EnGwCCD.epc','CddDiagIndexing'))
+
+    def test_TRS_COMCONF_GEN_0226_TEST01(self):
         current_path = os.path.realpath(__file__)
         head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckEnGwCLD6(head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_GW_CAN_DIAG_INDEX','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_LIN_VSM_1_INDEX'))
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0226\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0226\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckEnGw1(head + '\\Tests\\TRS.COMCONF.GEN.0226\\TEST01\\out\\EnGwCCD.epc','a'))
+
+    #def test_TRS_COMCONF_GEN_0228_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0228\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0228\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw1(head + '\\Tests\\TRS.COMCONF.GEN.0228\\TEST01\\out\\EnGwFonc.epc','CddPduRLowerLayerContribution'))
+
+    #def test_TRS_COMCONF_GEN_0229_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0229\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0229\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0229\\TEST01\\out\\EnGwFonc.epc','PduRLowerLayerRxPdu_isip_HS2_VERS_BSI_112_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0230_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0230\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0230\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw8(head + '\\Tests\\TRS.COMCONF.GEN.0230\\TEST01\\out\\EnGwFonc.epc','/EcuC/EcuC/EcucPduCollection/isip_HS2_VERS_BSI_112_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0231_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0231\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0231\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0231\\TEST01\\out\\EnGwFonc.epc','PduRLowerLayerTxPdu_isip_HS2_VERS_BSI_112_TO_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0232_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0232\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0232\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw8(head + '\\Tests\\TRS.COMCONF.GEN.0232\\TEST01\\out\\EnGwFonc.epc','/EcuC/EcuC/EcucPduCollection/isip_HS2_VERS_BSI_112_TO_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0233_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0233\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0233\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw91(head + '\\Tests\\TRS.COMCONF.GEN.0233\\TEST01\\out\\EnGwFonc.epc'))
+    #   self.assertTrue(FileCheck.CheckEnGw91(head + '\\Tests\\TRS.COMCONF.GEN.0233\\TEST01\\out\\EnGwFonc.epc'))
+
+    #def test_TRS_COMCONF_GEN_0234_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0234\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0234\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0234\\TEST01\\out\\EnGwFonc.epc','RoutingPathFonc_isip_HS2_VIN_VDS_BSI_492_TO_isip_HS2_VERS_BSI_112'))
+
+    #def test_TRS_COMCONF_GEN_0235_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw10(head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\out\\EnGwFonc.epc','isip_HS2_VIN_VDS_BSI_492_to_isip_HS2_VERS_BSI_112','/EnGwFonc/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_isip_HS2_VERS_BSI_112_TO_CDD','/EnGwFonc/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_isip_HS2_VERS_BSI_112_FROM_CDD'))
+
+
+
+
+
 
 
 

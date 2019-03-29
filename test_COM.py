@@ -1075,12 +1075,37 @@ class FileCheck():
                         return True
         return False
 
-
-
-
-
-
-
+    def CheckEnGw11(path, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12):
+        tree = etree.parse(path)
+        root = tree.getroot()
+        elements = root.findall(".//{http://autosar.org/schema/r4.0}ELEMENTS/{http://autosar.org/schema/r4.0}ECUC-MODULE-CONFIGURATION-VALUES/{http://autosar.org/schema/r4.0}CONTAINERS/{http://autosar.org/schema/r4.0}ECUC-CONTAINER-VALUE")
+        for elem in elements:
+            elem1 = elem.getchildren()[2].getchildren()[0].getchildren()[1].text
+            if elem1 == param1:
+                elem2 = elem.getchildren()[2].getchildren()[1].getchildren()[1].text
+                if elem2 == param2:
+                    elem3 = elem.getchildren()[2].getchildren()[2].getchildren()[1].text
+                    if elem3 == param3:
+                        elem4 = elem.getchildren()[2].getchildren()[3].getchildren()[1].text
+                        if elem4 == param4:
+                            elem5 = elem.getchildren()[2].getchildren()[4].getchildren()[1].text
+                            if elem5 == param5:
+                                elem6 = elem.getchildren()[2].getchildren()[5].getchildren()[1].text
+                                if elem6 == param6:
+                                    elem7 = elem.getchildren()[2].getchildren()[6].getchildren()[1].text
+                                    if elem7 == param7:
+                                        elem8 = elem.getchildren()[2].getchildren()[7].getchildren()[1].text
+                                        if elem8 == param8:
+                                            elem9 = elem.getchildren()[2].getchildren()[8].getchildren()[1].text
+                                            if elem9 == param9:
+                                                elem10 = elem.getchildren()[2].getchildren()[9].getchildren()[1].text
+                                                if elem10 == param10:
+                                                    elem11 = elem.getchildren()[2].getchildren()[10].getchildren()[1].text
+                                                    if elem11 == param11:
+                                                        elem12 = elem.getchildren()[2].getchildren()[11].getchildren()[1].text
+                                                        if elem12 == param12:
+                                                            return True
+        return False
 
 
 class COMConfigurator(unittest.TestCase):
@@ -1107,6 +1132,9 @@ class COMConfigurator(unittest.TestCase):
     #     head, tail = ntpath.split(current_path)
     #     os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\out')
     #     self.assertFalse(FileCheck.checkFile(head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\out\\', ['ComCallout.xml','EcuC.epc', 'PduR.epc', 'EnGwCCB.epc', 'EnGwCCD.epc', 'EnGwCCLD.epc', 'EnGwCLD.epc', 'EnGwFonc.epc']))
+
+
+
 
     ###################################################################################################################
     def test_TRS_COMCONF_GEN_004_TEST01(self):
@@ -2197,12 +2225,6 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out\\EnGwCLD.epc','EnGwCLDReqRepConfiguration_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
 
-    #def test_TRS_COMCONF_GEN_0183_TEST01(self):
-    #    current_path = os.path.realpath(__file__)
-    #    head, tail = ntpath.split(current_path)
-    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0183\\TEST01\\out\\EnGwCLD.epc','EnGwCLDReqRepConfiguration_DIAG_FRONT_WIPING_LIN_VSM_1_2P1'))
-
     #def test_TRS_COMCONF_GEN_0184_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
@@ -2269,12 +2291,6 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckEnGw6(head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_GW_CAN_DIAG_INDEX','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_LIN_VSM_1_INDEX'))
 
-    #def test_TRS_COMCONF_GEN_0194_TEST01(self):
-    #    current_path = os.path.realpath(__file__)
-    #    head, tail = ntpath.split(current_path)
-    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGw6(head + '\\Tests\\TRS.COMCONF.GEN.0194\\TEST01\\out\\EnGwCLD.epc','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_DIAG_SIR_LIN_VSM_1_1P3','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_GW_CAN_DIAG_INDEX','/EnGwCLD/EnGwCLD/EnGwCLDBuffer/cEnGw_LIN_VSM_1_INDEX'))
-
     #def test_TRS_COMCONF_GEN_0195_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
@@ -2293,6 +2309,12 @@ class COMConfigurator(unittest.TestCase):
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0197\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0197\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckEnGw1(head + '\\Tests\\TRS.COMCONF.GEN.0197\\TEST01\\out\\EnGwCLD.epc','cEnGw_LIN_VSM_1_INDEX'))
+
+    #def test_TRS_COMCONF_GEN_0198_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0199\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0198\\TEST01\\out -EnGw')
+    #    self.assertFalse(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0199\\TEST01\\out\\EnGwCCLD.epc','PduRLowerLayerRxPdu_isip_HS4_VMF_DSGN_1_FROM_CDD'))
 
     #def test_TRS_COMCONF_GEN_0199_TEST01(self):
     #    current_path = os.path.realpath(__file__)
@@ -2343,6 +2365,12 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0206\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0206\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckEnGw10(head + '\\Tests\\TRS.COMCONF.GEN.0206\\TEST01\\out\\EnGwCCLD.epc','isip_HS4_VSM_CDE_PTR_MESSAGE_to_isip_HS4_VMF_DSGN','/EnGwCCLD/EnGwCCLD/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_isip_HS4_VMF_DSGN_TO_CDD','/EnGwCCLD/EnGwCCLD/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_isip_HS4_VMF_DSGN_FROM_CDD'))
 
+    #def test_TRS_COMCONF_GEN_0207_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0207\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0207\\TEST01\\out -EnGw')
+    #    self.assertFalse(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0207\\TEST01\\out\\EnGwCCB.epc','PduRLowerLayerRxPdu_isip_ARVSW_Resultat_Frame_FROM_CDD'))
+
     #def test_TRS_COMCONF_GEN_0208_TEST01(self):
     #    current_path = os.path.realpath(__file__)
     #    head, tail = ntpath.split(current_path)
@@ -2391,6 +2419,12 @@ class COMConfigurator(unittest.TestCase):
     #    head, tail = ntpath.split(current_path)
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0215\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0215\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckEnGw10(head + '\\Tests\\TRS.COMCONF.GEN.0215\\TEST01\\out\\EnGwCCB.epc','isip_HS1_REQ_EOBD_ON_CAN_7E7_to_isip_HS1_REQ_EOBD_ON_CAN_7E6','/EnGwCCB/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_isip_HS1_REQ_EOBD_ON_CAN_7E6_TO_CDD','/EnGwCCB/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_isip_HS1_REQ_EOBD_ON_CAN_7E6_FROM_CDD'))
+
+    #def test_TRS_COMCONF_GEN_0216_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0216\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0216\\TEST01\\out -EnGw')
+    #    self.assertFalse(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0216\\TEST01\\out\\EnGwCCD.epc','PduRLowerLayerRxPdu_isip_HS5_REVEIL_TCM_1_FROM_CDD'))
 
     #def test_TRS_COMCONF_GEN_0217_TEST01(self):
     #    current_path = os.path.realpath(__file__)
@@ -2447,11 +2481,17 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0225\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0225\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckEnGw4(head + '\\Tests\\TRS.COMCONF.GEN.0225\\TEST01\\out\\EnGwCCD.epc','CddDiagIndexing'))
 
-    def test_TRS_COMCONF_GEN_0226_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0226\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0226\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckEnGw1(head + '\\Tests\\TRS.COMCONF.GEN.0226\\TEST01\\out\\EnGwCCD.epc','a'))
+    #def test_TRS_COMCONF_GEN_0226_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0226\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0226\\TEST01\\out -EnGw')
+    #    self.assertTrue(FileCheck.CheckEnGw11(head + '\\Tests\\TRS.COMCONF.GEN.0226\\TEST01\\out\\EnGwCCD.epc','0','2','0','1','2','2','3','5','3','4','5','5'))
+
+    #def test_TRS_COMCONF_GEN_0227_TEST01(self):
+    #    current_path = os.path.realpath(__file__)
+    #    head, tail = ntpath.split(current_path)
+    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0227\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0227\\TEST01\\out -EnGw')
+    #    self.assertFalse(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0227\\TEST01\\out\\EnGwFonc.epc','PduRLowerLayerRxPdu_isip_HS2_VERS_BSI_112_1_FROM_CDD'))
 
     #def test_TRS_COMCONF_GEN_0228_TEST01(self):
     #    current_path = os.path.realpath(__file__)
@@ -2496,11 +2536,11 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0234\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0234\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0234\\TEST01\\out\\EnGwFonc.epc','RoutingPathFonc_isip_HS2_VIN_VDS_BSI_492_TO_isip_HS2_VERS_BSI_112'))
 
-    #def test_TRS_COMCONF_GEN_0235_TEST01(self):
-    #    current_path = os.path.realpath(__file__)
-    #    head, tail = ntpath.split(current_path)
-    #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\out -EnGw')
-    #    self.assertTrue(FileCheck.CheckEnGw10(head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\out\\EnGwFonc.epc','isip_HS2_VIN_VDS_BSI_492_to_isip_HS2_VERS_BSI_112','/EnGwFonc/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_isip_HS2_VERS_BSI_112_TO_CDD','/EnGwFonc/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_isip_HS2_VERS_BSI_112_FROM_CDD'))
+    def test_TRS_COMCONF_GEN_0235_TEST01(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\out -EnGw')
+        self.assertTrue(FileCheck.CheckEnGw10(head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\out\\EnGwFonc.epc','isip_HS2_VIN_VDS_BSI_492_to_isip_HS2_VERS_BSI_112','/EnGwFonc/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_isip_HS2_VERS_BSI_112_TO_CDD','/EnGwFonc/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_isip_HS2_VERS_BSI_112_FROM_CDD'))
 
 
 

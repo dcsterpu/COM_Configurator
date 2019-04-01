@@ -329,6 +329,7 @@ def PduR_script(file_list, output_path, logger):
             routes.remove(route)
             logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the source ID cannot be established")
             continue
+        # TRS.COMCONF.GEN.0011(0)
         if route['WAY'] is None:
             routes.remove(route)
             logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the communication direction cannot be established")

@@ -18,6 +18,8 @@ def arg_parse(parser):
     parser.add_argument('-out_log', '--out_log', help="output path for log file", required=False, default="")
     parser.add_argument('-NeMo', action="store_const", const="-NeMo", required=False, default="")
     parser.add_argument('-EnGw', action="store_const", const="-EnGw", required=False, default="")
+    parser.add_argument('-CFHM', action="store_const", const="-CFHM", required=False, default="")
+    #parser.add_argument('-LPhM', action="store_const", const="-LPhM", required=False, default="")
 
 
 def prettify_xml(elem):
@@ -60,6 +62,12 @@ def main():
     EnGw = False
     if args.EnGw:
         EnGw = True
+    CFHM = False
+    if args.CFHM:
+        CFHM = True
+    LPhM = False
+    # if args.LPhM:
+    #     LPhM = True
     for path in input_path:
         if path.startswith('@'):
             file = open(path[1:])
@@ -120,6 +128,10 @@ def main():
                 LinTp_config(entry_list, output_path, logger)
                 LinIf_config(entry_list, output_path, logger)
                 BswM_config(entry_list, output_path, logger)
+            if CFHM:
+                CFHM_script(entry_list, output_path, logger)
+            if LPhM:
+                LPhM_config(entry_list, output_path, logger)
         else:
             logger = set_logger(output_path)
             if NeMo:
@@ -134,6 +146,10 @@ def main():
                 LinTp_config(entry_list, output_path, logger)
                 LinIf_config(entry_list, output_path, logger)
                 BswM_config(entry_list, output_path, logger)
+            if CFHM:
+                CFHM_script(entry_list, output_path, logger)
+            if LPhM:
+                LPhM_config(entry_list, output_path, logger)
     elif not output_path:
         if output_epc:
             if not os.path.isdir(output_epc):
@@ -153,6 +169,8 @@ def main():
                     LinTp_config(entry_list, output_epc, logger)
                     LinIf_config(entry_list, output_epc, logger)
                     BswM_config(entry_list, output_epc, logger)
+                if LPhM:
+                    LPhM_config(entry_list, output_epc, logger)
             else:
                 logger = set_logger(output_epc)
                 if EnGw:
@@ -164,6 +182,8 @@ def main():
                     LinTp_config(entry_list, output_epc, logger)
                     LinIf_config(entry_list, output_epc, logger)
                     BswM_config(entry_list, output_epc, logger)
+                if LPhM:
+                    LPhM_config(entry_list, output_epc, logger)
         if output_script:
             if not os.path.isdir(output_script):
                 print("\nError defining the output script path!\n")
@@ -177,12 +197,16 @@ def main():
                     NeMo_script(entry_list, output_script, logger)
                 if EnGw:
                     PduR_script(entry_list, output_script, logger)
+                if CFHM:
+                    CFHM_script(entry_list, output_script, logger)
             else:
                 logger = set_logger(output_script)
                 if NeMo:
                     NeMo_script(entry_list, output_script, logger)
                 if EnGw:
                     PduR_script(entry_list, output_script, logger)
+                if CFHM:
+                    CFHM_script(entry_list, output_script, logger)
     else:
         print("\nNo output path defined!\n")
         sys.exit(1)
@@ -2271,17 +2295,17 @@ def NeMo_script(file_list, output_path, logger):
                 operation2.attrib['Type'] = "SetValue"
                 expression2 = etree.SubElement(operation2, 'Expression').text = '"NmLib_COMCbkRxTOut_' + elem['SIGNAL'].split("/")[-1] + '"'
                 # set ComNotification
-                operation = etree.SubElement(operations, 'Operation')
-                operation.attrib['Type'] = "ForEach"
-                expression = etree.SubElement(operation, 'Expression')
-                expression.text = "as:modconf('Com')[1]/ComConfig/*/ComSignal/*[contains(@name,'" + elem['SIGNAL'].split("/")[-1] + "')]/ComNotification"
-                operations2 = etree.SubElement(operation, 'Operations')
-                operation_enable = etree.SubElement(operations2, 'Operation')
-                operation_enable.attrib['Type'] = "SetEnabled"
-                expression_enable = etree.SubElement(operation_enable, 'Expression').text = "boolean(1)"
-                operation2 = etree.SubElement(operations2, 'Operation')
-                operation2.attrib['Type'] = "SetValue"
-                expression2 = etree.SubElement(operation2, 'Expression').text = '"NmLib_COMCbk_' + elem['SIGNAL'].split("/")[-1] + '"'
+                # operation = etree.SubElement(operations, 'Operation')
+                # operation.attrib['Type'] = "ForEach"
+                # expression = etree.SubElement(operation, 'Expression')
+                # expression.text = "as:modconf('Com')[1]/ComConfig/*/ComSignal/*[contains(@name,'" + elem['SIGNAL'].split("/")[-1] + "')]/ComNotification"
+                # operations2 = etree.SubElement(operation, 'Operations')
+                # operation_enable = etree.SubElement(operations2, 'Operation')
+                # operation_enable.attrib['Type'] = "SetEnabled"
+                # expression_enable = etree.SubElement(operation_enable, 'Expression').text = "boolean(1)"
+                # operation2 = etree.SubElement(operations2, 'Operation')
+                # operation2.attrib['Type'] = "SetValue"
+                # expression2 = etree.SubElement(operation2, 'Expression').text = '"NmLib_COMCbk_' + elem['SIGNAL'].split("/")[-1] + '"'
             if elem['PDU'] != "":
                 # TRS.COMCONF.GEN.004(0)
                 # set ComIPduCallout
@@ -3677,6 +3701,7 @@ def LinIf_config(file_list, output_path, logger):
                 obj_lin['REQ-ID'] = elem.find(".//REQUEST-ID").text
                 obj_lin['REP-ID'] = elem.find(".//RESPONSE-ID").text
                 lins.append(obj_lin)
+
     # create ouput file: LinIf.epc
     rootLinIf = etree.Element('AUTOSAR', {attr_qname: 'http://autosar.org/schema/r4.0 AUTOSAR_4-2-2_STRICT_COMPACT.xsd'}, nsmap=NSMAP)
     packages = etree.SubElement(rootLinIf, 'AR-PACKAGES')
@@ -4824,6 +4849,274 @@ def BswM_config(file_list, output_path, logger):
     pretty_xml = prettify_xml(rootBswM)
     output = etree.ElementTree(etree.fromstring(pretty_xml))
     output.write(output_path + '/BswM.epc', encoding='UTF-8', xml_declaration=True, method="xml")
+    return
+
+
+def CFHM_script(file_list, output_path, logger):
+    fault_frames = []
+    can_frames = []
+    can_frames_triggering = []
+    existing_ipdus = []
+    for file in file_list:
+        if file.endswith('.xml'):
+            parser = etree.XMLParser(remove_comments=True)
+            tree = objectify.parse(file, parser=parser)
+            root = tree.getroot()
+            frames = root.findall(".//FAULT-EVENT-FRAME")
+            for elem in frames:
+                if elem.find(".//PDU-REF") is not None:
+                    obj_elem = {}
+                    obj_elem['PDU'] = elem.find(".//PDU-REF").text
+                    obj_elem['ECU'] = elem.find(".//ECU-CODE").text
+                    obj_elem['FRAME'] = None
+                    obj_elem['ID'] = None
+                    fault_frames.append(obj_elem)
+        if file.endswith('.arxml'):
+            parser = etree.XMLParser(remove_comments=True)
+            tree = objectify.parse(file, parser=parser)
+            root = tree.getroot()
+            frames = root.findall(".//{http://autosar.org/schema/r4.0}CAN-FRAME")
+            for elem in frames:
+                obj_elem = {}
+                obj_elem['NAME'] = elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                obj_elem['PDU'] = elem.find(".//{http://autosar.org/schema/r4.0}PDU-REF").text.split("/")[-1]
+                can_frames.append(obj_elem)
+            frames = root.findall(".//{http://autosar.org/schema/r4.0}USER-DEFINED-I-PDU")
+            for elem in frames :
+                existing_ipdus.append(elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text)
+            frames = root.findall(".//{http://autosar.org/schema/r4.0}CAN-FRAME-TRIGGERING")
+            for elem in frames:
+                obj_elem = {}
+                obj_elem['CAN-FRAME'] = elem.find(".//{http://autosar.org/schema/r4.0}FRAME-REF").text.split("/")[-1]
+                obj_elem['ID'] = elem.find(".//{http://autosar.org/schema/r4.0}IDENTIFIER").text
+                can_frames_triggering.append(obj_elem)
+
+    for frame in fault_frames[:]:
+        if frame['PDU'].split("/")[-1] not in existing_ipdus:
+            fault_frames.remove(frame)
+            logger.warning("The PDU: " + frame['PDU'].split("/")[-1] + " is not present in the network messaging file.")
+
+    for frame in fault_frames:
+        name = frame['PDU'].split("/")[-1]
+        for can_frame in can_frames:
+            if can_frame['PDU'] == name:
+                frame['FRAME'] = can_frame['NAME']
+                for triggering in can_frames_triggering:
+                    if can_frame['NAME'] == triggering['CAN-FRAME']:
+                        frame['ID'] = triggering['ID']
+
+    rootScript = etree.Element('Script')
+    name = etree.SubElement(rootScript, 'Name').text = "CfhmTedPdu"
+    description = etree.SubElement(rootScript, 'Decription').text = "Fixe the CfhmEcuNbr and the CfhmTedPduRef with the information find in Fault Event frame configuration"
+    expression = etree.SubElement(rootScript, 'Expression').text = "as:modconf('Dem')[1]"
+    operations = etree.SubElement(rootScript, 'Operations')
+    for frame in fault_frames:
+        condition = etree.SubElement(operations, 'Operation')
+        condition.attrib['Type'] = "Condition"
+        expression = etree.SubElement(condition, 'Expression')
+        expression.text = "not(node:exists(as:modconf('Dem')[1]/DemCfhm/CfhmRemoteFaultDecoder/CfhmTedPdu/*/CfhmTedPduRef" + '[.="ASPath:/EcuC/EcuC/EcucPduCollection/' + frame['PDU'].split("/")[-1] + "_" + frame['ID'] + 'R"]))'
+        operations2 = etree.SubElement(condition, 'Operations')
+        operation = etree.SubElement(operations2, 'Operation')
+        operation.attrib['Type'] = 'ForEach'
+        expression2 = etree.SubElement(operation, 'Expression')
+        expression2.text = "as:modconf('Dem')[1]/DemCfhm/CfhmRemoteFaultDecoder/CfhmTedPdu"
+        operations3 = etree.SubElement(operation, 'Operations')
+        operation_add = etree.SubElement(operations3, 'Operation')
+        operation_add.attrib['Type'] = "Add"
+        expression_add = etree.SubElement(operation_add, 'Expression')
+        expression_add.text = '"TED_' + frame['FRAME'] + '"'
+        operation_foreach1 = etree.SubElement(operations3, 'Operation')
+        operation_foreach1.attrib['Type'] = "ForEach"
+        expression_foreach1 = etree.SubElement(operation_foreach1, 'Expression')
+        expression_foreach1.text = "node:current()/TED_" + frame['FRAME'] + "/CfhmTedPduRef"
+        operations_foreach1 = etree.SubElement(operation_foreach1, 'Operations')
+        operation = etree.SubElement(operations_foreach1, 'Operation')
+        operation.attrib['Type'] = 'SetValue'
+        expression = etree.SubElement(operation, 'Expression')
+        expression.text = "'ASPath:/EcuC/EcuC/EcucPduCollection/" + frame['PDU'].split("/")[-1] + "_" + frame['ID'] + "R'"
+        operation_foreach2 = etree.SubElement(operations3, 'Operation')
+        operation_foreach2.attrib['Type'] = "ForEach"
+        expression_foreach2 = etree.SubElement(operation_foreach2, 'Expression')
+        expression_foreach2.text = "node:current()/TED_" + frame['FRAME'] + "/CfhmEcuNbr"
+        operations2 = etree.SubElement(operation_foreach2, 'Operations')
+        operation = etree.SubElement(operations2, 'Operation')
+        operation.attrib['Type'] = 'SetValue'
+        expression = etree.SubElement(operation, 'Expression')
+        expression.text = "num:i(" + frame['ECU'] + ")"
+    pretty_xml = prettify_xml(rootScript)
+    tree = etree.ElementTree(etree.fromstring(pretty_xml))
+    tree.write(output_path + "/CfhmTedPdu.xml", encoding="UTF-8", xml_declaration=True, method="xml")
+
+
+
+def LPhM_config(file_list, output_path, logger):
+    NSMAP = {None: 'http://autosar.org/schema/r4.0', "xsi": 'http://www.w3.org/2001/XMLSchema-instance'}
+    attr_qname = etree.QName("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation")
+    tables = []
+    networks = []
+    for file in file_list:
+        if file.endswith('.arxml'):
+            parser = etree.XMLParser(remove_comments=True)
+            tree = objectify.parse(file, parser=parser)
+            root = tree.getroot()
+            elements = root.findall(".//{http://autosar.org/schema/r4.0}LIN-SCHEDULE-TABLE")
+            for elem in elements:
+                obj_table = {}
+                obj_table['NAME'] = elem.find(".//{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                obj_table['CATEGORY'] = elem.find(".//{http://autosar.org/schema/r4.0}CATEGORY").text
+                obj_table['CHANNEL'] = elem.getparent().getparent().getchildren()[0].text
+                obj_table['LIN'] = elem.getparent().getparent().getparent().getparent().getparent().getparent().getchildren()[0].text
+                tables.append(obj_table)
+
+    lins = []
+    cluster_list = []
+    for table in tables:
+        if table['LIN'] not in cluster_list:
+            cluster_list.append(table['LIN'])
+    # for table in tables:
+    #     if table['CHANNEL'] not in channel_list:
+    #         channel_list.append(table['CHANNEL'])
+    for cluster in cluster_list:
+        temp_list = []
+        for table in tables:
+            if table['LIN'] == cluster:
+                temp_list.append(table)
+        obj_dict = {}
+        obj_dict[cluster] = temp_list
+        lins.append(obj_dict)
+
+
+
+            
+
+    # create ouput file: LPhM.epc
+    rootLPhM = etree.Element('AUTOSAR', {attr_qname: 'http://autosar.org/schema/r4.0 AUTOSAR_4-2-2_STRICT_COMPACT.xsd'}, nsmap=NSMAP)
+    packages = etree.SubElement(rootLPhM, 'AR-PACKAGES')
+    package = etree.SubElement(packages, 'AR-PACKAGE')
+    short_name = etree.SubElement(package, 'SHORT-NAME').text = "LPhM"
+    elements = etree.SubElement(package, 'ELEMENTS')
+    ecuc_module = etree.SubElement(elements, 'ECUC-MODULE-CONFIGURATION-VALUES')
+    short_name = etree.SubElement(ecuc_module, 'SHORT-NAME').text = "LPhM"
+    definition = etree.SubElement(ecuc_module, 'DEFINITION-REF')
+    definition.attrib['DEST'] = "ECUC-MODULE-DEF"
+    definition.text = "/AUTOSAR/EcuDefs/LPhM"
+    description = etree.SubElement(ecuc_module, 'IMPLEMENTATION-CONFIG-VARIANT').text = "VARIANT-POST-BUILD"
+    containers = etree.SubElement(ecuc_module, 'CONTAINERS')
+    #LPhM schedule tables
+    for table in tables:
+        ecuc_general2 = etree.SubElement(containers, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(ecuc_general2, "SHORT-NAME").text = table['NAME']
+        definition_general = etree.SubElement(ecuc_general2, "DEFINITION-REF")
+        definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition_general.text = "/AUTOSAR/EcuDefs/LPhM/LPhMLinIfScheduleTable"
+        parameter_values = etree.SubElement(ecuc_general2, "PARAMETER-VALUES")
+        category = etree.SubElement(parameter_values, "ECUC-TEXTUAL-PARAM-VALUE")
+        definition_category = etree.SubElement(category, "DEFINITION-REF")
+        definition_category.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition_category.text = "/AUTOSAR/EcuDefs/LPhM/LPhMLinIfScheduleTable/LPhMLinIfScheduleTableType"
+        if table['CATEGORY'] == "FUNCTIONAL":
+            value_category = etree.SubElement(category, "VALUE").text = "FONC"
+        elif table['CATEGORY'] == "RESPONSE_DIAG":
+            value_category = etree.SubElement(category, "VALUE").text = "REPDIAG"
+        elif table['CATEGORY'] == "REQUEST_DIAG":
+            value_category = etree.SubElement(category, "VALUE").text = "REQDIAG"
+        elif table['CATEGORY'] == "WAKEUP":
+            value_category = etree.SubElement(category, "VALUE").text = "WAKEUP"
+        elif table['CATEGORY'] == "COMMAND":
+            value_category = etree.SubElement(category, "VALUE").text = "COMMAND"
+        else:
+            logger.error("The table category is not valid for: " + table['NAME'])
+        references = etree.SubElement(ecuc_general2, "REFERENCE-VALUES")
+        ecuc_ref_value_1 = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
+        definition = etree.SubElement(ecuc_ref_value_1, "DEFINITION-REF")
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/AUTOSAR/EcuDefs/LPhM/LPhMLinIfScheduleTable/LPhMLinIfScheduleTableRef"
+        value = etree.SubElement(ecuc_ref_value_1, "VALUE-REF")
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/LinIf/LinIf/LinIfGlobalConfig/" + table["CHANNEL"] + "/" + table['NAME']
+    #LPhM cluster
+    ecuc_general = etree.SubElement(containers, "ECUC-CONTAINER-VALUE")
+    short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = "LPhMCluster_0"
+    definition_general = etree.SubElement(ecuc_general, "DEFINITION-REF")
+    definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    definition_general.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster"
+    subcontainer_master = etree.SubElement(ecuc_general, "SUB-CONTAINERS")
+    network_list = []
+    for cluster in cluster_list:
+        ecuc_general = etree.SubElement(subcontainer_master, "ECUC-CONTAINER-VALUE")
+        short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = cluster
+        definition_general = etree.SubElement(ecuc_general, "DEFINITION-REF")
+        definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition_general.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterLIN"
+        subcontainer_cluster = etree.SubElement(ecuc_general, "SUB-CONTAINERS")
+        channel_list = []
+        for table in tables:
+            if table['LIN'] == cluster:
+                if table['CHANNEL'] not in channel_list:
+                    channel_list.append(table['CHANNEL'])
+                    channel = table['CHANNEL']
+                    channel_name = re.search("LIN_VSM_\d", table['CHANNEL'])
+                    ecuc_general = etree.SubElement(subcontainer_cluster, "ECUC-CONTAINER-VALUE")
+                    short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = table['CHANNEL']
+                    definition_general = etree.SubElement(ecuc_general, "DEFINITION-REF")
+                    definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+                    definition_general.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterLIN/ChannelList"
+                    references = etree.SubElement(ecuc_general, "REFERENCE-VALUES")
+                    ecuc_ref_value_1 = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
+                    definition = etree.SubElement(ecuc_ref_value_1, "DEFINITION-REF")
+                    definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+                    definition.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterLIN/ChannelList/ChannelRef"
+                    value = etree.SubElement(ecuc_ref_value_1, "VALUE-REF")
+                    value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                    value.text = "/Lin/Lin/LinGlobalConfig/" + channel
+                    ecuc_ref_value_2 = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
+                    definition = etree.SubElement(ecuc_ref_value_2, "DEFINITION-REF")
+                    definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+                    definition.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterLIN/ChannelList/LPhMUser"
+                    value = etree.SubElement(ecuc_ref_value_2, "VALUE-REF")
+                    value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                    value.text = "//ComM/ComM/ComMConfigSet/ComMUser_" + channel_name.group(0)
+                    subcontainer_channel = etree.SubElement(ecuc_general, "SUB-CONTAINERS")
+                    for table in tables:
+                        if table['LIN'] == cluster and table['CHANNEL'] == channel:
+                            ecuc_general = etree.SubElement(subcontainer_channel, "ECUC-CONTAINER-VALUE")
+                            short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = table['NAME']
+                            definition_general = etree.SubElement(ecuc_general, "DEFINITION-REF")
+                            definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+                            definition_general.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterLIN/ChannelList/LPhMScheduleTable"
+                            parameter_values = etree.SubElement(ecuc_general, "PARAMETER-VALUES")
+                            category = etree.SubElement(parameter_values, "ECUC-TEXTUAL-PARAM-VALUE")
+                            definition_category = etree.SubElement(category, "DEFINITION-REF")
+                            definition_category.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+                            definition_category.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterLIN/ChannelList/LPhMScheduleTable/ScheduleTableCategory"
+                            if table['CATEGORY'] == "FUNCTIONAL":
+                                value_category = etree.SubElement(category, "VALUE").text = "FONC"
+                            elif table['CATEGORY'] == "RESPONSE_DIAG":
+                                value_category = etree.SubElement(category, "VALUE").text = "REPDIAG"
+                            elif table['CATEGORY'] == "REQUEST_DIAG":
+                                value_category = etree.SubElement(category, "VALUE").text = "REQDIAG"
+                            elif table['CATEGORY'] == "WAKEUP":
+                                value_category = etree.SubElement(category, "VALUE").text = "WAKEUP"
+                            elif table['CATEGORY'] == "COMMAND":
+                                value_category = etree.SubElement(category, "VALUE").text = "COMMAND"
+                            else:
+                                logger.error("The table category is not valid for: " + table['NAME'])
+                            references = etree.SubElement(ecuc_general, "REFERENCE-VALUES")
+                            ecuc_ref_value_1 = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
+                            definition = etree.SubElement(ecuc_ref_value_1, "DEFINITION-REF")
+                            definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+                            definition.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterLIN/ChannelList/LPhMScheduleTable/LPhMScheduleTableRef"
+                            value = etree.SubElement(ecuc_ref_value_1, "VALUE-REF")
+                            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                            value.text = "/LinSM/LinSM/LinSMConfigSet_0/" + channel_name.group(0) + "/" + table['NAME']
+                    
+
+
+
+    # generate data
+    pretty_xml = prettify_xml(rootLPhM)
+    output = etree.ElementTree(etree.fromstring(pretty_xml))
+    output.write(output_path + '/LPhM.epc', encoding='UTF-8', xml_declaration=True, method="xml")
     return
 
 if __name__ == "__main__":                                          # pragma: no cover

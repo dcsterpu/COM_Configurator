@@ -353,6 +353,7 @@ def PduR_script(file_list, output_path, logger):
             routes.remove(route)
             logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the source ID cannot be established")
             continue
+        # TRS.COMCONF.GEN.0011(0)
         if route['WAY'] is None:
             routes.remove(route)
             logger.warning('The mapping with source ' + route['SOURCE'] + " has been deleted because the communication direction cannot be established")
@@ -1190,6 +1191,7 @@ def EnGw_config(file_list, output_path, logger):
     definition.text = "/AUTOSAR/EcuDefs/EnGwCLD/CddComStackContribution"
     subcontainer = etree.SubElement(ecuc_container_master, 'SUB-CONTAINERS')
     ecuc_container = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
+    # TRS.COMCONF.GEN.0166(0)
     short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRUpperLayerContribution"
     definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
     definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1206,6 +1208,7 @@ def EnGw_config(file_list, output_path, logger):
                 comment = etree.Comment("LinIf")
                 subcontainers_CDD.append(comment)
                 ecuc_container_value = etree.SubElement(subcontainers_CDD, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0167(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRUpperLayerRxPdu_REP_" + nad_network.group(0) + "_1P3"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1215,6 +1218,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRUpperLayerHandleId"
+                # TRS.COMCONF.GEN.0168(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 #index = index + 1
                 textual_2 = etree.SubElement(parameter_values, "ECUC-TEXTUAL-PARAM-VALUE")
@@ -1232,6 +1236,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_" + nad_network.group(0) + "_1P3_LinIf"
                 # REP part
                 ecuc_container_value = etree.SubElement(subcontainers_CDD, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0169(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRUpperLayerTxPdu_REQ_" + nad_network.group(0) + "_1P3"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1241,6 +1246,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerTxPdu/CddPduRUpperLayerHandleId"
+                # TRS.COMCONF.GEN.0170(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 index = index + 1
                 textual_2 = etree.SubElement(parameter_values, "ECUC-TEXTUAL-PARAM-VALUE")
@@ -1262,6 +1268,7 @@ def EnGw_config(file_list, output_path, logger):
             comment = etree.Comment("LinTp")
             subcontainers_CDD.append(comment)
             ecuc_container_value = etree.SubElement(subcontainers_CDD, 'ECUC-CONTAINER-VALUE')
+            # TRS.COMCONF.GEN.0171(0)
             short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRUpperLayerRxPdu_REP_" + nad['NETWORK'] + "_2P1"
             definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
             definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1271,6 +1278,7 @@ def EnGw_config(file_list, output_path, logger):
             definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
             definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRUpperLayerHandleId"
+            # TRS.COMCONF.GEN.0172(0)
             value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
             #index = index + 1
             textual_2 = etree.SubElement(parameter_values, "ECUC-TEXTUAL-PARAM-VALUE")
@@ -1288,6 +1296,7 @@ def EnGw_config(file_list, output_path, logger):
             value_ref.text = "/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_" + nad['NETWORK'] + "_LinTp"
             # REP part
             ecuc_container_value = etree.SubElement(subcontainers_CDD, 'ECUC-CONTAINER-VALUE')
+            # TRS.COMCONF.GEN.0173(0)
             short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRUpperLayerTxPdu_REQ_" + nad['NETWORK'] + "_2P1"
             definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
             definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1297,6 +1306,7 @@ def EnGw_config(file_list, output_path, logger):
             definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
             definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerTxPdu/CddPduRUpperLayerHandleId"
+            # TRS.COMCONF.GEN.0174(0)
             value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
             index = index + 1
             textual_2 = etree.SubElement(parameter_values, "ECUC-TEXTUAL-PARAM-VALUE")
@@ -1320,6 +1330,7 @@ def EnGw_config(file_list, output_path, logger):
                 comment = etree.Comment("CanTp")
                 subcontainers_CDD.append(comment)
                 ecuc_container_value = etree.SubElement(subcontainers_CDD, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0175(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRUpperLayerRxPdu_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_2P1"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1329,6 +1340,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRUpperLayerHandleId"
+                # TRS.COMCONF.GEN.0176(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 #index = index + 1
                 textual_2 = etree.SubElement(parameter_values, "ECUC-TEXTUAL-PARAM-VALUE")
@@ -1346,6 +1358,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_CanTp"
                 # REP part
                 ecuc_container_value = etree.SubElement(subcontainers_CDD, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0177(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRUpperLayerTxPdu_REP_" + diag_tool + "_" + nad['NETWORK'] + "_2P1"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1355,6 +1368,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerTxPdu/CddPduRUpperLayerHandleId"
+                # TRS.COMCONF.GEN.0178(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 index = index + 1
                 textual_2 = etree.SubElement(parameter_values, "ECUC-TEXTUAL-PARAM-VALUE")
@@ -1372,6 +1386,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_" + diag_tool + "_" + nad['NETWORK'] + "_CanTp"
                 # RoutingPath backward
                 ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0179(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDRoutingPath_REP_" + diag_tool + "_" + nad['NETWORK'] + "_2P1"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1383,6 +1398,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDSrcRef"
                 value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
                 value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                # TRS.COMCONF.GEN.0180(0)
                 value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REP_" + nad['NETWORK'] + "_2P1"
                 ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
                 definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
@@ -1393,6 +1409,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_" + diag_tool + "_" + nad['NETWORK'] + "_2P1"
                 # RoutingPath forward
                 ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0181(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDRoutingPath_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_2P1"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1404,6 +1421,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDSrcRef"
                 value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
                 value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                # TRS.COMCONF.GEN.0182(0)
                 value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_2P1"
                 ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
                 definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
@@ -1414,6 +1432,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQ_" + nad['NETWORK'] + "_2P1"
                 # ReqRep
                 ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0183(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDReqRepConfiguration_" + diag_tool + "_" + nad['NETWORK'] + "_2P1"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1425,6 +1444,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDReqRepConfiguration/EnGwCLDReqRef"
                 value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
                 value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                # TRS.COMCONF.GEN.0184(0)
                 value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_2P1"
                 ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
                 definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
@@ -1452,6 +1472,7 @@ def EnGw_config(file_list, output_path, logger):
                 comment = etree.Comment("CanIf")
                 subcontainers_CDD.append(comment)
                 ecuc_container_value = etree.SubElement(subcontainers_CDD, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0185(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRUpperLayerRxPdu_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_1P3"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1461,6 +1482,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRUpperLayerHandleId"
+                # TRS.COMCONF.GEN.0186(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 #index = index + 1
                 textual_2 = etree.SubElement(parameter_values, "ECUC-TEXTUAL-PARAM-VALUE")
@@ -1478,6 +1500,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/EnGwCLD_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_CanIf"
                 # REP part
                 ecuc_container_value = etree.SubElement(subcontainers_CDD, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0187(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRUpperLayerTxPdu_REP_" + diag_tool + "_" + nad['NETWORK'] + "_1P3"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1487,6 +1510,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerTxPdu/CddPduRUpperLayerHandleId"
+                # TRS.COMCONF.GEN.0188(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 index = index + 1
                 textual_2 = etree.SubElement(parameter_values, "ECUC-TEXTUAL-PARAM-VALUE")
@@ -1504,6 +1528,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/EnGwCLD_REP_" + diag_tool + "_" + nad['NETWORK'] + "_CanIf"
                 # RoutingPath backward
                 ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0189(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDRoutingPath_REP_" + diag_tool + "_" + nad['NETWORK'] + "_1P3"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1515,6 +1540,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDSrcRef"
                 value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
                 value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                # TRS.COMCONF.GEN.0190(0)
                 value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REP_" + nad_network.group(0) + "_1P3"
                 ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
                 definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
@@ -1525,6 +1551,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REP_" + diag_tool + "_" + nad['NETWORK'] + "_1P3"
                 # RoutingPath forward
                 ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0191(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDRoutingPath_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_1P3"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1536,6 +1563,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDRoutingPath/EnGwCLDSrcRef"
                 value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
                 value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                # TRS.COMCONF.GEN.0192(0)
                 value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_1P3"
                 ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
                 definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
@@ -1546,6 +1574,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerTxPdu_REQ_" + nad_network.group(0) + "_1P3"
                 # ReqRep
                 ecuc_container_value = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0193(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "EnGwCLDReqRepConfiguration_" + diag_tool + "_" + nad['NETWORK'] + "_1P3"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1557,6 +1586,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCLD/EnGwCLDReqRepConfiguration/EnGwCLDReqRef"
                 value_ref = etree.SubElement(ecuc_reference_src, 'VALUE-REF')
                 value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                # TRS.COMCONF.GEN.0194(0)
                 value_ref.text = "/EnGwCLD/EnGwCLD/CddComStackContribution/CddPduRUpperLayerContribution/PduRUpperLayerRxPdu_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_1P3"
                 ecuc_reference_dest = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
                 definition_ref = etree.SubElement(ecuc_reference_dest, 'DEFINITION-REF')
@@ -1590,6 +1620,7 @@ def EnGw_config(file_list, output_path, logger):
     subcontainer = etree.SubElement(ecuc_container_master, 'SUB-CONTAINERS')
     for diag_tool in diag_tools:
         ecuc_container_value = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
+        # TRS.COMCONF.GEN.0196(0)
         short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "cEnGw_GW_CAN_" + diag_tool + "_INDEX"
         definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
         definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1604,6 +1635,7 @@ def EnGw_config(file_list, output_path, logger):
                 network_list.append(nad_network.group(0))
     for network in network_list:
         ecuc_container_value = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
+        # TRS.COMCONF.GEN.0197(0)
         short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "cEnGw_" + network + "_INDEX"
         definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
         definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1635,12 +1667,15 @@ def EnGw_config(file_list, output_path, logger):
     definition.text = "/AUTOSAR/EcuDefs/EnGwCCLD/CddComStackContribution"
     subcontainer = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
     ecuc_container = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
+    # TRS.COMCONF.GEN.0199(0)
     short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRLowerLayerContribution"
     definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
     definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
     definition.text = "/AUTOSAR/EcuDefs/EnGwCCLD/CddComStackContribution/CddPduRLowerLayerContribution"
     subcontainers = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
     index = 0
+    # TRS.COMCONF.GEN.0198(0)
+
     for mapping in mappings:
         found_source = False
         found_target = False
@@ -1652,6 +1687,7 @@ def EnGw_config(file_list, output_path, logger):
             if found_source and found_target and mapping['TYPE'] == "GW-LIN-UNCONNECTED":
                 # REQ part
                 ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0200(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1661,6 +1697,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCLD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerHandleId"
+                # TRS.COMCONF.GEN.0201(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
                 ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
@@ -1672,6 +1709,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
                 # REP part
                 ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0202(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1681,6 +1719,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCLD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerHandleId"
+                # TRS.COMCONF.GEN.0203(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 index = index + 1
                 reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
@@ -1693,6 +1732,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
                 # Routing path
                 ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0205(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "RoutingPathCCLD_" + mapping['SOURCE-PDU'] + "_TO_" + mapping['TARGET-PDU']
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1702,6 +1742,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_textual_param_value, "DEFINITION-REF")
                 definition_ref.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCLD/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCLDRoutingPath/EnGwAuthorizationCallout"
+                # TRS.COMCONF.GEN.0206(0)
                 value = etree.SubElement(ecuc_textual_param_value, 'VALUE').text = mapping['SOURCE-PDU'] + "_to_" + mapping['TARGET-PDU']
                 reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
                 ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
@@ -1745,12 +1786,14 @@ def EnGw_config(file_list, output_path, logger):
     definition.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution"
     subcontainer = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
     ecuc_container = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
+    # TRS.COMCONF.GEN.0208(0)
     short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRLowerLayerContribution"
     definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
     definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
     definition.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution"
     subcontainers = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
     index = 0
+    # TRS.COMCONF.GEN.0207(0)
     for mapping in mappings:
         found_source = False
         found_target = False
@@ -1762,6 +1805,7 @@ def EnGw_config(file_list, output_path, logger):
             if found_source and found_target and mapping['TYPE'] == "GW-REMOTE-DIAG":
                 # REQ part
                 ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0209(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1771,6 +1815,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerHandleId"
+                # TRS.COMCONF.GEN.0210(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
                 ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
@@ -1782,6 +1827,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
                 # REP part
                 ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0211(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1791,6 +1837,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerHandleId"
+                # TRS.COMCONF.GEN.0212(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 index = index + 1
                 reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
@@ -1803,6 +1850,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
                 # Routing path
                 ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0214(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "RoutingPathCCB_" + mapping['SOURCE-PDU'] + "_TO_" + mapping['TARGET-PDU']
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1812,6 +1860,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_textual_param_value, "DEFINITION-REF")
                 definition_ref.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCBRoutingPath/EnGwAuthorizationCallout"
+                # TRS.COMCONF.GEN.0215(0)
                 value = etree.SubElement(ecuc_textual_param_value, 'VALUE').text = mapping['SOURCE-PDU'] + "_to_" + mapping['TARGET-PDU']
                 reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
                 ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
@@ -1846,7 +1895,6 @@ def EnGw_config(file_list, output_path, logger):
     definition.attrib['DEST'] = "ECUC-MODULE-DEF"
     definition.text = "/AUTOSAR/EcuDefs/EnGwCCD"
     description = etree.SubElement(ecuc_module, 'IMPLEMENTATION-CONFIG-VARIANT').text = "VARIANT-PRE-COMPILE"
-    # implement TRS.COMCONF.GEN.00D(1)
     containers = etree.SubElement(ecuc_module, 'CONTAINERS')
     ecuc_container = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
     short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddComStackContribution"
@@ -1855,6 +1903,7 @@ def EnGw_config(file_list, output_path, logger):
     definition.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution"
     subcontainer = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
     ecuc_container = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
+    # TRS.COMCONF.GEN.0217(0)
     short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRLowerLayerContribution"
     definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
     definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1862,6 +1911,7 @@ def EnGw_config(file_list, output_path, logger):
     subcontainers = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
     index = 0
     data_elements_to = []
+    # TRS.COMCONF.GEN.0216(0)
     for mapping in mappings:
         found_source = False
         found_target = False
@@ -1876,13 +1926,16 @@ def EnGw_config(file_list, output_path, logger):
                 target_cluster = frame['CLUSTER']
             if found_source and found_target and mapping['TYPE'] == "GW-CAN-DIAG":
                 obj_sort = {}
+                # TRS.COMCONF.GEN.0220(0)
                 obj_sort['SHORT-NAME'] = "PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
+                # TRS.COMCONF.GEN.0221(0)
                 obj_sort['ID'] = 0
                 obj_sort['REF'] = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
                 obj_sort['CLUSTER'] = target_cluster
                 data_elements_to.append(obj_sort)
                 # Routing path
                 ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0223(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "RoutingPathCCD_" + mapping['SOURCE-PDU'] + "_TO_" + mapping['TARGET-PDU']
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -1892,6 +1945,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_textual_param_value, "DEFINITION-REF")
                 definition_ref.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCDRoutingPath/EnGwAuthorizationCallout"
+                # TRS.COMCONF.GEN.0224(0)
                 value = etree.SubElement(ecuc_textual_param_value, 'VALUE').text = mapping['SOURCE-PDU'] + "_to_" + mapping['TARGET-PDU']
                 reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
                 ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
@@ -1927,7 +1981,9 @@ def EnGw_config(file_list, output_path, logger):
                 target_cluster = frame['CLUSTER']
             if found_source and found_target and mapping['TYPE'] == "GW-CAN-DIAG":
                 obj_sort = {}
+                # TRS.COMCONF.GEN.0218(0)
                 obj_sort['SHORT-NAME'] = "PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
+                # TRS.COMCONF.GEN.0219(0)
                 obj_sort['ID'] = 0
                 obj_sort['REF'] = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
                 obj_sort['CLUSTER'] = target_cluster
@@ -2021,6 +2077,7 @@ def EnGw_config(file_list, output_path, logger):
         FromFDEnd = FromFDBegin
 
     ecuc_container = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
+    # TRS.COMCONF.GEN.0225(0)
     short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddDiagIndexing"
     definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
     definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -2030,6 +2087,7 @@ def EnGw_config(file_list, output_path, logger):
     definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
     definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
     definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToDiagBegin"
+    # TRS.COMCONF.GEN.0226(0)
     value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToDiagBegin)
     ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
     definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
@@ -2113,12 +2171,14 @@ def EnGw_config(file_list, output_path, logger):
     definition.text = "/AUTOSAR/EcuDefs/EnGwFonc/CddComStackContribution"
     subcontainer = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
     ecuc_container = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
+    # TRS.COMCONF.GEN.0228(0)
     short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRLowerLayerContribution"
     definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
     definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
     definition.text = "/AUTOSAR/EcuDefs/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution"
     subcontainers = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
     index = 0
+    # TRS.COMCONF.GEN.0227(0)
     for mapping in mappings:
         found_source = False
         found_target = False
@@ -2130,6 +2190,7 @@ def EnGw_config(file_list, output_path, logger):
             if found_source and found_target and mapping['TYPE'] == "GW-FILTERED":
                 # REQ part
                 ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0229(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -2139,6 +2200,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerHandleId"
+                # TRS.COMCONF.GEN.0230(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
                 ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
@@ -2150,6 +2212,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
                 # REP part
                 ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0231(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -2159,6 +2222,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerHandleId"
+                # TRS.COMCONF.GEN.0232(0)
                 value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
                 index = index + 1
                 reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
@@ -2171,6 +2235,7 @@ def EnGw_config(file_list, output_path, logger):
                 value_ref.text = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
                 # Routing path
                 ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+                # TRS.COMCONF.GEN.0234(0)
                 short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "RoutingPathFonc_" + mapping['SOURCE-PDU'] + "_TO_" + mapping['TARGET-PDU']
                 definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
                 definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -2180,6 +2245,7 @@ def EnGw_config(file_list, output_path, logger):
                 definition_ref = etree.SubElement(ecuc_textual_param_value, "DEFINITION-REF")
                 definition_ref.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
                 definition_ref.text = "/AUTOSAR/EcuDefs/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/EnGwFoncRoutingPath/EnGwAuthorizationCallout"
+                # TRS.COMCONF.GEN.0235(0)
                 value = etree.SubElement(ecuc_textual_param_value, 'VALUE').text = mapping['SOURCE-PDU'] + "_to_" + mapping['TARGET-PDU']
                 reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
                 ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
@@ -2857,6 +2923,7 @@ def CanIf_config(file_list, output_path, logger):
         for lin in lins21:
             # Rx part
             ecuc_container_value = etree.SubElement(subcontainer_init, "ECUC-CONTAINER-VALUE")
+            # TRS.COMCONF.GEN.0116(0)
             short_name = etree.SubElement(ecuc_container_value, "SHORT-NAME").text = "CanIfRxPduCfg_REQ_" + diag_tool + "_" + lin['NAME']
             definition = etree.SubElement(ecuc_container_value, "DEFINITION-REF")
             definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -2866,6 +2933,7 @@ def CanIf_config(file_list, output_path, logger):
             definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
             definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
             definition_0.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfRxPduCfg/CanIfRxPduCanId"
+            # TRS.COMCONF.GEN.0117(0)
             value_0 = etree.SubElement(numerical_0, "VALUE").text = lin['REQ-ID']
             numerical_1 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
             definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
@@ -2889,6 +2957,7 @@ def CanIf_config(file_list, output_path, logger):
             definition.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfRxPduCfg/CanIfRxPduRef"
             value = etree.SubElement(ecuc_ref_value, "VALUE-REF")
             value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            # TRS.COMCONF.GEN.0118(0)
             value.text = "/EcuC/EcuC/EcucPduCollection/CanIf_REQ_" + diag_tool + "_" + lin['NAME'] + "_CanTp"
             ecuc_ref_value = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
             definition = etree.SubElement(ecuc_ref_value, "DEFINITION-REF")
@@ -2899,6 +2968,7 @@ def CanIf_config(file_list, output_path, logger):
             value.text = "/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg/HOH_0_VSM_" + diag_tool
             # Tx part
             ecuc_container_value = etree.SubElement(subcontainer_init, "ECUC-CONTAINER-VALUE")
+            # TRS.COMCONF.GEN.0119(0)
             short_name = etree.SubElement(ecuc_container_value, "SHORT-NAME").text = "CanIfTxPduCfg_REP_" + diag_tool + "_" + lin['NAME']
             definition = etree.SubElement(ecuc_container_value, "DEFINITION-REF")
             definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -2908,6 +2978,7 @@ def CanIf_config(file_list, output_path, logger):
             definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
             definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
             definition_0.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduCanId"
+            # TRS.COMCONF.GEN.0120(0)
             value_0 = etree.SubElement(numerical_0, "VALUE").text = lin['REP-ID']
             numerical_1 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
             definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
@@ -2926,6 +2997,7 @@ def CanIf_config(file_list, output_path, logger):
             definition.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduRef"
             value = etree.SubElement(ecuc_ref_value, "VALUE-REF")
             value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            # TRS.COMCONF.GEN.0121(0)
             value.text = "/EcuC/EcuC/EcucPduCollection/CanTp_REP_" + diag_tool + "_" + lin['NAME'] + "_CanIf"
             ecuc_ref_value = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
             definition = etree.SubElement(ecuc_ref_value, "DEFINITION-REF")
@@ -2940,6 +3012,7 @@ def CanIf_config(file_list, output_path, logger):
             if nad['CONFIG'] == "1.3":
                 # Rx N PDU
                 ecuc_container_value = etree.SubElement(subcontainer_init, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.0122(0)
                 short_name = etree.SubElement(ecuc_container_value, "SHORT-NAME").text = "CanIfRxPduCfg_REQ_" + diag_tool + "_" + nad['NETWORK']
                 definition = etree.SubElement(ecuc_container_value, "DEFINITION-REF")
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -2952,6 +3025,7 @@ def CanIf_config(file_list, output_path, logger):
                         definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
                         definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                         definition_0.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfRxPduCfg/CanIfRxPduCanId"
+                        # TRS.COMCONF.GEN.0123(0)
                         value_0 = etree.SubElement(numerical_0, "VALUE").text = lin['REQ-ID']
                 numerical_1 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
@@ -2975,6 +3049,7 @@ def CanIf_config(file_list, output_path, logger):
                 definition.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfRxPduCfg/CanIfRxPduRef"
                 value = etree.SubElement(ecuc_ref_value, "VALUE-REF")
                 value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                # TRS.COMCONF.GEN.0124(0)
                 value.text = "/EcuC/EcuC/EcucPduCollection/CanIf_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_EnGwCLD"
                 ecuc_ref_value = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
                 definition = etree.SubElement(ecuc_ref_value, "DEFINITION-REF")
@@ -2985,6 +3060,7 @@ def CanIf_config(file_list, output_path, logger):
                 value.text = "/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg/HOH_0_VSM_" + diag_tool
                 # Tx N FC PDU
                 ecuc_container_value = etree.SubElement(subcontainer_init, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.0125(0)
                 short_name = etree.SubElement(ecuc_container_value, "SHORT-NAME").text = "CanIfTxPduCfg_REP_" + diag_tool + "_" + nad['NETWORK']
                 definition = etree.SubElement(ecuc_container_value, "DEFINITION-REF")
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -2998,6 +3074,7 @@ def CanIf_config(file_list, output_path, logger):
                         definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
                         definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                         definition_0.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduCanId"
+                        # TRS.COMCONF.GEN.0126(0)
                         value_0 = etree.SubElement(numerical_0, "VALUE").text = lin['REP-ID']
                 numerical_1 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
@@ -3026,6 +3103,7 @@ def CanIf_config(file_list, output_path, logger):
                 definition.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduRef"
                 value = etree.SubElement(ecuc_ref_value, "VALUE-REF")
                 value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                # TRS.COMCONF.GEN.0127(0)
                 value.text = "/EcuC/EcuC/EcucPduCollection/CanIf_REP_" + diag_tool + "_" + nad['NETWORK'] + "_EnGwCLD"
                 ecuc_ref_value = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
                 definition = etree.SubElement(ecuc_ref_value, "DEFINITION-REF")
@@ -3037,6 +3115,7 @@ def CanIf_config(file_list, output_path, logger):
             else:
                 # Tx N PDU
                 ecuc_container_value = etree.SubElement(subcontainer_init, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.0128(0)
                 short_name = etree.SubElement(ecuc_container_value, "SHORT-NAME").text = "CanIfTxPduCfg_REP_" + diag_tool + "_" + nad_network.group(0) + "_" + nad['NAME']
                 definition = etree.SubElement(ecuc_container_value, "DEFINITION-REF")
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3050,6 +3129,7 @@ def CanIf_config(file_list, output_path, logger):
                         definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
                         definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                         definition_0.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduCanId"
+                        # TRS.COMCONF.GEN.0129(0)
                         value_0 = etree.SubElement(numerical_0, "VALUE").text = lin['REP-ID']
                 numerical_1 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
@@ -3078,6 +3158,7 @@ def CanIf_config(file_list, output_path, logger):
                 definition.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduRef"
                 value = etree.SubElement(ecuc_ref_value, "VALUE-REF")
                 value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                # TRS.COMCONF.GEN.0130(0)
                 value.text = "/EcuC/EcuC/EcucPduCollection/CanTp_REP_" + diag_tool + "_" + nad_network.group(0) + "_" + nad['NAME'] + "_CanIf"
                 ecuc_ref_value = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
                 definition = etree.SubElement(ecuc_ref_value, "DEFINITION-REF")
@@ -3088,6 +3169,7 @@ def CanIf_config(file_list, output_path, logger):
                 value.text = "/CanIf/CanIf/CanIfInitCfg/HOH_2_VSM_" + diag_tool
                 # Tx N FC PDU
                 ecuc_container_value = etree.SubElement(subcontainer_init, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.0131(0)
                 short_name = etree.SubElement(ecuc_container_value, "SHORT-NAME").text = "CanIfTxPduCfg_FC_REP_" + diag_tool + "_" + nad_network.group(0) + "_" + nad['NAME']
                 definition = etree.SubElement(ecuc_container_value, "DEFINITION-REF")
                 definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3101,6 +3183,7 @@ def CanIf_config(file_list, output_path, logger):
                         definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
                         definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                         definition_0.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduCanId"
+                        # TRS.COMCONF.GEN.0132(0)
                         value_0 = etree.SubElement(numerical_0, "VALUE").text = lin['REP-ID']
                 numerical_1 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
@@ -3129,6 +3212,7 @@ def CanIf_config(file_list, output_path, logger):
                 definition.text = "/AUTOSAR/EcuDefs/CanIf/CanIfInitCfg/CanIfTxPduCfg/CanIfTxPduRef"
                 value = etree.SubElement(ecuc_ref_value, "VALUE-REF")
                 value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                # TRS.COMCONF.GEN.013(0)
                 value.text = "/EcuC/EcuC/EcucPduCollection/CanTp_FC_REP_" + diag_tool + "_" + nad_network.group(0) + "_" + nad['NAME'] + "_CanIf"
                 ecuc_ref_value = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
                 definition = etree.SubElement(ecuc_ref_value, "DEFINITION-REF")
@@ -3202,6 +3286,7 @@ def CanTp_config(file_list, output_path, logger):
     definition_ref = etree.SubElement(ecuc_num_1, "DEFINITION-REF")
     definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
     definition_ref.text = "/AUTOSAR/EcuDefs/CanTp/CanTpGeneral/CanTpPaddingByte"
+    # TRS.COMCONF.GEN.097(0)
     value = etree.SubElement(ecuc_num_1, "VALUE").text = "255"
     ecuc_num_2 = etree.SubElement(parameter_values, "ECUC-NUMERICAL-PARAM-VALUE")
     definition_ref = etree.SubElement(ecuc_num_2, "DEFINITION-REF")
@@ -3230,6 +3315,7 @@ def CanTp_config(file_list, output_path, logger):
         for lin in lins:
             lin_network = re.search("LIN_VSM_\d", lin["NAME"])
             ecuc_container_value = etree.SubElement(subcontainer_init, "ECUC-CONTAINER-VALUE")
+            # TRS.COMCONF.GEN.097(0)
             short_name = etree.SubElement(ecuc_container_value, "SHORT-NAME").text = "CanTpChannel_Gw_" + diag_tool + "_" + lin['NAME']
             definition = etree.SubElement(ecuc_container_value, "DEFINITION-REF")
             definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3239,6 +3325,7 @@ def CanTp_config(file_list, output_path, logger):
             definition_ref = etree.SubElement(ecuc_textual_param_value, "DEFINITION-REF")
             definition_ref.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
             definition_ref.text = "/AUTOSAR/EcuDefs/CanTp/CanTpConfig/CanTpChannel/CanTpChannelMode"
+            # TRS.COMCONF.GEN.098(0)
             value = etree.SubElement(ecuc_textual_param_value, "VALUE").text = "CANTP_MODE_HALF_DUPLEX"
             subcontainer_nad = etree.SubElement(ecuc_container_value, "SUB-CONTAINERS")
             for nad in nads:
@@ -3247,6 +3334,7 @@ def CanTp_config(file_list, output_path, logger):
                     if lin_network.group(0) == nad_network.group(0):
                         # REQ part
                         ecuc_container_nad = etree.SubElement(subcontainer_nad, "ECUC-CONTAINER-VALUE")
+                        # TRS.COMCONF.GEN.099(0)
                         short_name = etree.SubElement(ecuc_container_nad, "SHORT-NAME").text = "CanTpRxNSdu_REQ_" + diag_tool + "_" + lin['NAME'] + "_" + nad['NAME']
                         definition = etree.SubElement(ecuc_container_nad, "DEFINITION-REF")
                         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3256,6 +3344,7 @@ def CanTp_config(file_list, output_path, logger):
                         definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
                         definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                         definition_0.text = "/AUTOSAR/EcuDefs/CanTp/CanTpConfig/CanTpChannel/CanTpRxNSdu/CanTpRxNSduId"
+                        # TRS.COMCONF.GEN.0100(0)
                         value_0 = etree.SubElement(numerical_0, "VALUE").text = str(id)
                         #id = id + 1
                         numerical_1 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
@@ -3315,9 +3404,11 @@ def CanTp_config(file_list, output_path, logger):
                         definition.text = "/AUTOSAR/EcuDefs/CanTp/CanTpConfig/CanTpChannel/CanTpRxNSdu/CanTpRxNSduRef"
                         value = etree.SubElement(ecuc_ref_value, "VALUE-REF")
                         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                        # TRS.COMCONF.GEN.0101(0)
                         value.text = "/EcuC/EcuC/EcucPduCollection/CanTp_REQ_" + diag_tool + "_" + nad['NETWORK'] + "_EnGwCLD"
                         subcontainers = etree.SubElement(ecuc_container_nad, "SUB-CONTAINERS")
                         ecuc_container_1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+                        # TRS.COMCONF.GEN.0102(0)
                         short_name = etree.SubElement(ecuc_container_1, "SHORT-NAME").text = "CanTpNSa_REQ_" + diag_tool + "_" + lin['NAME'] + "_" + nad['NAME']
                         definition = etree.SubElement(ecuc_container_1, "DEFINITION-REF")
                         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3329,6 +3420,7 @@ def CanTp_config(file_list, output_path, logger):
                         def_param.text = "/AUTOSAR/EcuDefs/CanTp/CanTpConfig/CanTpChannel/CanTpRxNSdu/CanTpNSa/CanTpNSa"
                         value = etree.SubElement(ecuc_numerical, "VALUE").text = nad["ID"]
                         ecuc_container_2 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+                        # TRS.COMCONF.GEN.0103(0)
                         short_name = etree.SubElement(ecuc_container_2, "SHORT-NAME").text = "CanTpNTa_REQ_" + diag_tool + "_" + lin['NAME'] + "_" + nad['NAME']
                         definition = etree.SubElement(ecuc_container_2, "DEFINITION-REF")
                         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3340,6 +3432,7 @@ def CanTp_config(file_list, output_path, logger):
                         def_param.text = "/AUTOSAR/EcuDefs/CanTp/CanTpConfig/CanTpChannel/CanTpRxNSdu/CanTpNTa/CanTpNTa"
                         value = etree.SubElement(ecuc_numerical, "VALUE").text = nad["ID"]
                         ecuc_container_3 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+                        # TRS.COMCONF.GEN.0104(0)
                         short_name = etree.SubElement(ecuc_container_3, "SHORT-NAME").text = "CanTpRxNPdu_REQ_" + diag_tool + "_" + lin['NAME'] + "_" + nad['NAME']
                         definition = etree.SubElement(ecuc_container_3, "DEFINITION-REF")
                         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3353,6 +3446,7 @@ def CanTp_config(file_list, output_path, logger):
                         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
                         value.text = "/EcuC/EcuC/EcucPduCollection/CanIf_REQ_" + diag_tool + "_" + nad_network.group(0) + "_CanTp"
                         ecuc_container_4 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+                        # TRS.COMCONF.GEN.0105(0)
                         short_name = etree.SubElement(ecuc_container_4, "SHORT-NAME").text = "CanTpTxFcNPdu_REQ_" + diag_tool + "_" + lin['NAME'] + "_" + nad['NAME']
                         definition = etree.SubElement(ecuc_container_4, "DEFINITION-REF")
                         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3367,6 +3461,7 @@ def CanTp_config(file_list, output_path, logger):
                         value.text = "/EcuC/EcuC/EcucPduCollection/CanTp_FC_REP_" + diag_tool + "_" + nad_network.group(0) + "_" + nad['NAME'] + "_CanIf"
                         # REP part
                         ecuc_container_nad = etree.SubElement(subcontainer_nad, "ECUC-CONTAINER-VALUE")
+                        # TRS.COMCONF.GEN.0106(0)
                         short_name = etree.SubElement(ecuc_container_nad, "SHORT-NAME").text = "CanTpTxNSdu_REP_" + diag_tool + "_" + lin['NAME'] + "_" + nad['NAME']
                         definition = etree.SubElement(ecuc_container_nad, "DEFINITION-REF")
                         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3376,6 +3471,7 @@ def CanTp_config(file_list, output_path, logger):
                         definition_0 = etree.SubElement(numerical_0, "DEFINITION-REF")
                         definition_0.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                         definition_0.text = "/AUTOSAR/EcuDefs/CanTp/CanTpConfig/CanTpChannel/CanTpTxNSdu/CanTpTxNSduId"
+                        # TRS.COMCONF.GEN.0107(0)
                         value_0 = etree.SubElement(numerical_0, "VALUE").text = str(id)
                         id = id + 1
                         numerical_1 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
@@ -3425,9 +3521,11 @@ def CanTp_config(file_list, output_path, logger):
                         definition.text = "/AUTOSAR/EcuDefs/CanTp/CanTpConfig/CanTpChannel/CanTpTxNSdu/CanTpTxNSduRef"
                         value = etree.SubElement(ecuc_ref_value, "VALUE-REF")
                         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+                        # TRS.COMCONF.GEN.0108(0)
                         value.text = "/EcuC/EcuC/EcucPduCollection/CanTp_REP_" + diag_tool + "_" + nad['NETWORK'] + "_EnGwCLD"
                         subcontainers = etree.SubElement(ecuc_container_nad, "SUB-CONTAINERS")
                         ecuc_container_1 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+                        # TRS.COMCONF.GEN.0109(0)
                         short_name = etree.SubElement(ecuc_container_1, "SHORT-NAME").text = "CanTpNSa_REP_" + diag_tool + "_" + lin['NAME'] + "_" + nad['NAME']
                         definition = etree.SubElement(ecuc_container_1, "DEFINITION-REF")
                         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3439,6 +3537,7 @@ def CanTp_config(file_list, output_path, logger):
                         def_param.text = "/AUTOSAR/EcuDefs/CanTp/CanTpConfig/CanTpChannel/CanTpTxNSdu/CanTpNSa/CanTpNSa"
                         value = etree.SubElement(ecuc_numerical, "VALUE").text = nad["ID"]
                         ecuc_container_2 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+                        # TRS.COMCONF.GEN.0110(0)
                         short_name = etree.SubElement(ecuc_container_2, "SHORT-NAME").text = "CanTpNTa_REP_" + diag_tool + "_" + lin['NAME'] + "_" + nad['NAME']
                         definition = etree.SubElement(ecuc_container_2, "DEFINITION-REF")
                         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3450,6 +3549,7 @@ def CanTp_config(file_list, output_path, logger):
                         def_param.text = "/AUTOSAR/EcuDefs/CanTp/CanTpConfig/CanTpChannel/CanTpTxNSdu/CanTpNTa/CanTpNTa"
                         value = etree.SubElement(ecuc_numerical, "VALUE").text = nad["ID"]
                         ecuc_container_3 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+                        # TRS.COMCONF.GEN.0111(0)
                         short_name = etree.SubElement(ecuc_container_3, "SHORT-NAME").text = "CanTpTxNPdu_REP_" + diag_tool + "_" + lin['NAME'] + "_" + nad['NAME']
                         definition = etree.SubElement(ecuc_container_3, "DEFINITION-REF")
                         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3463,6 +3563,7 @@ def CanTp_config(file_list, output_path, logger):
                         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
                         value.text = "/EcuC/EcuC/EcucPduCollection/CanTp_REP_" + diag_tool + "_" + nad_network.group(0) + "_" + nad['NAME'] + "_CanIf"
                         ecuc_container_4 = etree.SubElement(subcontainers, "ECUC-CONTAINER-VALUE")
+                        # TRS.COMCONF.GEN.0112(0)
                         short_name = etree.SubElement(ecuc_container_4, "SHORT-NAME").text = "CanTpRxFcNPdu_REP_" + diag_tool + "_" + lin['NAME'] + "_" + nad['NAME']
                         definition = etree.SubElement(ecuc_container_4, "DEFINITION-REF")
                         definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3555,6 +3656,7 @@ def LinTp_config(file_list, output_path, logger):
                 lin = "LIN_VSM_8_Channel"
             # REP part
             ecuc_nad = etree.SubElement(subcontainer_general, "ECUC-CONTAINER-VALUE")
+            # TRS.COMCONF.GEN.065(0)
             short_name = etree.SubElement(ecuc_nad, "SHORT-NAME").text = "LinTpRxNSdu_REP_" + nad['NETWORK']
             definition_nad = etree.SubElement(ecuc_nad, "DEFINITION-REF")
             definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3564,6 +3666,7 @@ def LinTp_config(file_list, output_path, logger):
             definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
             definition_1.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
             definition_1.text = "/AUTOSAR/EcuDefs/LinTp/LinTpGlobalConfig/LinTpRxNSdu/LinTpDl"
+            # TRS.COMCONF.GEN.066(0)
             value_1 = etree.SubElement(numerical_1, "VALUE").text = "1"
             numerical_2 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
             definition_2 = etree.SubElement(numerical_2, "DEFINITION-REF")
@@ -3582,6 +3685,7 @@ def LinTp_config(file_list, output_path, logger):
             definition.text = "/AUTOSAR/EcuDefs/LinTp/LinTpGlobalConfig/LinTpRxNSdu/LinTpRxNSduPduRef"
             value = etree.SubElement(ecuc_ref_value_1, "VALUE-REF")
             value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            # TRS.COMCONF.GEN.067(0)
             value.text = "/EcuC/EcuC/EcucPduCollection/LinTp_REP_" + nad['NETWORK'] + "_EnGwCLD"
             ecuc_ref_value_2 = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
             definition = etree.SubElement(ecuc_ref_value_2, "DEFINITION-REF")
@@ -3599,6 +3703,7 @@ def LinTp_config(file_list, output_path, logger):
             value.text = "/LinTp/LinTp/LinTpGlobalConfig/LinTpChannel_" + nad_network.group(0)
             # REQ part
             ecuc_nad = etree.SubElement(subcontainer_general, "ECUC-CONTAINER-VALUE")
+            # TRS.COMCONF.GEN.068(0)
             short_name = etree.SubElement(ecuc_nad, "SHORT-NAME").text = "LinTpTxNSdu_REQ_" + nad['NETWORK']
             definition_nad = etree.SubElement(ecuc_nad, "DEFINITION-REF")
             definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3608,6 +3713,7 @@ def LinTp_config(file_list, output_path, logger):
             definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
             definition_1.attrib['DEST'] = "ECUC-FLOAT-PARAM-DEF"
             definition_1.text = "/AUTOSAR/EcuDefs/LinTp/LinTpGlobalConfig/LinTpTxNSdu/LinTpNas"
+            # TRS.COMCONF.GEN.069(0)
             value_1 = etree.SubElement(numerical_1, "VALUE").text = "0.1"
             numerical_2 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
             definition_2 = etree.SubElement(numerical_2, "DEFINITION-REF")
@@ -3626,6 +3732,7 @@ def LinTp_config(file_list, output_path, logger):
             definition.text = "/AUTOSAR/EcuDefs/LinTp/LinTpGlobalConfig/LinTpTxNSdu/LinTpTxNSduPduRef"
             value = etree.SubElement(ecuc_ref_value_1, "VALUE-REF")
             value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            # TRS.COMCONF.GEN.070(0)
             value.text = "/EcuC/EcuC/EcucPduCollection/LinTp_REQ_" + nad['NETWORK'] + "_EnGwCLD"
             ecuc_ref_value_2 = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
             definition = etree.SubElement(ecuc_ref_value_2, "DEFINITION-REF")
@@ -3648,6 +3755,7 @@ def LinTp_config(file_list, output_path, logger):
             if nad_network.group(0) not in network_list:
                 network_list.append(nad_network.group(0))
                 ecuc_nad = etree.SubElement(subcontainer_general, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.071(0)
                 short_name = etree.SubElement(ecuc_nad, "SHORT-NAME").text = "LinTpChannel_" + nad_network.group(0)
                 definition_nad = etree.SubElement(ecuc_nad, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3657,6 +3765,7 @@ def LinTp_config(file_list, output_path, logger):
                 definition_1 = etree.SubElement(boolean_1, "DEFINITION-REF")
                 definition_1.attrib['DEST'] = "ECUC-BOOLEAN-PARAM-DEF"
                 definition_1.text = "/AUTOSAR/EcuDefs/LinTp/LinTpGlobalConfig/LinTpChannelConfig/LinTpDropNotRequestedNad"
+                # TRS.COMCONF.GEN.072(0)
                 value_1 = etree.SubElement(boolean_1, "VALUE").text = "0"
                 boolean_2 = etree.SubElement(parameter_values, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_2 = etree.SubElement(boolean_2, "DEFINITION-REF")
@@ -3729,6 +3838,7 @@ def LinIf_config(file_list, output_path, logger):
             if nad_network.group(0) not in network_list:
                 network_list.append(nad_network.group(0))
                 ecuc_general = etree.SubElement(subcontainer_master, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.075(0)
                 short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = nad_network.group(0) + "_Channel"
                 definition_general = etree.SubElement(ecuc_general, "DEFINITION-REF")
                 definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3737,6 +3847,7 @@ def LinIf_config(file_list, output_path, logger):
                 subcontainer_general = etree.SubElement(ecuc_general, "SUB-CONTAINERS")
                 # REQ part lin network
                 ecuc_nad = etree.SubElement(subcontainer_general, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.076(0)
                 short_name = etree.SubElement(ecuc_nad, "SHORT-NAME").text = "LinIfFrame_REP_" + nad_network.group(0) + "_1P3"
                 definition_nad = etree.SubElement(ecuc_nad, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3746,6 +3857,7 @@ def LinIf_config(file_list, output_path, logger):
                 definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
                 definition_1.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_1.text = "/AUTOSAR/EcuDefs/LinIf/LinIfGlobalConfig/LinIfChannel/LinIfFrame/LinIfLength"
+                # TRS.COMCONF.GEN.077(0)
                 value_1 = etree.SubElement(numerical_1, "VALUE").text = "8"
                 numerical_2 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_2 = etree.SubElement(numerical_2, "DEFINITION-REF")
@@ -3764,12 +3876,14 @@ def LinIf_config(file_list, output_path, logger):
                 value_4 = etree.SubElement(numerical_4, "VALUE").text = "UNCONDITIONAL"
                 subcontainer_local = etree.SubElement(ecuc_nad, "SUB-CONTAINERS")
                 lin_direction = etree.SubElement(subcontainer_local, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.078(0)
                 short_name = etree.SubElement(lin_direction, "SHORT-NAME").text = "LinIfPduDirection_REP_" + nad_network.group(0) + "_1P3"
                 definition_nad = etree.SubElement(lin_direction, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
                 definition_nad.text = "/AUTOSAR/EcuDefs/LinIf/LinIfGlobalConfig/LinIfChannel/LinIfFrame/LinIfPduDirection"
                 subcontainer_local2 = etree.SubElement(lin_direction, "SUB-CONTAINERS")
                 lin_direction2 = etree.SubElement(subcontainer_local2, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.079(0)
                 short_name = etree.SubElement(lin_direction2, "SHORT-NAME").text = "LinIfRxPdu_REP_" + nad_network.group(0) + "_1P3"
                 definition_nad = etree.SubElement(lin_direction2, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3784,6 +3898,7 @@ def LinIf_config(file_list, output_path, logger):
                 value.text = "/EcuC/EcuC/EcucPduCollection/LinIf_REP_" + nad_network.group(0) + "_1P3_EnGwCLD"
                 # REP part schedule table
                 ecuc_nad = etree.SubElement(subcontainer_general, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.084(0)
                 short_name = etree.SubElement(ecuc_nad, "SHORT-NAME").text = "LinIfScheduleTable_REP_" + nad_network.group(0) + "_1P3"
                 definition_nad = etree.SubElement(ecuc_nad, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3793,6 +3908,7 @@ def LinIf_config(file_list, output_path, logger):
                 definition_1 = etree.SubElement(textual_1, "DEFINITION-REF")
                 definition_1.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
                 definition_1.text = "/AUTOSAR/EcuDefs/LinIf/LinIfGlobalConfig/LinIfChannel/LinIfScheduleTable/LinIfScheduleTableName"
+                # TRS.COMCONF.GEN.085(0)
                 value_1 = etree.SubElement(textual_1, "VALUE").text = "SCH_REP_" + nad_network.group(0) + "_1P3"
                 textual_2 = etree.SubElement(parameters, "ECUC-TEXTUAL-PARAM-VALUE")
                 definition_2 = etree.SubElement(textual_2, "DEFINITION-REF")
@@ -3811,6 +3927,7 @@ def LinIf_config(file_list, output_path, logger):
                 value_4 = etree.SubElement(textual_4, "VALUE").text = "LINTP_DIAG_RESPONSE"
                 subcontainer_local = etree.SubElement(ecuc_nad, "SUB-CONTAINERS")
                 lin_entry0 = etree.SubElement(subcontainer_local, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.086(0)
                 short_name = etree.SubElement(lin_entry0, "SHORT-NAME").text = "LinIfEntry_0"
                 definition_nad = etree.SubElement(lin_entry0, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3820,6 +3937,7 @@ def LinIf_config(file_list, output_path, logger):
                 definition_1 = etree.SubElement(textual_1, "DEFINITION-REF")
                 definition_1.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
                 definition_1.text = "/AUTOSAR/EcuDefs/LinIf/LinIfGlobalConfig/LinIfChannel/LinIfScheduleTable/LinIfEntry/LinIfEntryIndex"
+                # TRS.COMCONF.GEN.087(0)
                 value_1 = etree.SubElement(textual_1, "VALUE").text = "0"
                 numerical_2 = etree.SubElement(parameters_local, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_2 = etree.SubElement(numerical_2, "DEFINITION-REF")
@@ -3835,6 +3953,7 @@ def LinIf_config(file_list, output_path, logger):
                 value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
                 value.text = "/LinIf/LinIf/LinIfGlobalConfig/" + nad_network.group(0) + "_Channel/LinIfFrame_REP_" + nad_network.group(0) + "_1P3"
                 lin_entry1 = etree.SubElement(subcontainer_local, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.088(0)
                 short_name = etree.SubElement(lin_entry1, "SHORT-NAME").text = "LinIfEntry_1"
                 definition_nad = etree.SubElement(lin_entry1, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3844,6 +3963,7 @@ def LinIf_config(file_list, output_path, logger):
                 definition_1 = etree.SubElement(textual_1, "DEFINITION-REF")
                 definition_1.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
                 definition_1.text = "/AUTOSAR/EcuDefs/LinIf/LinIfGlobalConfig/LinIfChannel/LinIfScheduleTable/LinIfEntry/LinIfEntryIndex"
+                # TRS.COMCONF.GEN.089(0)
                 value_1 = etree.SubElement(textual_1, "VALUE").text = "1"
                 numerical_2 = etree.SubElement(parameters_local, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_2 = etree.SubElement(numerical_2, "DEFINITION-REF")
@@ -3860,6 +3980,7 @@ def LinIf_config(file_list, output_path, logger):
                 value.text = "/LinIf/LinIf/LinIfGlobalConfig/" + nad_network.group(0) + "_Channel/LinIfFrame_REP_" + nad_network.group(0) + "_1P3"
                 # REQ part lin network
                 ecuc_nad = etree.SubElement(subcontainer_general, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.080(0)
                 short_name = etree.SubElement(ecuc_nad, "SHORT-NAME").text = "LinIfFrame_REQ_" + nad_network.group(0) + "_1P3"
                 definition_nad = etree.SubElement(ecuc_nad, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3869,6 +3990,7 @@ def LinIf_config(file_list, output_path, logger):
                 definition_1 = etree.SubElement(numerical_1, "DEFINITION-REF")
                 definition_1.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
                 definition_1.text = "/AUTOSAR/EcuDefs/LinIf/LinIfGlobalConfig/LinIfChannel/LinIfFrame/LinIfLength"
+                # TRS.COMCONF.GEN.081(0)
                 value_1 = etree.SubElement(numerical_1, "VALUE").text = "8"
                 numerical_2 = etree.SubElement(parameters, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_2 = etree.SubElement(numerical_2, "DEFINITION-REF")
@@ -3887,12 +4009,14 @@ def LinIf_config(file_list, output_path, logger):
                 value_4 = etree.SubElement(numerical_4, "VALUE").text = "UNCONDITIONAL"
                 subcontainer_local = etree.SubElement(ecuc_nad, "SUB-CONTAINERS")
                 lin_direction = etree.SubElement(subcontainer_local, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.082(0)
                 short_name = etree.SubElement(lin_direction, "SHORT-NAME").text = "LinIfPduDirection_REQ_" + nad_network.group(0) + "_1P3"
                 definition_nad = etree.SubElement(lin_direction, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
                 definition_nad.text = "/AUTOSAR/EcuDefs/LinIf/LinIfGlobalConfig/LinIfChannel/LinIfFrame/LinIfPduDirection"
                 subcontainer_local2 = etree.SubElement(lin_direction, "SUB-CONTAINERS")
                 lin_direction2 = etree.SubElement(subcontainer_local2, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.083(0)
                 short_name = etree.SubElement(lin_direction2, "SHORT-NAME").text = "LinIfTxPdu_REQ_" + nad_network.group(0) + "_1P3"
                 definition_nad = etree.SubElement(lin_direction2, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3907,6 +4031,7 @@ def LinIf_config(file_list, output_path, logger):
                 value.text = "/EcuC/EcuC/EcucPduCollection/LinIf_REQ_" + nad_network.group(0) + "_1P3_EnGwCLD"
                 # REQ part schedule table
                 ecuc_nad = etree.SubElement(subcontainer_general, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.090(0)
                 short_name = etree.SubElement(ecuc_nad, "SHORT-NAME").text = "LinIfScheduleTable_REQ_" + nad_network.group(0) + "_1P3"
                 definition_nad = etree.SubElement(ecuc_nad, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3916,6 +4041,7 @@ def LinIf_config(file_list, output_path, logger):
                 definition_1 = etree.SubElement(textual_1, "DEFINITION-REF")
                 definition_1.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
                 definition_1.text = "/AUTOSAR/EcuDefs/LinIf/LinIfGlobalConfig/LinIfChannel/LinIfScheduleTable/LinIfScheduleTableName"
+                # TRS.COMCONF.GEN.091(0)
                 value_1 = etree.SubElement(textual_1, "VALUE").text = "SCH_REQ_" + nad_network.group(0) + "_1P3"
                 textual_2 = etree.SubElement(parameters, "ECUC-TEXTUAL-PARAM-VALUE")
                 definition_2 = etree.SubElement(textual_2, "DEFINITION-REF")
@@ -3934,6 +4060,7 @@ def LinIf_config(file_list, output_path, logger):
                 value_4 = etree.SubElement(textual_4, "VALUE").text = "LINTP_DIAG_REQUEST"
                 subcontainer_local = etree.SubElement(ecuc_nad, "SUB-CONTAINERS")
                 lin_entry0 = etree.SubElement(subcontainer_local, "ECUC-CONTAINER-VALUE")
+                # TRS.COMCONF.GEN.092(0)
                 short_name = etree.SubElement(lin_entry0, "SHORT-NAME").text = "LinIfEntry_0"
                 definition_nad = etree.SubElement(lin_entry0, "DEFINITION-REF")
                 definition_nad.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -3943,6 +4070,7 @@ def LinIf_config(file_list, output_path, logger):
                 definition_1 = etree.SubElement(textual_1, "DEFINITION-REF")
                 definition_1.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
                 definition_1.text = "/AUTOSAR/EcuDefs/LinIf/LinIfGlobalConfig/LinIfChannel/LinIfScheduleTable/LinIfEntry/LinIfEntryIndex"
+                # TRS.COMCONF.GEN.093(0)
                 value_1 = etree.SubElement(textual_1, "VALUE").text = "0"
                 numerical_2 = etree.SubElement(parameters_local, "ECUC-NUMERICAL-PARAM-VALUE")
                 definition_2 = etree.SubElement(numerical_2, "DEFINITION-REF")
@@ -4004,6 +4132,7 @@ def BswM_config(file_list, output_path, logger):
                 if table['CATEGORY'] == "REQUEST_DIAG":
                     network['REQUEST'] = True
 
+    # TRS.COMCONF.GEN.0137(0)
     for network in networks[:]:
         if not network['RESPONSE']:
             logger.error("LIN-CLUSTER " + network['NAME'] + " does not have a SCHEDULE-TABLE of type RESPONSE_DIAG")
@@ -4033,6 +4162,7 @@ def BswM_config(file_list, output_path, logger):
     description = etree.SubElement(ecuc_module, 'IMPLEMENTATION-CONFIG-VARIANT').text = "VARIANT-PRE-COMPILE"
     containers = etree.SubElement(ecuc_module, 'CONTAINERS')
     ecuc_general = etree.SubElement(containers, "ECUC-CONTAINER-VALUE")
+    # TRS.COMCONF.GEN.0136(0)
     short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = "BswMConfig_0"
     definition_general = etree.SubElement(ecuc_general, "DEFINITION-REF")
     definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -4053,6 +4183,7 @@ def BswM_config(file_list, output_path, logger):
     for table in tables:
         if table['CATEGORY'] in ["RESPONSE_DIAG", "REQUEST_DIAG", "FUNCTIONAL"]:
             container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
+            # TRS.COMCONF.GEN.0138(0)
             short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMLogicalExpression_BswMRule_CurrentSchedule_" + table["LIN"] + "_" + table["NAME"]
             definition = etree.SubElement(container, "DEFINITION-REF")
             definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
@@ -4066,6 +4197,7 @@ def BswM_config(file_list, output_path, logger):
             value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
             value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_LinScheduleTable_" + table["LIN"] + "_" + table["NAME"]
 
+            # TRS.COMCONF.GEN.0139(0)
             container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
             short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeCondition_LinScheduleTable_" + table["LIN"] + "_" + table["NAME"]
             definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4104,6 +4236,7 @@ def BswM_config(file_list, output_path, logger):
             definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode/BswMBswRequestedMode"
             value = etree.SubElement(textual_param2, "VALUE").text = "LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"]
 
+            # TRS.COMCONF.GEN.0140(0)
             container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
             short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMScheduleIndication_" + table["LIN"] + "_" + table["NAME"]
             definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4136,6 +4269,7 @@ def BswM_config(file_list, output_path, logger):
             value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
             value.text = "/LinSM/LinSM/LinSMConfigSet/" + table["LIN"] + "/" + table["NAME"]
 
+            # TRS.COMCONF.GEN.0141(0)
             container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
             short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMRule_CurrentSchedule_" + table["LIN"] + "_" + table["NAME"]
             definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4168,6 +4302,7 @@ def BswM_config(file_list, output_path, logger):
             value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
             value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_CurrentSchedule_" + table["LIN"] + "_" + table["NAME"] + "_TrueActionList"
 
+            # TRS.COMCONF.GEN.0142(0)
             container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
             short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMActionList_BswMRule_CurrentSchedule_" + table["LIN"] + "_" + table["NAME"] + "_TrueActionList"
             definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4205,6 +4340,7 @@ def BswM_config(file_list, output_path, logger):
             value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
             value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_Confirmation_" + table["LIN"] + "_" + table["NAME"]
 
+        # TRS.COMCONF.GEN.0143(0)
         if table['CATEGORY'] == "RESPONSE_DIAG":
             container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
             short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_Confirmation_" + table["LIN"] + "_" + table["NAME"]
@@ -4230,6 +4366,7 @@ def BswM_config(file_list, output_path, logger):
             definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
             value = etree.SubElement(textual_param2, "VALUE").text = "SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_" + table["LIN"] + ",LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"] + ",LINTP_DIAG_RESPONSE)"
 
+            # TRS.COMCONF.GEN.0144(0)
             container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
             short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_" + table["LIN"] + "_DiagResp"
             definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4254,6 +4391,7 @@ def BswM_config(file_list, output_path, logger):
             definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
             value = etree.SubElement(textual_param2, "VALUE").text = "SSR_DiagScheduleResponse(ComMConf_ComMChannel_" + table["LIN"] + ",LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"] + ")"
 
+        # TRS.COMCONF.GEN.0145(0)
         if table['CATEGORY'] == "FUNCTIONAL":
             container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
             short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_Confirmation_" + table["LIN"] + "_" + table["NAME"]
@@ -4279,6 +4417,7 @@ def BswM_config(file_list, output_path, logger):
             definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
             value = etree.SubElement(textual_param2, "VALUE").text = "SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_" + table["LIN"] + ",LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"] + ",LINTP_APPLICATIVE_SCHEDULE)"
 
+        # TRS.COMCONF.GEN.0146(0)
         if table['CATEGORY'] == "REQUEST_DIAG":
             container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
             short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_Confirmation_" + table["LIN"] + "_" + table["NAME"]
@@ -4304,6 +4443,7 @@ def BswM_config(file_list, output_path, logger):
             definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
             value = etree.SubElement(textual_param2, "VALUE").text = "SSR_ScheduleRequestConfirmation(ComMConf_ComMChannel_" + table["LIN"] + ",LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"] + ",LINTP_DIAG_REQUEST)"
 
+            # TRS.COMCONF.GEN.0147(0)
             container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
             short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_" + table["LIN"] + "_DiagReq"
             definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4328,6 +4468,7 @@ def BswM_config(file_list, output_path, logger):
             definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMModeControl/BswMAction/BswMAvailableActions/BswMUserCallout/BswMUserCalloutFunction"
             value = etree.SubElement(textual_param2, "VALUE").text = "SSR_DiagScheduleRequest(ComMConf_ComMChannel_" + table["LIN"] + ",LinSMConf_LinSMSchedule_" + table["LIN"] + "_" + table["NAME"] + ")"
 
+    # TRS.COMCONF.GEN.0148(0)
     for network in networks:
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMLogicalExpression_BswMRule_LinTp_" + network["NAME"] + "_Applicative"
@@ -4343,6 +4484,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_APPLICATIVE_SCHEDULE"
 
+        # TRS.COMCONF.GEN.0149(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMLogicalExpression_BswMRule_LinTp_" + network["NAME"] + "_DiagReq"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4357,6 +4499,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_DIAG_REQUEST"
 
+        # TRS.COMCONF.GEN.0150(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMLogicalExpression_BswMRule_LinTp_" + network["NAME"] + "_DiagResp"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4371,6 +4514,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/BswM/BswM/BswMConfig_0/BswMArbitration/BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_DIAG_RESPONSE"
 
+        # TRS.COMCONF.GEN.0151(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_APPLICATIVE_SCHEDULE"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4409,6 +4553,7 @@ def BswM_config(file_list, output_path, logger):
         definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode/BswMBswRequestedMode"
         value = etree.SubElement(textual_param2, "VALUE").text = "LINTP_APPLICATIVE_SCHEDULE"
 
+        # TRS.COMCONF.GEN.0152(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_DIAG_REQUEST"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4447,6 +4592,7 @@ def BswM_config(file_list, output_path, logger):
         definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode/BswMBswRequestedMode"
         value = etree.SubElement(textual_param2, "VALUE").text = "LINTP_DIAG_REQUEST"
 
+        # TRS.COMCONF.GEN.0153(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeCondition_BswMModeRequestPort_" + network["NAME"] + "_LINTP_DIAG_RESPONSE"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4485,6 +4631,7 @@ def BswM_config(file_list, output_path, logger):
         definition.text = "/AUTOSAR/EcuDefs/BswM/BswMConfig/BswMArbitration/BswMModeCondition/BswMConditionValue/BswMBswMode/BswMBswRequestedMode"
         value = etree.SubElement(textual_param2, "VALUE").text = "LINTP_DIAG_RESPONSE"
 
+        # TRS.COMCONF.GEN.0154(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeRequestPort_" + network["NAME"] + "_Applicative"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4528,6 +4675,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/LinIf/LinIf/LinIfGlobalConfig/" + network["NAME"] + "_Channel"
 
+        # TRS.COMCONF.GEN.0155(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeRequestPort_" + network["NAME"] + "_DiagReq"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4571,6 +4719,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/LinIf/LinIf/LinIfGlobalConfig/" + network["NAME"] + "_Channel"
 
+        # TRS.COMCONF.GEN.0156(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMModeRequestPort_" + network["NAME"] + "_DiagResp"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4614,6 +4763,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/LinIf/LinIf/LinIfGlobalConfig/" + network["NAME"] + "_Channel"
 
+        # TRS.COMCONF.GEN.0157(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMRule_LinTp_" + network["NAME"] + "_Applicative"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4646,6 +4796,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_Applicative_TrueActionList"
 
+        # TRS.COMCONF.GEN.0158(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMRule_LinTp_" + network["NAME"] + "_DiagReq"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4678,6 +4829,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_DiagReq_TrueActionList"
 
+        # TRS.COMCONF.GEN.0159(0)
         container = etree.SubElement(subcontainer_arbitration, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMRule_LinTp_" + network["NAME"] + "_DiagResp"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4710,6 +4862,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_DiagResp_TrueActionList"
 
+        # TRS.COMCONF.GEN.0160(0)
         container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_Applicative_TrueActionList"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4747,6 +4900,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_" + network["NAME"] + "_Applicative"
 
+        # TRS.COMCONF.GEN.0161(0)
         container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_DiagReq_TrueActionList"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4784,6 +4938,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_" + network["NAME"] + "_DiagReq"
 
+        # TRS.COMCONF.GEN.0162(0)
         container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMActionList_BswMRule_LinTp_" + network["NAME"] + "_DiagResp_TrueActionList"
         definition = etree.SubElement(container, "DEFINITION-REF")
@@ -4821,6 +4976,7 @@ def BswM_config(file_list, output_path, logger):
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
         value.text = "/BswM/BswM/BswMConfig_0/BswMModeControl/BswMAction_BswMUserCallout_" + network["NAME"] + "_DiagResp"
 
+        # TRS.COMCONF.GEN.0163(0)
         container = etree.SubElement(subcontainer_control, "ECUC-CONTAINER-VALUE")
         short_name = etree.SubElement(container, "SHORT-NAME").text = "BswMAction_BswMUserCallout_" + network["NAME"] + "_Applicative"
         definition = etree.SubElement(container, "DEFINITION-REF")

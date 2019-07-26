@@ -1118,6 +1118,9 @@ def EnGw_config(file_list, output_path, logger):
     can_frames = []
     diag_tools = []
     nads = []
+    diag_pdu_types = []
+    pdu_mappings = []
+    can_connectors = []
     for file in file_list:
         if file.endswith('.arxml'):
             parser = etree.XMLParser(remove_comments=True)
@@ -1126,13 +1129,61 @@ def EnGw_config(file_list, output_path, logger):
             frames = root.findall(".//{http://autosar.org/schema/r4.0}PDU-TRIGGERING")
             for elem in frames:
                 obj_elem = {}
+                obj_elem['DEST'] = elem.find("{http://autosar.org/schema/r4.0}I-PDU-REF").attrib['DEST']
                 obj_elem['PDU'] = elem.find("{http://autosar.org/schema/r4.0}I-PDU-REF").text.split("/")[-1]
+                obj_elem['PDU-REF'] = elem.find("{http://autosar.org/schema/r4.0}I-PDU-REF").text
                 obj_elem['NAME'] = elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                ports = elem.findall(".//{http://autosar.org/schema/r4.0}I-PDU-PORT-REF")
+                port_list = []
+                for port in ports:
+                    port_list.append(port.text)
+                obj_elem['PORTS'] = port_list
                 obj_elem['CHANNEL'] = elem.getparent().getparent().getchildren()[0].text
                 obj_elem['CLUSTER'] = elem.getparent().getparent().getparent().getparent().getparent().getparent().getchildren()[0].text
                 obj_elem['PACKAGE'] = elem.getparent().getparent().getparent().getparent().getparent().getparent().getparent().getparent().getchildren()[0].text
                 obj_elem['ROOT'] = elem.getparent().getparent().getparent().getparent().getparent().getparent().getparent().getparent().getparent().getparent().getchildren()[0].text
                 can_frames.append(obj_elem)
+            elements = root.findall(".//{http://autosar.org/schema/r4.0}DCM-I-PDU")
+            for elem in elements:
+                obj_elem = {}
+                obj_elem['NAME'] = elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                obj_elem['SIZE'] = elem.find("{http://autosar.org/schema/r4.0}LENGTH").text
+                obj_elem['TYPE'] = elem.find("{http://autosar.org/schema/r4.0}DIAG-PDU-TYPE").text
+                diag_pdu_types.append(obj_elem)
+            elements = root.findall(".//{http://autosar.org/schema/r4.0}I-PDU-MAPPING")
+            for elem in elements:
+                obj_elem = {}
+                obj_elem['SOURCE'] = elem.find("{http://autosar.org/schema/r4.0}SOURCE-I-PDU-REF").text
+                targets = elem.findall(".//{http://autosar.org/schema/r4.0}TARGET-I-PDU-REF")
+                temp_list = []
+                for target in targets:
+                    temp_list.append(target.text)
+                obj_elem['TARGET'] = temp_list
+                pdu_mappings.append(obj_elem)
+            elements = root.findall(".//{http://autosar.org/schema/r4.0}CAN-COMMUNICATION-CONNECTOR")
+            for elem in elements:
+                obj_elem = {}
+                obj_elem['NAME'] = elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                obj_elem['INSTANCE'] = elem.getparent().getparent().getchildren()[0].text
+                ports = elem.findall(".//{http://autosar.org/schema/r4.0}I-PDU-PORT")
+                for port in ports:
+                    if port.find("{http://autosar.org/schema/r4.0}COMMUNICATION-DIRECTION").text == "IN":
+                        obj_elem['IN-PORT'] = port.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                    elif port.find("{http://autosar.org/schema/r4.0}COMMUNICATION-DIRECTION").text == "OUT":
+                        obj_elem['OUT-PORT'] = port.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                can_connectors.append(obj_elem)
+            elements = root.findall(".//{http://autosar.org/schema/r4.0}ETHERNET-COMMUNICATION-CONNECTOR")
+            for elem in elements:
+                obj_elem = {}
+                obj_elem['NAME'] = elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                obj_elem['INSTANCE'] = elem.getparent().getparent().getchildren()[0].text
+                ports = elem.findall(".//{http://autosar.org/schema/r4.0}I-PDU-PORT")
+                for port in ports:
+                    if port.find("{http://autosar.org/schema/r4.0}COMMUNICATION-DIRECTION").text == "IN":
+                        obj_elem['IN-PORT'] = port.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                    elif port.find("{http://autosar.org/schema/r4.0}COMMUNICATION-DIRECTION").text == "OUT":
+                        obj_elem['OUT-PORT'] = port.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                can_connectors.append(obj_elem)
             elements = root.findall(".//{http://autosar.org/schema/r4.0}LIN-SLAVE-CONFIG")
             for elem in elements:
                 obj_nad = {}
@@ -1675,7 +1726,6 @@ def EnGw_config(file_list, output_path, logger):
     subcontainers = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
     index = 0
     # TRS.COMCONF.GEN.0198(0)
-
     for mapping in mappings:
         found_source = False
         found_target = False
@@ -1765,390 +1815,596 @@ def EnGw_config(file_list, output_path, logger):
     output = etree.ElementTree(etree.fromstring(pretty_xml))
     output.write(output_path + '/EnGwCCLD.epc', encoding='UTF-8', xml_declaration=True, method="xml")
 
-    # create output file: EnGwCCB.epc
-    rootCCB = etree.Element('AUTOSAR', {attr_qname: 'http://autosar.org/schema/r4.0 AUTOSAR_4-2-2_STRICT_COMPACT.xsd'}, nsmap=NSMAP)
-    packages = etree.SubElement(rootCCB, 'AR-PACKAGES')
+    # # create output file: EnGwCCB.epc
+    # rootCCB = etree.Element('AUTOSAR', {attr_qname: 'http://autosar.org/schema/r4.0 AUTOSAR_4-2-2_STRICT_COMPACT.xsd'}, nsmap=NSMAP)
+    # packages = etree.SubElement(rootCCB, 'AR-PACKAGES')
+    # package = etree.SubElement(packages, 'AR-PACKAGE')
+    # short_name = etree.SubElement(package, 'SHORT-NAME').text = "EnGwCCB"
+    # elements = etree.SubElement(package, 'ELEMENTS')
+    # ecuc_module = etree.SubElement(elements, 'ECUC-MODULE-CONFIGURATION-VALUES')
+    # short_name = etree.SubElement(ecuc_module, 'SHORT-NAME').text = "EnGwCCB"
+    # definition = etree.SubElement(ecuc_module, 'DEFINITION-REF')
+    # definition.attrib['DEST'] = "ECUC-MODULE-DEF"
+    # definition.text = "/AUTOSAR/EcuDefs/EnGwCCB"
+    # description = etree.SubElement(ecuc_module, 'IMPLEMENTATION-CONFIG-VARIANT').text = "VARIANT-PRE-COMPILE"
+    # # implement TRS.COMCONF.GEN.00B(1)
+    # containers = etree.SubElement(ecuc_module, 'CONTAINERS')
+    # ecuc_container = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
+    # short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddComStackContribution"
+    # definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+    # definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    # definition.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution"
+    # subcontainer = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
+    # ecuc_container = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
+    # # TRS.COMCONF.GEN.0208(0)
+    # short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRLowerLayerContribution"
+    # definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+    # definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    # definition.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution"
+    # subcontainers = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
+    # index = 0
+    # # TRS.COMCONF.GEN.0207(0)
+    # for mapping in mappings:
+    #     found_source = False
+    #     found_target = False
+    #     for frame in can_frames:
+    #         if mapping['SOURCE'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
+    #             found_source = True
+    #         if mapping['TARGET'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
+    #             found_target = True
+    #         if found_source and found_target and mapping['TYPE'] == "GW-REMOTE-DIAG":
+    #             # REQ part
+    #             ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+    #             # TRS.COMCONF.GEN.0209(0)
+    #             short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
+    #             definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu"
+    #             parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
+    #             ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    #             definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerHandleId"
+    #             # TRS.COMCONF.GEN.0210(0)
+    #             value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
+    #             reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
+    #             ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+    #             definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerPduRef"
+    #             value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
+    #             value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+    #             value_ref.text = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
+    #             # REP part
+    #             ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+    #             # TRS.COMCONF.GEN.0211(0)
+    #             short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
+    #             definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu"
+    #             parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
+    #             ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    #             definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerHandleId"
+    #             # TRS.COMCONF.GEN.0212(0)
+    #             value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
+    #             index = index + 1
+    #             reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
+    #             ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+    #             definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerPduRef"
+    #             value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
+    #             value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+    #             value_ref.text = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
+    #             # Routing path
+    #             ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+    #             # TRS.COMCONF.GEN.0214(0)
+    #             short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "RoutingPathCCB_" + mapping['SOURCE-PDU'] + "_TO_" + mapping['TARGET-PDU']
+    #             definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCBRoutingPath"
+    #             parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
+    #             ecuc_textual_param_value = etree.SubElement(parameter_values, 'ECUC-TEXTUAL-PARAM-VALUE')
+    #             definition_ref = etree.SubElement(ecuc_textual_param_value, "DEFINITION-REF")
+    #             definition_ref.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCBRoutingPath/EnGwAuthorizationCallout"
+    #             # TRS.COMCONF.GEN.0215(0)
+    #             value = etree.SubElement(ecuc_textual_param_value, 'VALUE').text = mapping['SOURCE-PDU'] + "_to_" + mapping['TARGET-PDU']
+    #             reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
+    #             ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+    #             definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCBRoutingPath/EnGwCCBSrcRef"
+    #             value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
+    #             value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+    #             value_ref.text = "/EnGwCCB/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'] + "_TO_CDD"
+    #             ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+    #             definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCBRoutingPath/EnGwCCBDestRef"
+    #             value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
+    #             value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+    #             value_ref.text = "/EnGwCCB/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
+    #             break
+    # # generate data
+    # pretty_xml = prettify_xml(rootCCB)
+    # output = etree.ElementTree(etree.fromstring(pretty_xml))
+    # output.write(output_path + '/EnGwCCB.epc', encoding='UTF-8', xml_declaration=True, method="xml")
+    #
+    # # create output file: EnGwCCD.epc
+    # rootCCD = etree.Element('AUTOSAR', {attr_qname: 'http://autosar.org/schema/r4.0 AUTOSAR_4-2-2_STRICT_COMPACT.xsd'}, nsmap=NSMAP)
+    # packages = etree.SubElement(rootCCD, 'AR-PACKAGES')
+    # package = etree.SubElement(packages, 'AR-PACKAGE')
+    # short_name = etree.SubElement(package, 'SHORT-NAME').text = "EnGwCCD"
+    # elements = etree.SubElement(package, 'ELEMENTS')
+    # ecuc_module = etree.SubElement(elements, 'ECUC-MODULE-CONFIGURATION-VALUES')
+    # short_name = etree.SubElement(ecuc_module, 'SHORT-NAME').text = "EnGwCCD"
+    # definition = etree.SubElement(ecuc_module, 'DEFINITION-REF')
+    # definition.attrib['DEST'] = "ECUC-MODULE-DEF"
+    # definition.text = "/AUTOSAR/EcuDefs/EnGwCCD"
+    # description = etree.SubElement(ecuc_module, 'IMPLEMENTATION-CONFIG-VARIANT').text = "VARIANT-PRE-COMPILE"
+    # containers = etree.SubElement(ecuc_module, 'CONTAINERS')
+    # ecuc_container = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
+    # short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddComStackContribution"
+    # definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+    # definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    # definition.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution"
+    # subcontainer = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
+    # ecuc_container = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
+    # # TRS.COMCONF.GEN.0217(0)
+    # short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRLowerLayerContribution"
+    # definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+    # definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    # definition.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution"
+    # subcontainers = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
+    # index = 0
+    # data_elements_to = []
+    # # TRS.COMCONF.GEN.0216(0)
+    # for mapping in mappings:
+    #     found_source = False
+    #     found_target = False
+    #     target_cluster = ""
+    #     source_cluster = ""
+    #     for frame in can_frames:
+    #         if mapping['SOURCE'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
+    #             found_source = True
+    #             source_cluster = frame['CLUSTER']
+    #         if mapping['TARGET'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
+    #             found_target = True
+    #             target_cluster = frame['CLUSTER']
+    #         if found_source and found_target and mapping['TYPE'] == "GW-CAN-DIAG":
+    #             obj_sort = {}
+    #             # TRS.COMCONF.GEN.0220(0)
+    #             obj_sort['SHORT-NAME'] = "PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
+    #             # TRS.COMCONF.GEN.0221(0)
+    #             obj_sort['ID'] = 0
+    #             obj_sort['REF'] = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
+    #             obj_sort['CLUSTER'] = target_cluster
+    #             data_elements_to.append(obj_sort)
+    #             # Routing path
+    #             ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+    #             # TRS.COMCONF.GEN.0223(0)
+    #             short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "RoutingPathCCD_" + mapping['SOURCE-PDU'] + "_TO_" + mapping['TARGET-PDU']
+    #             definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCDRoutingPath"
+    #             parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
+    #             ecuc_textual_param_value = etree.SubElement(parameter_values, 'ECUC-TEXTUAL-PARAM-VALUE')
+    #             definition_ref = etree.SubElement(ecuc_textual_param_value, "DEFINITION-REF")
+    #             definition_ref.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCDRoutingPath/EnGwAuthorizationCallout"
+    #             # TRS.COMCONF.GEN.0224(0)
+    #             value = etree.SubElement(ecuc_textual_param_value, 'VALUE').text = mapping['SOURCE-PDU'] + "_to_" + mapping['TARGET-PDU']
+    #             reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
+    #             ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+    #             definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCDRoutingPath/EnGwCCDSrcRef"
+    #             value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
+    #             value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+    #             value_ref.text = "/EnGwCCD/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'] + "_TO_CDD"
+    #             ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+    #             definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
+    #             definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #             definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCDRoutingPath/EnGwCCDDestRef"
+    #             value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
+    #             value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+    #             value_ref.text = "/EnGwCCLD/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
+    #             break
+    # data_elements_to = sorted(data_elements_to, key=lambda x: x['CLUSTER'], reverse=True)
+    # index = 0
+    # for elem in data_elements_to:
+    #     elem['ID'] = index
+    #     index = index + 1
+    # data_elements_from = []
+    # for mapping in mappings:
+    #     found_source = False
+    #     found_target = False
+    #     target_cluster = ""
+    #     for frame in can_frames:
+    #         if mapping['SOURCE'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
+    #             found_source = True
+    #         if mapping['TARGET'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
+    #             found_target = True
+    #             target_cluster = frame['CLUSTER']
+    #         if found_source and found_target and mapping['TYPE'] == "GW-CAN-DIAG":
+    #             obj_sort = {}
+    #             # TRS.COMCONF.GEN.0218(0)
+    #             obj_sort['SHORT-NAME'] = "PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
+    #             # TRS.COMCONF.GEN.0219(0)
+    #             obj_sort['ID'] = 0
+    #             obj_sort['REF'] = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
+    #             obj_sort['CLUSTER'] = target_cluster
+    #             data_elements_from.append(obj_sort)
+    #             break
+    #
+    # data_elements_from = sorted(data_elements_from, key=lambda x: x['CLUSTER'], reverse=True)
+    # index = 0
+    # for elem in data_elements_from:
+    #     elem['ID'] = index
+    #     index = index + 1
+    # data_elements = data_elements_to + data_elements_from
+    # for elem in data_elements:
+    #     if "_TO_" in elem['SHORT-NAME']:
+    #         ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+    #         short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = elem['SHORT-NAME']
+    #         definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
+    #         definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    #         definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu"
+    #         parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
+    #         ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    #         definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    #         definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #         definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerHandleId"
+    #         value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(elem['ID'])
+    #         reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
+    #         ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+    #         definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
+    #         definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #         definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerPduRef"
+    #         value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
+    #         value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+    #         value_ref.text = elem['REF']
+    #     else:
+    #         ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+    #         short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = elem['SHORT-NAME']
+    #         definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
+    #         definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    #         definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu"
+    #         parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
+    #         ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    #         definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    #         definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #         definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerHandleId"
+    #         value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(elem['ID'])
+    #         reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
+    #         ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+    #         definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
+    #         definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    #         definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerPduRef"
+    #         value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
+    #         value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+    #         value_ref.text = elem['REF']
+    # ToDiagBegin = 0
+    # ToDiagEnd = 0
+    # ToHSBegin = 0
+    # ToHSEnd = 0
+    # ToFDBegin = 0
+    # ToFDEnd = int(len(data_elements)/2-1)
+    # FromDiagBegin = int(len(data_elements)/2)
+    # FromDiagEnd = 0
+    # FromHSBegin = int(len(data_elements)/2)
+    # FromHSEnd = 0
+    # FromFDBegin = 0
+    # FromFDEnd = len(data_elements)-1
+    # countHS = 0
+    # countFD = 0
+    # for elem in data_elements_to:
+    #     if "HS" in elem['CLUSTER']:
+    #         countHS = countHS + 1
+    #     else:
+    #         countFD = countFD + 1
+    # if countHS + countFD > 0:
+    #     ToDiagEnd = int(len(data_elements) / 2 - 1)
+    #     FromDiagEnd = len(data_elements) - 1
+    # if countHS > 0:
+    #     ToHSEnd = ToHSBegin + countHS - 1
+    #     FromHSEnd = FromHSBegin + countHS - 1
+    # else:
+    #     ToHSEnd = ToHSBegin
+    #     FromHSEnd = FromHSBegin
+    # if countFD >0:
+    #     FromFDBegin = FromHSEnd + 1
+    #     ToFDBegin = ToHSEnd + 1
+    #     ToFDEnd = ToFDBegin + countFD - 1
+    #     FromFDEnd = FromFDBegin + countFD - 1
+    # else:
+    #     FromFDBegin = FromHSEnd
+    #     ToFDBegin = ToHSEnd
+    #     ToFDEnd = ToFDBegin
+    #     FromFDEnd = FromFDBegin
+    #
+    # ecuc_container = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
+    # # TRS.COMCONF.GEN.0225(0)
+    # short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddDiagIndexing"
+    # definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+    # definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+    # definition.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing"
+    # parameter_values = etree.SubElement(ecuc_container, 'PARAMETER-VALUES')
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToDiagBegin"
+    # # TRS.COMCONF.GEN.0226(0)
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToDiagBegin)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToDiagEnd"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToDiagEnd)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToHSDiagBegin"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToHSBegin)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToHSDiagEnd"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToHSEnd)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToFDDiagBegin"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToFDBegin)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToFDDiagEnd"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToFDEnd)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromDiagBegin"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromDiagBegin)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromDiagEnd"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromDiagEnd)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromHSDiagBegin"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromHSBegin)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromHSDiagEnd"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromHSEnd)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromFDDiagBegin"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromFDBegin)
+    # ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+    # definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
+    # definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+    # definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromFDDiagEnd"
+    # value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromFDEnd)
+    # # generate data
+    # pretty_xml = prettify_xml(rootCCD)
+    # output = etree.ElementTree(etree.fromstring(pretty_xml))
+    # output.write(output_path + '/EnGwCCD.epc', encoding='UTF-8', xml_declaration=True, method="xml")
+
+    #EnGwCD
+    replist = []
+    reqlist = []
+    reqreplist = []
+    for triggering in can_frames:
+        if triggering['DEST'] == "DCM-I-PDU":
+            for pdu in diag_pdu_types:
+                if triggering['PDU-REF'].split("/")[-1] == pdu['NAME'] and pdu['TYPE'] == 'DIAG-REQUEST':
+                    reqlist.append(triggering)
+                elif triggering['PDU-REF'].split("/")[-1] == pdu['NAME'] and pdu['TYPE'] == 'DIAG-RESPONSE':
+                    replist.append(triggering)
+    for frame in reqlist:
+        for port in frame['PORTS']:
+            for connector in can_connectors:
+                try:
+                    if ((connector['INSTANCE'] + "/" + connector['NAME'] + "/" + connector['IN-PORT']) in port) and (connector['INSTANCE'] == 'VSM'):
+                        for mapping in pdu_mappings:
+                            if (frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']) in mapping['SOURCE']:
+                                for pdu in mapping['TARGET']:
+                                    obj_out = {}
+                                    obj_out['REQUEST-IN-VSM'] = mapping['SOURCE']
+                                    obj_out['REQPDU-IN-VSM'] = frame['PDU']
+                                    obj_out['REQUEST-OUT-VSM'] = pdu
+                                    for frame2 in reqlist:
+                                        if pdu.split("/")[-1] == frame2['NAME']:
+                                            for port2 in frame2['PORTS']:
+                                                for connector2 in can_connectors:
+                                                    if (connector2['INSTANCE'] + "/" + connector2['NAME'] + "/" + connector2['IN-PORT']) in port2:
+                                                        obj_out['ECU-INSTANCE'] = connector2['INSTANCE']
+                                                        for frame3 in replist:
+                                                            for port2 in frame3['PORTS']:
+                                                                if (connector2['INSTANCE'] + "/" + connector2['NAME'] + "/" + connector2['OUT-PORT']) in port2:
+                                                                    obj_out['RESPONSE-IN-VSM'] = "/" + frame3['ROOT'] + "/" + frame3['PACKAGE'] + "/" + frame3['CLUSTER'] + "/" + frame3['CHANNEL'] + "/" + frame3['NAME']
+                                                                    obj_out['REPPDU-IN-VSM'] = frame3['PDU']
+                                                                    for mapping2 in pdu_mappings:
+                                                                        if obj_out['RESPONSE-IN-VSM'] == mapping2['SOURCE']:
+                                                                            for pdu2 in mapping2['TARGET']:
+                                                                                for frame4 in replist:
+                                                                                    if (frame4['CLUSTER'] + "/" + frame4['CHANNEL'] + "/" + frame4['NAME']) in pdu2:
+                                                                                        for port3 in frame4['PORTS']:
+                                                                                            if connector['OUT-PORT'] in port3:
+                                                                                                obj_out['RESPONSE-OUT-VSM'] = "/" + frame4['ROOT'] + "/" + frame4['PACKAGE'] + "/" + frame4['CLUSTER'] + "/" + frame4['CHANNEL'] + "/" + frame4['NAME']
+                                                                                                obj_out['CLUSTER-DIAG'] = frame4['CLUSTER']
+                                                                                                reqreplist.append(obj_out)
+                except KeyError as e:
+                    logger.warning(str(e) + ": " + connector['NAME'])
+                    #print(str(e) + ": " + connector['NAME'])
+
+
+    # create output file: EnGwCD.epc
+    rootCD = etree.Element('AUTOSAR', {attr_qname: 'http://autosar.org/schema/r4.0 AUTOSAR_4-2-2_STRICT_COMPACT.xsd'}, nsmap=NSMAP)
+    packages = etree.SubElement(rootCD, 'AR-PACKAGES')
     package = etree.SubElement(packages, 'AR-PACKAGE')
-    short_name = etree.SubElement(package, 'SHORT-NAME').text = "EnGwCCB"
+    short_name = etree.SubElement(package, 'SHORT-NAME').text = "EnGwCanDiag"
     elements = etree.SubElement(package, 'ELEMENTS')
     ecuc_module = etree.SubElement(elements, 'ECUC-MODULE-CONFIGURATION-VALUES')
-    short_name = etree.SubElement(ecuc_module, 'SHORT-NAME').text = "EnGwCCB"
+    short_name = etree.SubElement(ecuc_module, 'SHORT-NAME').text = "EnGwCanDiag"
     definition = etree.SubElement(ecuc_module, 'DEFINITION-REF')
     definition.attrib['DEST'] = "ECUC-MODULE-DEF"
-    definition.text = "/AUTOSAR/EcuDefs/EnGwCCB"
+    definition.text = "/TS_2018/EnGwCanDiag"
     description = etree.SubElement(ecuc_module, 'IMPLEMENTATION-CONFIG-VARIANT').text = "VARIANT-PRE-COMPILE"
-    # implement TRS.COMCONF.GEN.00B(1)
-    containers = etree.SubElement(ecuc_module, 'CONTAINERS')
-    ecuc_container = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
-    short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddComStackContribution"
-    definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+    containers_general = etree.SubElement(ecuc_module, 'CONTAINERS')
+    container_cdd = etree.SubElement(containers_general, 'ECUC-CONTAINER-VALUE')
+    short_name = etree.SubElement(container_cdd, 'SHORT-NAME').text = "CddComStackContribution_0"
+    definition = etree.SubElement(container_cdd, 'DEFINITION-REF')
     definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-    definition.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution"
-    subcontainer = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
-    ecuc_container = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
-    # TRS.COMCONF.GEN.0208(0)
-    short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRLowerLayerContribution"
-    definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+    definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution"
+    subcontainers = etree.SubElement(container_cdd, 'SUB-CONTAINERS')
+    container = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
+    short_name = etree.SubElement(container, 'SHORT-NAME').text = "CddPduRUpperLayerContribution"
+    definition = etree.SubElement(container, 'DEFINITION-REF')
     definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-    definition.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution"
-    subcontainers = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
-    index = 0
-    # TRS.COMCONF.GEN.0207(0)
-    for mapping in mappings:
-        found_source = False
-        found_target = False
-        for frame in can_frames:
-            if mapping['SOURCE'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
-                found_source = True
-            if mapping['TARGET'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
-                found_target = True
-            if found_source and found_target and mapping['TYPE'] == "GW-REMOTE-DIAG":
-                # REQ part
-                ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
-                # TRS.COMCONF.GEN.0209(0)
-                short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
-                definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu"
-                parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
-                ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-                definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerHandleId"
-                # TRS.COMCONF.GEN.0210(0)
-                value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
-                reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-                ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerPduRef"
-                value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
-                value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                value_ref.text = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
-                # REP part
-                ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
-                # TRS.COMCONF.GEN.0211(0)
-                short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
-                definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu"
-                parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
-                ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-                definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerHandleId"
-                # TRS.COMCONF.GEN.0212(0)
-                value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(index)
-                index = index + 1
-                reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-                ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerPduRef"
-                value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
-                value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                value_ref.text = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
-                # Routing path
-                ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
-                # TRS.COMCONF.GEN.0214(0)
-                short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "RoutingPathCCB_" + mapping['SOURCE-PDU'] + "_TO_" + mapping['TARGET-PDU']
-                definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCBRoutingPath"
-                parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
-                ecuc_textual_param_value = etree.SubElement(parameter_values, 'ECUC-TEXTUAL-PARAM-VALUE')
-                definition_ref = etree.SubElement(ecuc_textual_param_value, "DEFINITION-REF")
-                definition_ref.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCBRoutingPath/EnGwAuthorizationCallout"
-                # TRS.COMCONF.GEN.0215(0)
-                value = etree.SubElement(ecuc_textual_param_value, 'VALUE').text = mapping['SOURCE-PDU'] + "_to_" + mapping['TARGET-PDU']
-                reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-                ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCBRoutingPath/EnGwCCBSrcRef"
-                value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
-                value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                value_ref.text = "/EnGwCCB/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'] + "_TO_CDD"
-                ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCBRoutingPath/EnGwCCBDestRef"
-                value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
-                value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                value_ref.text = "/EnGwCCB/EnGwCCB/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
-                break
-    # generate data
-    pretty_xml = prettify_xml(rootCCB)
-    output = etree.ElementTree(etree.fromstring(pretty_xml))
-    output.write(output_path + '/EnGwCCB.epc', encoding='UTF-8', xml_declaration=True, method="xml")
-
-    # create output file: EnGwCCD.epc
-    rootCCD = etree.Element('AUTOSAR', {attr_qname: 'http://autosar.org/schema/r4.0 AUTOSAR_4-2-2_STRICT_COMPACT.xsd'}, nsmap=NSMAP)
-    packages = etree.SubElement(rootCCD, 'AR-PACKAGES')
-    package = etree.SubElement(packages, 'AR-PACKAGE')
-    short_name = etree.SubElement(package, 'SHORT-NAME').text = "EnGwCCD"
-    elements = etree.SubElement(package, 'ELEMENTS')
-    ecuc_module = etree.SubElement(elements, 'ECUC-MODULE-CONFIGURATION-VALUES')
-    short_name = etree.SubElement(ecuc_module, 'SHORT-NAME').text = "EnGwCCD"
-    definition = etree.SubElement(ecuc_module, 'DEFINITION-REF')
-    definition.attrib['DEST'] = "ECUC-MODULE-DEF"
-    definition.text = "/AUTOSAR/EcuDefs/EnGwCCD"
-    description = etree.SubElement(ecuc_module, 'IMPLEMENTATION-CONFIG-VARIANT').text = "VARIANT-PRE-COMPILE"
-    containers = etree.SubElement(ecuc_module, 'CONTAINERS')
-    ecuc_container = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
-    short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddComStackContribution"
-    definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+    definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution"
+    subcontainers_cdd = etree.SubElement(container, 'SUB-CONTAINERS')
+    container_diag = etree.SubElement(containers_general, 'ECUC-CONTAINER-VALUE')
+    short_name = etree.SubElement(container_diag, 'SHORT-NAME').text = "EnGwCanDiagReqRep"
+    definition = etree.SubElement(container_diag, 'DEFINITION-REF')
     definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-    definition.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution"
-    subcontainer = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
-    ecuc_container = etree.SubElement(subcontainer, 'ECUC-CONTAINER-VALUE')
-    # TRS.COMCONF.GEN.0217(0)
-    short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRLowerLayerContribution"
-    definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
-    definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-    definition.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution"
-    subcontainers = etree.SubElement(ecuc_container, 'SUB-CONTAINERS')
-    index = 0
-    data_elements_to = []
-    # TRS.COMCONF.GEN.0216(0)
-    for mapping in mappings:
-        found_source = False
-        found_target = False
-        target_cluster = ""
-        source_cluster = ""
-        for frame in can_frames:
-            if mapping['SOURCE'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
-                found_source = True
-                source_cluster = frame['CLUSTER']
-            if mapping['TARGET'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
-                found_target = True
-                target_cluster = frame['CLUSTER']
-            if found_source and found_target and mapping['TYPE'] == "GW-CAN-DIAG":
-                obj_sort = {}
-                # TRS.COMCONF.GEN.0220(0)
-                obj_sort['SHORT-NAME'] = "PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
-                # TRS.COMCONF.GEN.0221(0)
-                obj_sort['ID'] = 0
-                obj_sort['REF'] = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_TO_CDD"
-                obj_sort['CLUSTER'] = target_cluster
-                data_elements_to.append(obj_sort)
-                # Routing path
-                ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
-                # TRS.COMCONF.GEN.0223(0)
-                short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = "RoutingPathCCD_" + mapping['SOURCE-PDU'] + "_TO_" + mapping['TARGET-PDU']
-                definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCDRoutingPath"
-                parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
-                ecuc_textual_param_value = etree.SubElement(parameter_values, 'ECUC-TEXTUAL-PARAM-VALUE')
-                definition_ref = etree.SubElement(ecuc_textual_param_value, "DEFINITION-REF")
-                definition_ref.attrib['DEST'] = "ECUC-STRING-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCDRoutingPath/EnGwAuthorizationCallout"
-                # TRS.COMCONF.GEN.0224(0)
-                value = etree.SubElement(ecuc_textual_param_value, 'VALUE').text = mapping['SOURCE-PDU'] + "_to_" + mapping['TARGET-PDU']
-                reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-                ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCDRoutingPath/EnGwCCDSrcRef"
-                value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
-                value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                value_ref.text = "/EnGwCCD/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_" + mapping['TARGET-PDU'] + "_TO_CDD"
-                ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-                definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
-                definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-                definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/EnGwCCDRoutingPath/EnGwCCDDestRef"
-                value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
-                value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-                value_ref.text = "/EnGwCCLD/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
-                break
-    data_elements_to = sorted(data_elements_to, key=lambda x: x['CLUSTER'], reverse=True)
-    index = 0
-    for elem in data_elements_to:
-        elem['ID'] = index
-        index = index + 1
-    data_elements_from = []
-    for mapping in mappings:
-        found_source = False
-        found_target = False
-        target_cluster = ""
-        for frame in can_frames:
-            if mapping['SOURCE'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
-                found_source = True
-            if mapping['TARGET'] == "/" + frame['ROOT'] + "/" + frame['PACKAGE'] + "/" + frame['CLUSTER'] + "/" + frame['CHANNEL'] + "/" + frame['NAME']:
-                found_target = True
-                target_cluster = frame['CLUSTER']
-            if found_source and found_target and mapping['TYPE'] == "GW-CAN-DIAG":
-                obj_sort = {}
-                # TRS.COMCONF.GEN.0218(0)
-                obj_sort['SHORT-NAME'] = "PduRLowerLayerRxPdu_" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
-                # TRS.COMCONF.GEN.0219(0)
-                obj_sort['ID'] = 0
-                obj_sort['REF'] = "/EcuC/EcuC/EcucPduCollection/" + mapping['TARGET-PDU'].split("/")[-1] + "_FROM_CDD"
-                obj_sort['CLUSTER'] = target_cluster
-                data_elements_from.append(obj_sort)
-                break
-
-    data_elements_from = sorted(data_elements_from, key=lambda x: x['CLUSTER'], reverse=True)
-    index = 0
-    for elem in data_elements_from:
-        elem['ID'] = index
-        index = index + 1
-    data_elements = data_elements_to + data_elements_from
-    for elem in data_elements:
-        if "_TO_" in elem['SHORT-NAME']:
-            ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
-            short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = elem['SHORT-NAME']
-            definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu"
-            parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
-            ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-            definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerHandleId"
-            value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(elem['ID'])
-            reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-            ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-            definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerTxPdu/CddPduRLowerLayerPduRef"
-            value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
-            value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-            value_ref.text = elem['REF']
-        else:
-            ecuc_container_value = etree.SubElement(subcontainers, 'ECUC-CONTAINER-VALUE')
-            short_name = etree.SubElement(ecuc_container_value, 'SHORT-NAME').text = elem['SHORT-NAME']
-            definition_ref = etree.SubElement(ecuc_container_value, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu"
-            parameter_values = etree.SubElement(ecuc_container_value, 'PARAMETER-VALUES')
-            ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-            definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerHandleId"
-            value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(elem['ID'])
-            reference_values = etree.SubElement(ecuc_container_value, 'REFERENCE-VALUES')
-            ecuc_reference_value = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
-            definition_ref = etree.SubElement(ecuc_reference_value, 'DEFINITION-REF')
-            definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-            definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddComStackContribution/CddPduRLowerLayerContribution/CddPduRLowerLayerRxPdu/CddPduRLowerLayerPduRef"
-            value_ref = etree.SubElement(ecuc_reference_value, 'VALUE-REF')
-            value_ref.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-            value_ref.text = elem['REF']
-    ToDiagBegin = 0
-    ToDiagEnd = 0
-    ToHSBegin = 0
-    ToHSEnd = 0
-    ToFDBegin = 0
-    ToFDEnd = int(len(data_elements)/2-1)
-    FromDiagBegin = int(len(data_elements)/2)
-    FromDiagEnd = 0
-    FromHSBegin = int(len(data_elements)/2)
-    FromHSEnd = 0
-    FromFDBegin = 0
-    FromFDEnd = len(data_elements)-1
-    countHS = 0
-    countFD = 0
-    for elem in data_elements_to:
-        if "HS" in elem['CLUSTER']:
-            countHS = countHS + 1
-        else:
-            countFD = countFD + 1
-    if countHS + countFD > 0:
-        ToDiagEnd = int(len(data_elements) / 2 - 1)
-        FromDiagEnd = len(data_elements) - 1
-    if countHS > 0:
-        ToHSEnd = ToHSBegin + countHS - 1
-        FromHSEnd = FromHSBegin + countHS - 1
-    else:
-        ToHSEnd = ToHSBegin
-        FromHSEnd = FromHSBegin
-    if countFD >0:
-        FromFDBegin = FromHSEnd + 1
-        ToFDBegin = ToHSEnd + 1
-        ToFDEnd = ToFDBegin + countFD - 1
-        FromFDEnd = FromFDBegin + countFD - 1
-    else:
-        FromFDBegin = FromHSEnd
-        ToFDBegin = ToHSEnd
-        ToFDEnd = ToFDBegin
-        FromFDEnd = FromFDBegin
-
-    ecuc_container = etree.SubElement(containers, 'ECUC-CONTAINER-VALUE')
-    # TRS.COMCONF.GEN.0225(0)
-    short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddDiagIndexing"
-    definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
-    definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
-    definition.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing"
-    parameter_values = etree.SubElement(ecuc_container, 'PARAMETER-VALUES')
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToDiagBegin"
-    # TRS.COMCONF.GEN.0226(0)
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToDiagBegin)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToDiagEnd"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToDiagEnd)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToHSDiagBegin"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToHSBegin)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToHSDiagEnd"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToHSEnd)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToFDDiagBegin"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToFDBegin)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexToFDDiagEnd"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(ToFDEnd)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromDiagBegin"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromDiagBegin)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromDiagEnd"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromDiagEnd)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromHSDiagBegin"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromHSBegin)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromHSDiagEnd"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromHSEnd)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromFDDiagBegin"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromFDBegin)
-    ecuc_numerical_param_value = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
-    definition_ref = etree.SubElement(ecuc_numerical_param_value, 'DEFINITION-REF')
-    definition_ref.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
-    definition_ref.text = "/AUTOSAR/EcuDefs/EnGwCCD/CddDiagIndexing/IndexFromFDDiagEnd"
-    value = etree.SubElement(ecuc_numerical_param_value, 'VALUE').text = str(FromFDEnd)
+    definition.text = "/TS_2018/EnGwCanDiag/EnGwCanDiagReqRepConfiguration"
+    subcontainers_diag = etree.SubElement(container_diag, 'SUB-CONTAINERS')
+    response_list = []
+    for group in reqreplist:
+        # CddPduRUpperLayerRxPdu
+        ecuc_container = etree.SubElement(subcontainers_cdd, 'ECUC-CONTAINER-VALUE')
+        short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRUpperLayerRxPdu_" + group['REQPDU-IN-VSM']
+        definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu"
+        parameter_values = etree.SubElement(ecuc_container, 'PARAMETER-VALUES')
+        textual_param = etree.SubElement(parameter_values, 'ECUC-TEXTUAL-PARAM-VALUE')
+        definition = etree.SubElement(textual_param, 'DEFINITION-REF')
+        definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+        definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRApiType"
+        value = etree.SubElement(textual_param, 'VALUE').text = "TP"
+        numerical_param = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+        definition = etree.SubElement(numerical_param, 'DEFINITION-REF')
+        definition.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+        definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRUpperLayerHandleId"
+        value = etree.SubElement(numerical_param, 'VALUE').text = "0"
+        reference_values = etree.SubElement(ecuc_container, 'REFERENCE-VALUES')
+        reference_param = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+        definition = etree.SubElement(reference_param, 'DEFINITION-REF')
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRUpperLayerPduRef"
+        value = etree.SubElement(reference_param, 'VALUE-REF')
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/EcuC/EcuC/EcucPduCollection/" + group['REQPDU-IN-VSM']
+        #EnGwCanDiagReq
+        ecuc_container = etree.SubElement(subcontainers_diag, 'ECUC-CONTAINER-VALUE')
+        short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "EnGwCanDiagRep_" + group['CLUSTER-DIAG']
+        definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+        definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+        definition.text = "/TS_2018/EnGwCanDiag/EnGwCanDiagReqRepConfiguration/EnGwCanDiagReq"
+        reference_values = etree.SubElement(ecuc_container, 'REFERENCE-VALUES')
+        reference_param = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+        definition = etree.SubElement(reference_param, 'DEFINITION-REF')
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/TS_2018/EnGwCanDiag/EnGwCanDiagReqRepConfiguration/EnGwCanDiagReq/EnGwCanDiagReqRef"
+        value = etree.SubElement(reference_param, 'VALUE-REF')
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/EnGwCanDiag/EnGwCanDiag/CddComStackContribution_0/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu_" + group['REQPDU-IN-VSM']
+        reference_param = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+        definition = etree.SubElement(reference_param, 'DEFINITION-REF')
+        definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+        definition.text = "/TS_2018/EnGwCanDiag/EnGwCanDiagReqRepConfiguration/EnGwCanDiagReq/RoutingPathGroupRef"
+        value = etree.SubElement(reference_param, 'VALUE-REF')
+        value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+        value.text = "/PduR/PduR/PduRRoutingTables/RPG_DIAG_REP_" + group['CLUSTER-DIAG']
+        if group['RESPONSE-IN-VSM'] not in response_list:
+            response_list.append(group['RESPONSE-IN-VSM'])
+            # CddPduRUpperLayerRxPdu
+            ecuc_container = etree.SubElement(subcontainers_cdd, 'ECUC-CONTAINER-VALUE')
+            short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRUpperLayerRxPdu_" + group['REPPDU-IN-VSM']
+            definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu"
+            parameter_values = etree.SubElement(ecuc_container, 'PARAMETER-VALUES')
+            textual_param = etree.SubElement(parameter_values, 'ECUC-TEXTUAL-PARAM-VALUE')
+            definition = etree.SubElement(textual_param, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRApiType"
+            value = etree.SubElement(textual_param, 'VALUE').text = "TP"
+            numerical_param = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+            definition = etree.SubElement(numerical_param, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRUpperLayerHandleId"
+            value = etree.SubElement(numerical_param, 'VALUE').text = "2"
+            reference_values = etree.SubElement(ecuc_container, 'REFERENCE-VALUES')
+            reference_param = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+            definition = etree.SubElement(reference_param, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRUpperLayerPduRef"
+            value = etree.SubElement(reference_param, 'VALUE-REF')
+            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            value.text = "/EcuC/EcuC/EcucPduCollection/" + group['REPPDU-IN-VSM']
+            # CddPduRUpperLayerTxPdu
+            ecuc_container = etree.SubElement(subcontainers_cdd, 'ECUC-CONTAINER-VALUE')
+            short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "CddPduRUpperLayerTxPdu_" + group['REPPDU-IN-VSM'] + "_CDD_NAK78"
+            definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerTxPdu"
+            parameter_values = etree.SubElement(ecuc_container, 'PARAMETER-VALUES')
+            textual_param = etree.SubElement(parameter_values, 'ECUC-TEXTUAL-PARAM-VALUE')
+            definition = etree.SubElement(textual_param, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerTxPdu/CddPduRApiType"
+            value = etree.SubElement(textual_param, 'VALUE').text = "IF"
+            numerical_param = etree.SubElement(parameter_values, 'ECUC-NUMERICAL-PARAM-VALUE')
+            definition = etree.SubElement(numerical_param, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-INTEGER-PARAM-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu/CddPduRUpperLayerHandleId"
+            value = etree.SubElement(numerical_param, 'VALUE').text = "0"
+            reference_values = etree.SubElement(ecuc_container, 'REFERENCE-VALUES')
+            reference_param = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+            definition = etree.SubElement(reference_param, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/CddComStackContribution/CddPduRUpperLayerContribution/CddPduRUpperLayerTxPdu/CddPduRUpperLayerPduRef"
+            value = etree.SubElement(reference_param, 'VALUE-REF')
+            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            value.text = "/EcuC/EcuC/EcucPduCollection/" + group['REPPDU-IN-VSM'] + "_CDD_NAK78"
+            # EnGwCanDiagRep
+            ecuc_container = etree.SubElement(subcontainers_diag, 'ECUC-CONTAINER-VALUE')
+            short_name = etree.SubElement(ecuc_container, 'SHORT-NAME').text = "EnGwCanDiagRep"
+            definition = etree.SubElement(ecuc_container, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/EnGwCanDiagReqRepConfiguration/EnGwCanDiagRep"
+            reference_values = etree.SubElement(ecuc_container, 'REFERENCE-VALUES')
+            reference_param = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+            definition = etree.SubElement(reference_param, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/EnGwCanDiagReqRepConfiguration/EnGwCanDiagRep/EnGwCanDiagRepRef"
+            value = etree.SubElement(reference_param, 'VALUE-REF')
+            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            value.text = "/EnGwCanDiag/EnGwCanDiag/CddComStackContribution_0/CddPduRUpperLayerContribution/CddPduRUpperLayerRxPdu_" + group['REPPDU-IN-VSM']
+            reference_param = etree.SubElement(reference_values, 'ECUC-REFERENCE-VALUE')
+            definition = etree.SubElement(reference_param, 'DEFINITION-REF')
+            definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+            definition.text = "/TS_2018/EnGwCanDiag/EnGwCanDiagReqRepConfiguration/EnGwCanDiagRep/PduRRoutingPathNak78Ref"
+            value = etree.SubElement(reference_param, 'VALUE-REF')
+            value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
+            value.text = "/PduR/PduR/PduRRoutingTables/PduRRoutingTable/RPath_" + group['REPPDU-IN-VSM'] + "_NAK78"
 
     # generate data
-    pretty_xml = prettify_xml(rootCCD)
+    pretty_xml = prettify_xml(rootCD)
     output = etree.ElementTree(etree.fromstring(pretty_xml))
-    output.write(output_path + '/EnGwCCD.epc', encoding='UTF-8', xml_declaration=True, method="xml")
+    output.write(output_path + '/EnGwCD.epc', encoding='UTF-8', xml_declaration=True, method="xml")
 
     # create output file: EnGwFonc.epc
     rootFonc = etree.Element('AUTOSAR', {attr_qname: 'http://autosar.org/schema/r4.0 AUTOSAR_4-2-2_STRICT_COMPACT.xsd'}, nsmap=NSMAP)
@@ -5037,10 +5293,22 @@ def CFHM_script(file_list, output_path, logger):
                 obj_elem['NAME'] = elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
                 obj_elem['PDU'] = elem.find(".//{http://autosar.org/schema/r4.0}PDU-REF").text.split("/")[-1]
                 can_frames.append(obj_elem)
+            frames = root.findall(".//{http://autosar.org/schema/r4.0}LIN-UNCONDITIONAL-FRAME")
+            for elem in frames:
+                obj_elem = {}
+                obj_elem['NAME'] = elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text
+                obj_elem['PDU'] = elem.find(".//{http://autosar.org/schema/r4.0}PDU-REF").text.split("/")[-1]
+                can_frames.append(obj_elem)
             frames = root.findall(".//{http://autosar.org/schema/r4.0}USER-DEFINED-I-PDU")
             for elem in frames :
                 existing_ipdus.append(elem.find("{http://autosar.org/schema/r4.0}SHORT-NAME").text)
             frames = root.findall(".//{http://autosar.org/schema/r4.0}CAN-FRAME-TRIGGERING")
+            for elem in frames:
+                obj_elem = {}
+                obj_elem['CAN-FRAME'] = elem.find(".//{http://autosar.org/schema/r4.0}FRAME-REF").text.split("/")[-1]
+                obj_elem['ID'] = elem.find(".//{http://autosar.org/schema/r4.0}IDENTIFIER").text
+                can_frames_triggering.append(obj_elem)
+            frames = root.findall(".//{http://autosar.org/schema/r4.0}LIN-FRAME-TRIGGERING")
             for elem in frames:
                 obj_elem = {}
                 obj_elem['CAN-FRAME'] = elem.find(".//{http://autosar.org/schema/r4.0}FRAME-REF").text.split("/")[-1]
@@ -5099,10 +5367,16 @@ def CFHM_script(file_list, output_path, logger):
         operation.attrib['Type'] = 'SetValue'
         expression = etree.SubElement(operation, 'Expression')
         expression.text = "num:i(" + frame['ECU'] + ")"
+    fixed_operation = etree.SubElement(operations, 'Operation')
+    fixed_operation.attrib['Type'] = "ForEach"
+    expression = etree.SubElement(fixed_operation, 'Expression').text = "as:modconf('Dem')[1]/DemCfhm/CfhmRemoteFaultDecoder/CfhmTedPdu/*/CfhmTedPduHandleId"
+    operations_fixed = etree.SubElement(fixed_operation, 'Operations')
+    operation_fixed = etree.SubElement(operations_fixed, 'Operation')
+    operation_fixed.attrib['Type'] = "SetValue"
+    expression = etree.SubElement(operation_fixed, 'Expression').text = "node:current()/../@index"
     pretty_xml = prettify_xml(rootScript)
     tree = etree.ElementTree(etree.fromstring(pretty_xml))
     tree.write(output_path + "/CfhmTedPdu.xml", encoding="UTF-8", xml_declaration=True, method="xml")
-
 
 
 def LPhM_config(file_list, output_path, logger):
@@ -5274,6 +5548,7 @@ def LPhM_config(file_list, output_path, logger):
     output = etree.ElementTree(etree.fromstring(pretty_xml))
     output.write(output_path + '/LPhM.epc', encoding='UTF-8', xml_declaration=True, method="xml")
     return
+
 
 if __name__ == "__main__":                                          # pragma: no cover
     # process = psutil.Process(os.getpid())                         # pragma: no cover

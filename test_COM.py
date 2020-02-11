@@ -2,13 +2,39 @@ import unittest
 import os
 import os.path
 import ntpath
-import coverage
 from lxml import etree
-#import HtmlTestRunner
+import HtmlTestRunner
 from operator import itemgetter
 
 
 class FileCheck():
+
+    def areSame(first_location, second_location):
+        file1 = open(first_location)
+        file2 = open(second_location)
+
+        line_file1 = file1.readline()
+        line_file2 = file2.readline()
+
+        while line_file1 != "" or line_file2 != "":
+            if "<!--" in line_file1:
+                line_file1 = file1.readline()
+                continue
+            if "<!--" in line_file2:
+                line_file2 = file2.readline()
+                continue
+            line_file1 = line_file1.rstrip()
+            line_file1 = line_file1.lstrip()
+            line_file2 = line_file2.rstrip()
+            line_file2 = line_file2.lstrip()
+            if line_file1 != line_file2:
+                return False
+            line_file1 = file1.readline()
+            line_file2 = file2.readline()
+
+        file1.close()
+        file2.close()
+        return True
 
     def isOutput(path):
         """
@@ -80,21 +106,6 @@ class FileCheck():
             return True
         else:
             return False
-
-    # def ecuc(path1, path2):
-    #     """
-    #         path1 = used for defining the file to be checked for values(from input)
-    #         path2 = used for defining the file to be checked (from output)
-    #     """
-    #     a = 7
-    #     tree = etree.parse(path1)
-    #     root = tree.getroot()
-    #     source = root.findall(".//{http://autosar.org/2.1.2}CONTAINERS")
-    #     for container in source:
-    #     #     if container.getchildren[0].text == "DiagTool":
-    #     #     if container.getchildren[0].text == "BTA":
-    #         for elem in container:
-    #             for elem2 in elem:
 
     def CheckParameter(path, callout, param):
         """
@@ -1110,6 +1121,31 @@ class FileCheck():
 
 
 class COMConfigurator(unittest.TestCase):
+
+    def test_LPHM_tests_1(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('coverage run COM_Configurator.py -in ' + head + '\\Tests\\LPHM.tests\\Test01\\in -out ' + head + '\\Tests\\LPHM.tests\\Test01\\out -LPhM')
+        self.assertTrue(FileCheck.areSame(head + '\\Tests\\LPHM.tests\\Test01\\out\\LPhM.epc', head + '\\tests\\LPHM.tests\\Test01\\expected_LPhM.epc'))
+
+    def test_LPHM_tests_2(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('coverage run COM_Configurator.py -in ' + head + '\\Tests\\LPHM.tests\\Test02\\in -out ' + head + '\\Tests\\LPHM.tests\\Test02\\out -LPhM')
+        self.assertTrue(FileCheck.areSame(head + '\\Tests\\LPHM.tests\\Test02\\out\\LPhM.epc', head + '\\tests\\LPHM.tests\\Test02\\expected_LPhM.epc'))
+
+    def test_LPHM_tests_3(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('coverage run COM_Configurator.py -in ' + head + '\\Tests\\LPHM.tests\\Test03\\in -out ' + head + '\\Tests\\LPHM.tests\\Test03\\out -LPhM')
+        self.assertTrue(FileCheck.areSame(head + '\\Tests\\LPHM.tests\\Test03\\out\\LPhM.epc', head + '\\tests\\LPHM.tests\\Test03\\expected_LPhM.epc'))
+
+    def test_LPHM_tests_4(self):
+        current_path = os.path.realpath(__file__)
+        head, tail = ntpath.split(current_path)
+        os.system('coverage run COM_Configurator.py -in ' + head + '\\Tests\\LPHM.tests\\Test04\\in -out ' + head + '\\Tests\\LPHM.tests\\Test04\\out -LPhM')
+        self.assertTrue(FileCheck.areSame(head + '\\Tests\\LPHM.tests\\Test04\\out\\LPhM.epc', head + '\\tests\\LPHM.tests\\Test04\\expected_LPhM.epc'))
+
     # def test_TRS_COMCONF_INOUT_001_1(self):
     #     current_path = os.path.realpath(__file__)
     #     head, tail = ntpath.split(current_path)
@@ -1134,15 +1170,14 @@ class COMConfigurator(unittest.TestCase):
     #     os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\out')
     #     self.assertFalse(FileCheck.checkFile(head + '\\Tests\\TRS.COMCONF.INOUT.001_4\\out\\', ['ComCallout.xml','EcuC.epc', 'PduR.epc', 'EnGwCCB.epc', 'EnGwCCD.epc', 'EnGwCCLD.epc', 'EnGwCLD.epc', 'EnGwFonc.epc']))
 
-
-
-
     ###################################################################################################################
-    def test_TRS_COMCONF_GEN_004_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('C:\\Python\\Python37-32\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST01\\out -NeMo')
-        self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST01\\out\\ComCallout.xml','Pdu_CounterIn_ETH','ComIPduCallout'))
+
+
+    # def test_TRS_COMCONF_GEN_004_TEST01(self):
+    #     current_path = os.path.realpath(__file__)
+    #     head, tail = ntpath.split(current_path)
+    #     os.system('C:\\Python\\Python37-32\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST01\\out -NeMo')
+    #     self.assertTrue(FileCheck.CheckParameter(head + '\\Tests\\TRS.COMCONF.GEN.004\\TEST01\\out\\ComCallout.xml','Pdu_CounterIn_ETH','ComIPduCallout'))
 
     #def test_TRS_COMCONF_GEN_004_TEST02(self):
     #    current_path = os.path.realpath(__file__)
@@ -2537,25 +2572,11 @@ class COMConfigurator(unittest.TestCase):
     #    os.system('C:\\Users\\msnecula\\AppData\\Local\\Programs\\Python\\Python37\\python COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0234\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0234\\TEST01\\out -EnGw')
     #    self.assertTrue(FileCheck.CheckEnGw2(head + '\\Tests\\TRS.COMCONF.GEN.0234\\TEST01\\out\\EnGwFonc.epc','RoutingPathFonc_isip_HS2_VIN_VDS_BSI_492_TO_isip_HS2_VERS_BSI_112'))
 
-    def test_TRS_COMCONF_GEN_0235_TEST01(self):
-        current_path = os.path.realpath(__file__)
-        head, tail = ntpath.split(current_path)
-        os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\out -EnGw')
-        self.assertTrue(FileCheck.CheckEnGw10(head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\out\\EnGwFonc.epc','isip_HS2_VIN_VDS_BSI_492_to_isip_HS2_VERS_BSI_112','/EnGwFonc/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_isip_HS2_VERS_BSI_112_TO_CDD','/EnGwFonc/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_isip_HS2_VERS_BSI_112_FROM_CDD'))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    # def test_TRS_COMCONF_GEN_0235_TEST01(self):
+    #     current_path = os.path.realpath(__file__)
+    #     head, tail = ntpath.split(current_path)
+    #     os.system('coverage run COM_Configurator.py -in @' + head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\inputs.txt -out ' + head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\out -EnGw')
+    #     self.assertTrue(FileCheck.CheckEnGw10(head + '\\Tests\\TRS.COMCONF.GEN.0235\\TEST01\\out\\EnGwFonc.epc','isip_HS2_VIN_VDS_BSI_492_to_isip_HS2_VERS_BSI_112','/EnGwFonc/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerTxPdu_isip_HS2_VERS_BSI_112_TO_CDD','/EnGwFonc/EnGwFonc/CddComStackContribution/CddPduRLowerLayerContribution/PduRLowerLayerRxPdu_isip_HS2_VERS_BSI_112_FROM_CDD'))
 
     # def test_TRS_COMCONF_GEN_003_1(self):
     #     current_path = os.path.realpath(__file__)
@@ -2599,10 +2620,10 @@ class COMConfigurator(unittest.TestCase):
     #     os.system('coverage run COM_Configurator.py -in ' + head + '\\Tests\\TRS.COMCONF.GEN.005\\in -out ' + head + '\\Tests\\TRS.COMCONF.GEN.005\\out -EnGw')
     #     self.assertFalse(FileCheck.ecuc(head + '\\Tests\\TRS.COMCONF.GEN.005\\in\EPC_GwDiagCanLinConfig.epc', head + '\\Tests\\TRS.COMCONF.GEN.005\\out\EcuC.epc'))
 
-suite = unittest.TestLoader().loadTestsFromTestCase(COMConfigurator)
-unittest.TextTestRunner(verbosity=2).run(suite)
+# suite = unittest.TestLoader().loadTestsFromTestCase(COMConfigurator)
+# unittest.TextTestRunner(verbosity=2).run(suite)
 
-# current_path = os.path.realpath(__file__)
-# head, tail = ntpath.split(current_path)
-# if __name__ == "__main__":
-#     unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=head + "\\tests"))
+current_path = os.path.realpath(__file__)
+head, tail = ntpath.split(current_path)
+if __name__ == "__main__":
+    unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=head + "\\tests"))

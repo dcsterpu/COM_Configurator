@@ -1,0 +1,39 @@
+missing module named 'multiprocessing.forking' - imported by c:\python365\lib\site-packages\PyInstaller\loader\rthooks\pyi_rth_multiprocessing.py
+missing module named multiprocessing.get_context - imported by multiprocessing, multiprocessing.pool, multiprocessing.managers, multiprocessing.sharedctypes
+missing module named multiprocessing.TimeoutError - imported by multiprocessing, multiprocessing.pool
+missing module named multiprocessing.BufferTooShort - imported by multiprocessing, multiprocessing.connection
+missing module named multiprocessing.AuthenticationError - imported by multiprocessing, multiprocessing.connection
+missing module named multiprocessing.set_start_method - imported by multiprocessing, multiprocessing.spawn
+missing module named multiprocessing.get_start_method - imported by multiprocessing, multiprocessing.spawn
+missing module named resource - imported by posix, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named posix - imported by os, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named _posixsubprocess - imported by subprocess, multiprocessing.util, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named 'org.python' - imported by pickle, xml.sax, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named readline - imported by cmd, code, pdb, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+excluded module named _frozen_importlib - imported by importlib, importlib.abc, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named _frozen_importlib_external - imported by importlib._bootstrap, importlib, importlib.abc, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named _winreg - imported by platform, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named _scproxy - imported by urllib.request
+missing module named java - imported by platform, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named 'java.lang' - imported by platform, xml.sax._exceptions, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named vms_lib - imported by platform, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named termios - imported by tty, getpass, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named grp - imported by shutil, tarfile, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named pwd - imported by posixpath, shutil, tarfile, http.server, webbrowser, netrc, getpass, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named _dummy_threading - imported by dummy_threading, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named org - imported by copy, C:\Users\Cristi\PycharmProjects\COM_Configurator\COM_Configurator.py
+missing module named cPickle - imported by coverage.backward
+missing module named copy_reg - imported by cStringIO, cPickle
+missing module named ConfigParser - imported by coverage.backward
+missing module named cStringIO - imported by coverage.backward, cPickle
+missing module named contracts - imported by coverage.misc, coverage.control
+missing module named 'aspectlib.debug' - imported by coverage.debug
+missing module named aspectlib - imported by coverage.debug
+missing module named thread - imported by coverage.debug
+missing module named StringIO - imported by six
+missing module named _pypy_irc_topic - imported by coverage.control
+missing module named _structseq - imported by coverage.control
+missing module named __pypy__ - imported by coverage.collector
+missing module named gevent - imported by coverage.collector
+missing module named eventlet - imported by coverage.collector
+missing module named greenlet - imported by coverage.collector

@@ -1,0 +1,66 @@
+MAKESUPPORT_DIR = ..\..\MakeSupport
+HEXVIEW = ..\Hexview\hexview.exe
+APP = Volvo_framework
+BTL = ..\FBL\G2VOLV48SW_FBL.hex
+
+GNU_MAKE_RETURN_CODE = $(ERRORLEVEL)
+PATH = $(PATH_OLD)
+PATH_OLD =
+
+ifeq ($(MAKESUPPORT_DIR),)
+	@echo ************************************************************************
+	@echo BRS warning: MAKESUPPORT_DIR has to be set to MakeSupport\cmd directory!
+	@echo              Please correct setting in this batch file and try again!
+	@echo ************************************************************************
+	MAKESUPPORT_DIR = ""
+endif
+
+ifndef $(MAKESUPPORT_DIR)
+	@echo ************************************************************************
+	@echo BRS warning: MAKESUPPORT_DIR does not exist
+	@echo              Please correct setting in this batch file and try again!
+	@echo ************************************************************************
+	MAKESUPPORT_DIR = ""
+endif
+
+test:
+	# convert run to hex
+	HEX_RETURN = $(HEXVIEW) $(APP).run /CR:0x00000000-0x0001FFFF:0x1FFE0000-0x1FFFFFFF  /FA /AF:0xFF /AD:0xFF /AL /XI -o $(APP).hex
+	@echo $(HEX_RETURN)
+	ifneq ($(HEX_RETURN), 0)
+		$(error Hexview.exe didn't executed properly! CODE: $(HEX_RETURN))
+	else
+		# convert run to hex
+		cp $(APP).hex $(APP)_vbf.hex
+	endif
+
+
+run_hex:
+	# write volvo presence patern
+	$(HEXVIEW) /s $(APP).hex /FR:0x9FFF0-0x9FFF3 /FP:0x736A293E  /XI -o $(APP).hex
+	# merge BTL and APP
+	$(HEXVIEW) /s /MO:$(BTL)+$(APP).hex /XI -o VolvoMerge.hex
+	$(HEXVIEW) /s G2VOLV48SW_APP_FBL.hex /XI -o G2VOLV48SW_APP_FBL.srec
+	$(HEXVIEW) /s G2VOLV48SW_APP.hex /XI -o G2VOLV48SW_APP.srec
+	# Create VBF file
+	_CreateVbfContainer.bat	$(APP)_vbf.hex
+
+
+copy:
+	# write volvo presence patern
+	cp $(APP).hex G2VOLV48SW_APP.hex
+	# merge BTL and APP
+	cp VolvoMerge.hex G2VOLV48SW_APP_FBL.hex
+	# Create VBF file
+	cp $(APP)_vbf.vbf G2VOLV48SW_APP.vbf
+
+clean:
+	rm $(APP).hex
+	rm VolvoMerge.hex
+	rm $(APP).srec
+
+
+.PHONY: test run_hex copy clean
+
+
+MAKESUPPORT_DIR = ""

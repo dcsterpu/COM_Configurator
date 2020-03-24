@@ -2751,7 +2751,7 @@ def NeMo_script(file_list, output_path, logger):
                 operation.attrib['Type'] = "ForEach"
                 expression = etree.SubElement(operation, 'Expression')
                 if not elem['GATEWAY']:
-                    expression.text = "as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[text:match(@name,'^PD" + elem['PDU'].split("/")[-1] + "_\d+[RT]$')]/ComIPduCallout"
+                    expression.text = "as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[text:match(@name,'^PD" + elem['PDU'].split("/")[-1] + "_\d*+[RT]$')]/ComIPduCallout"
                 else:
                     expression.text = "as:modconf('Com')[1]/ComConfig/*/ComIPdu/*[text:match(@name,'^PD" + elem['PDU'].split("/")[-1] + "_[RT]$')]/ComIPduCallout"
                 operations2 = etree.SubElement(operation, 'Operations')
@@ -5525,6 +5525,15 @@ def LPhM_config(file_list, output_path, logger):
                     obj_group['DIRECTION'] = group.find(".//DIRECTION").text
                     temp_list.append(obj_group)
                 obj_temp['IPDUGROUPS'] = temp_list
+                tables = element.findall(".//SCHEDULE-TABLE")
+                temp_list = []
+                for table in tables:
+                    obj_group = {}
+                    obj_group['TABLE'] = table.find(".//SCHEDULE-TABLE-REF").text.split('/')[-1]
+                    obj_group['TYPE'] = table.find(".//TYPE").text
+                    # obj_group['MODE'] = table.find(".//RUN-MODE").text
+                    temp_list.append(obj_group)
+                obj_temp['SCHEDULE-TABLES'] = temp_list
                 if obj_temp['CLUSTER-TYPE'] == "CAN-CLUSTER":
                     can_networks.append(obj_temp)
                 else:
@@ -5554,7 +5563,7 @@ def LPhM_config(file_list, output_path, logger):
     # lin clusters
     for cluster in lin_networks:
         ecuc_general = etree.SubElement(subcontainer_master, "ECUC-CONTAINER-VALUE")
-        short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = cluster['NAME']
+        short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = "LPhM_" + cluster['NAME']
         definition_general = etree.SubElement(ecuc_general, "DEFINITION-REF")
         definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
         definition_general.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterLIN"
@@ -5571,7 +5580,7 @@ def LPhM_config(file_list, output_path, logger):
         definition.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterLIN/ChannelList/ChannelRef"
         value = etree.SubElement(ecuc_ref_value_1, "VALUE-REF")
         value.attrib['DEST'] = "ECUC-CONTAINER-VALUE"
-        value.text = "/Lin/Lin/LinGlobalConfig/" + cluster['NAME']
+        value.text = "/Lin/Lin/LinGlobalConfig/" + cluster['NAME'] + "_Channel"
         ecuc_ref_value_2 = etree.SubElement(references, "ECUC-REFERENCE-VALUE")
         definition = etree.SubElement(ecuc_ref_value_2, "DEFINITION-REF")
         definition.attrib['DEST'] = "ECUC-REFERENCE-DEF"
@@ -5599,11 +5608,33 @@ def LPhM_config(file_list, output_path, logger):
             value_group = etree.SubElement(container_group, "VALUE-REF")
             value_group.attrib['DEST'] = "IDENTIFIABLE"
             value_group.text = "/Com/Com/ComConfig/" + group['GROUP']
+        subcontainer_table = etree.SubElement(ecuc_general, "SUB-CONTAINERS")
+        for table in cluster['SCHEDULE-TABLES']:
+            container_table = etree.SubElement(subcontainer_table, "ECUC-CONTAINER-VALUE")
+            name = etree.SubElement(container_table, "SHORT-NAME").text = table['TABLE']
+            definition_table = etree.SubElement(container_table, "DEFINITION-REF")
+            definition_table.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
+            definition_table.text = "/LPhM_TS_2018/LPhM/LPhMCluster/LPhMClusterLIN/ChannelList/LPhMScheduleTable"
+            parameters_table = etree.SubElement(container_table, "PARAMETER-VALUES")
+            param = etree.SubElement(parameters_table, "ECUC-TEXTUAL-PARAM-VALUE")
+            definition_param = etree.SubElement(param, "DEFINITION-REF")
+            definition_param.attrib['DEST'] = "ECUC-ENUMERATION-PARAM-DEF"
+            definition_param.text = "/LPhM_TS_2018/LPhM/LPhMCluster/LPhMClusterLIN/ChannelList/LPhMScheduleTable/ScheduleTableCategory"
+            value = etree.SubElement(param, "VALUE").text = table['TYPE']
+            references_table = etree.SubElement(container_table, "REFERENCE-VALUES")
+            reference = etree.SubElement(references_table, "ECUC-REFERENCE-VALUE")
+            definition_ref = etree.SubElement(reference, "DEFINITION-REF")
+            definition_ref.attrib['DEST'] = "ECUC-REFERENCE-DEF"
+            definition_ref.text = "/LPhM_TS_2018/LPhM/LPhMCluster/LPhMClusterLIN/ChannelList/LPhMScheduleTable/LPhMScheduleTableRef"
+            value_ref = etree.SubElement(reference, "VALUE-REF")
+            value_ref.attrib['DEST'] = "IDENTIFIABLE"
+            value_ref.text = "/LinSM/LinSM/LinSMConfigSet/" + cluster['NAME'] + "/" + table['TABLE']
+
     # can clusters
     for cluster in can_networks:
         if cluster['CATEGORY'] not in ['BODY', 'PWT']:
             ecuc_general = etree.SubElement(subcontainer_master, "ECUC-CONTAINER-VALUE")
-            short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = cluster['NAME']
+            short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = "LPhM_" + cluster['NAME']
             definition_general = etree.SubElement(ecuc_general, "DEFINITION-REF")
             definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
             definition_general.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterInternal"
@@ -5623,7 +5654,7 @@ def LPhM_config(file_list, output_path, logger):
             value.text = "/ComM/ComM/ComMConfigSet/ComMUser_" + cluster['NAME']
         else:
             ecuc_general = etree.SubElement(subcontainer_master, "ECUC-CONTAINER-VALUE")
-            short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = cluster['NAME']
+            short_name = etree.SubElement(ecuc_general, "SHORT-NAME").text = "LPhM_" + cluster['NAME']
             definition_general = etree.SubElement(ecuc_general, "DEFINITION-REF")
             definition_general.attrib['DEST'] = "ECUC-PARAM-CONF-CONTAINER-DEF"
             definition_general.text = "/AUTOSAR/EcuDefs/LPhM/LPhMCluster/LPhMClusterCAN"
@@ -5666,7 +5697,7 @@ def LPhM_config(file_list, output_path, logger):
     # generate data
     pretty_xml = prettify_xml(rootLPhM)
     output = etree.ElementTree(etree.fromstring(pretty_xml))
-    output.write(output_path + '/LPhM.epc', encoding='UTF-8', xml_declaration=True, method="xml", doctype = "<!-- XML file generated by COM_Configurator-18 -->")
+    output.write(output_path + '/LPhM.epc', encoding='UTF-8', xml_declaration=True, method="xml", doctype="<!-- XML file generated by COM_Configurator-18 -->")
     return
 
 
